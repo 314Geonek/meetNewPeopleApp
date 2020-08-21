@@ -1,0 +1,23 @@
+<resources>
+
+    <string name="app_name">MainActivity</string>
+
+    <string name="login"> Log in</string>
+
+    <string name="registration">registration</string>
+
+    <string name="email">email</string>
+
+    <string name="password">password</string>
+
+    <string name="name">name</string>
+
+    <string name="register">register</string>
+
+    <string name="male">Male</string>
+
+    <string name="female">Female</string>
+
+    <string name="logout">logout</string>
+
+</resources>
