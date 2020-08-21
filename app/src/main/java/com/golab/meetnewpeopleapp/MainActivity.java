@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         checkUserSex();
+        ///sdadsdsa
+        
         al = new ArrayList<>();
         mLogOut = findViewById(R.id.logout);
         mAuth=FirebaseAuth.getInstance();
