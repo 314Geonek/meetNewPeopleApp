@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,38 +20,33 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private Button mLogOut;
-    private ArrayList<String> al;
-    private ArrayAdapter<String> arrayAdapter;
-    private int i;
+    private Array_Adapter arrayAdapter;
     private FirebaseAuth mAuth;
-
+    ListView listView;
+    List<cards> rowItems;
+    private String userSex, oppositeSex, currentUId;
+    private DatabaseReference usersDb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        usersDb = FirebaseDatabase.getInstance().getReference().child("Users");
+        mAuth = FirebaseAuth.getInstance();
+        currentUId = mAuth.getCurrentUser().getUid();
+
         checkUserSex();
-        ///sdadsdsa
-        
-        al = new ArrayList<>();
-        mLogOut = findViewById(R.id.logout);
-        mAuth=FirebaseAuth.getInstance();
-        mLogOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mAuth.signOut();
-                Intent intent=new Intent(MainActivity.this, ChooseLoginOrRegistrationActivity.class);
-                startActivity(intent);
-                finish();;
-                return;
-            }
-        });
-        arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.helloText, al );
+
+        rowItems = new ArrayList<cards>();
+
+        arrayAdapter = new Array_Adapter(this, R.layout.item, rowItems );
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
 
         flingContainer.setAdapter(arrayAdapter);
@@ -59,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
             public void removeFirstObjectInAdapter() {
                 // this is the simplest way to delete an object from the Adapter (/AdapterView)
                 Log.d("LIST", "removed object!");
-                al.remove(0);
+                rowItems.remove(0);
                 arrayAdapter.notifyDataSetChanged();
             }
 
@@ -95,111 +91,78 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        mLogOut = findViewById(R.id.logout);
+        mAuth=FirebaseAuth.getInstance();
+        mLogOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAuth.signOut();
+                Intent intent=new Intent(MainActivity.this, ChooseLoginOrRegistrationActivity.class);
+                startActivity(intent);
+                finish();;
+                return;
+            }
+        });
     }
-private String userSex, oppositeSex;
 
-public  void checkUserSex()
-{   final FirebaseUser userDb= FirebaseAuth.getInstance().getCurrentUser();
-    DatabaseReference maleDb = FirebaseDatabase.getInstance().getReference().child("Users").child("Male");
-    maleDb.addChildEventListener(new ChildEventListener() {
-        @Override
-        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-            if(snapshot.getKey().equals(userDb.getUid()))
-            {
-                userSex="Male";
-                oppositeSex="Female";
-                getOppositeSexUsers();
+
+
+    public void checkUserSex(){
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference userDb = usersDb.child(user.getUid());
+        userDb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    if (dataSnapshot.child("sex").getValue() != null){
+                        userSex = dataSnapshot.child("sex").getValue().toString();
+                        switch (userSex){
+                            case "Male":
+                                oppositeSex = "Female";
+                                break;
+                            case "Female":
+                                oppositeSex = "Male";
+                                break;
+                        }
+                        System.out.println(oppositeSex);
+                        getOppositeSexUsers();
+                    }
+                }
             }
-        }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-        @Override
-        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-        }
-
-        @Override
-        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-        }
-
-        @Override
-        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-
-        }
-    });
-
-    DatabaseReference femaleDb = FirebaseDatabase.getInstance().getReference().child("Users").child("Female");
-    femaleDb.addChildEventListener(new ChildEventListener() {
-        @Override
-        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-            if(snapshot.getKey().equals(userDb.getUid()))
-            {
-                userSex="Feale";
-                oppositeSex="Male";
-                getOppositeSexUsers();
             }
-        }
+        });
+    }
+    public void getOppositeSexUsers(){
+        usersDb.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot.child("sex").getValue() != null) {
+                    if (dataSnapshot.exists() && dataSnapshot.child("sex").getValue().toString().equals(oppositeSex)) {
 
-        @Override
-        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-        }
-
-        @Override
-        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-        }
-
-        @Override
-        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-
-        }
-    });
-}
-public void getOppositeSexUsers()
-{
-    DatabaseReference oppositeSexDb = FirebaseDatabase.getInstance().getReference().child("Users").child(oppositeSex);
-    oppositeSexDb.addChildEventListener(new ChildEventListener() {
-        @Override
-        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-            if(snapshot.exists())
-            {
-                al.add(snapshot.child("name").getValue().toString());
-                arrayAdapter.notifyDataSetChanged();
+                        cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString());
+                        rowItems.add(item);
+                        arrayAdapter.notifyDataSetChanged();
+                    }
+                }
             }
-        }
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
 
-        @Override
-        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-        }
-
-        @Override
-        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-        }
-
-        @Override
-        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-
-        }
-    });
-}
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
 
 
 }
