@@ -41,6 +41,12 @@ public class Registration extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
+        mRegister = (Button) findViewById(R.id.register);
+        mEmail = (EditText) findViewById(R.id.email);
+        mPassword = (EditText) findViewById(R.id.password);
+        mName = (EditText) findViewById(R.id.name);
+
+        mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
         mAuth = FirebaseAuth.getInstance();
         firebaseAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -54,16 +60,6 @@ public class Registration extends AppCompatActivity {
                 }
             }
         };
-
-
-        mRegister = (Button) findViewById(R.id.register);
-
-        mEmail = (EditText) findViewById(R.id.email);
-        mPassword = (EditText) findViewById(R.id.password);
-        mName = (EditText) findViewById(R.id.name);
-
-        mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
-
         mRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

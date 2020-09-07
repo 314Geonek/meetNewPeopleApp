@@ -20,4 +20,6 @@
 
     <string name="logout">logout</string>
 
+    <string name="settings">settings</string>
+
 </resources>

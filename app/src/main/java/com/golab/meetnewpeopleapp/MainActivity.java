@@ -61,14 +61,18 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onLeftCardExit(Object dataObject) {
-                //Do something on the left!
-                //You also have access to the original object.f
-                //If you want to use it just cast it (String) dataObject
+                cards object = (cards) dataObject;
+                String userId= object.getUserId();
+                usersDb.child(userId).child("connections").child("nope").child(currentUId).setValue(true);
                 Toast.makeText(MainActivity.this, "Left!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
+                cards object = (cards) dataObject;
+                String userId= object.getUserId();
+                usersDb.child(userId).child("connections").child("yeps").child(currentUId).setValue(true);
+                isMatch(userId);
                 Toast.makeText(MainActivity.this, "Right!", Toast.LENGTH_SHORT).show();
             }
 
@@ -91,20 +95,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mLogOut = findViewById(R.id.logout);
-        mAuth=FirebaseAuth.getInstance();
-        mLogOut.setOnClickListener(new View.OnClickListener() {
+
+    }
+
+    private void isMatch(String userId) {
+        DatabaseReference currentUserConnectionsDb = usersDb.child(currentUId).child("connections").child("yeps").child(userId);
+        currentUserConnectionsDb.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onClick(View view) {
-                mAuth.signOut();
-                Intent intent=new Intent(MainActivity.this, ChooseLoginOrRegistrationActivity.class);
-                startActivity(intent);
-                finish();;
-                return;
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists())
+                {
+                    Toast.makeText(MainActivity.this, "Connection",Toast.LENGTH_LONG).show();
+                    usersDb.child(snapshot.getKey()).child("connections").child("mMtches").child(currentUId).setValue(true);
+                    usersDb.child(currentUId).child("connections").child("Mtches").child(snapshot.getKey()).setValue(true);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
-
 
 
     public void checkUserSex(){
@@ -140,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.child("sex").getValue() != null) {
-                    if (dataSnapshot.exists() && dataSnapshot.child("sex").getValue().toString().equals(oppositeSex)) {
+                    if (dataSnapshot.exists() && dataSnapshot.child("sex").getValue().toString().equals(oppositeSex)    &&  !dataSnapshot.child("connections").child("nope").hasChild(currentUId)&&  !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)) {
 
                         cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString());
                         rowItems.add(item);
@@ -165,4 +178,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void goToSettings(View view) {
+        Intent intent=new Intent(MainActivity.this, Settings.class);
+        startActivity(intent);
+
+    }
+
+    public void signOut(View view) {
+        mAuth.signOut();
+        Intent intent=new Intent(MainActivity.this, ChooseLoginOrRegistrationActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }

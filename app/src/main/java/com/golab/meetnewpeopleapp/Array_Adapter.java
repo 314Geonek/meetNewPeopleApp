@@ -10,15 +10,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-
-
-
 import java.util.List;
 
 public class Array_Adapter extends ArrayAdapter<cards> {
+
     public Array_Adapter(@NonNull Context context, int resource, @NonNull List<cards> objects) {
         super(context, resource, objects);
     }
+
     public View getView(int possition, View convertView, ViewGroup parent)
     {
         cards card_item = getItem(possition);
