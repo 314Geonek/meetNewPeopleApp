@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -82,8 +83,6 @@ public class Settings extends AppCompatActivity {
                 return;
             }
         });
-
-
     }
     private void getUserInfo()
     {

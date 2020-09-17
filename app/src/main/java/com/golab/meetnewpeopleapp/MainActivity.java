@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     ListView listView;
     List<cards> rowItems;
-    private String userSex, oppositeSex, currentUId;
+    private String userSex, wantedSex, currentUId;
     private DatabaseReference usersDb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +41,7 @@ public class MainActivity extends AppCompatActivity {
         usersDb = FirebaseDatabase.getInstance().getReference().child("Users");
         mAuth = FirebaseAuth.getInstance();
         currentUId = mAuth.getCurrentUser().getUid();
-
         checkUserSex();
-
         rowItems = new ArrayList<cards>();
 
         arrayAdapter = new Array_Adapter(this, R.layout.item, rowItems );
@@ -57,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("LIST", "removed object!");
                 rowItems.remove(0);
                 arrayAdapter.notifyDataSetChanged();
+                if(rowItems.isEmpty())
+                    Toast.makeText(MainActivity.this, "Out of profiles try change the wanted sex", Toast.LENGTH_LONG).show();
+
+
             }
 
             @Override
@@ -108,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Connection",Toast.LENGTH_LONG).show();
                     usersDb.child(snapshot.getKey()).child("connections").child("mMtches").child(currentUId).setValue(true);
                     usersDb.child(currentUId).child("connections").child("Mtches").child(snapshot.getKey()).setValue(true);
-
                 }
             }
 
@@ -119,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     public void checkUserSex(){
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference userDb = usersDb.child(user.getUid());
@@ -127,18 +127,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
-                    if (dataSnapshot.child("sex").getValue() != null){
+                    if (dataSnapshot.child("wantedSex").getValue() != null){
+                        wantedSex = dataSnapshot.child("wantedSex").getValue().toString();
+                        getOtherProfiles();
+                    }
+                    else if (dataSnapshot.child("sex").getValue() != null){
                         userSex = dataSnapshot.child("sex").getValue().toString();
                         switch (userSex){
                             case "Male":
-                                oppositeSex = "Female";
+                                wantedSex = "Female";
                                 break;
                             case "Female":
-                                oppositeSex = "Male";
+                                wantedSex = "Male";
                                 break;
                         }
-                        System.out.println(oppositeSex);
-                        getOppositeSexUsers();
+                        getOtherProfiles();
                     }
                 }
             }
@@ -148,13 +151,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    public void getOppositeSexUsers(){
+    public void getOtherProfiles(){
         usersDb.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.child("sex").getValue() != null) {
-                    if (dataSnapshot.exists() && dataSnapshot.child("sex").getValue().toString().equals(oppositeSex)    &&  !dataSnapshot.child("connections").child("nope").hasChild(currentUId)&&  !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)) {
-
+                    if (dataSnapshot.exists()&& dataSnapshot.getKey()!=currentUId && dataSnapshot.child("sex").getValue().toString().equals(wantedSex)    &&  !dataSnapshot.child("connections").child("nope").hasChild(currentUId)&&  !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)) {
                         cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString());
                         rowItems.add(item);
                         arrayAdapter.notifyDataSetChanged();
@@ -181,7 +183,6 @@ public class MainActivity extends AppCompatActivity {
     public void goToSettings(View view) {
         Intent intent=new Intent(MainActivity.this, Settings.class);
         startActivity(intent);
-
     }
 
     public void signOut(View view) {
@@ -189,5 +190,13 @@ public class MainActivity extends AppCompatActivity {
         Intent intent=new Intent(MainActivity.this, ChooseLoginOrRegistrationActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        rowItems.clear();
+        checkUserSex();
+
     }
 }
