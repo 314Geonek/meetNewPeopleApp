@@ -28,6 +28,33 @@
         android:hint="@string/phone"
         android:layout_marginBottom="20sp"
         android:inputType="phone"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/aboutMe"
+        android:background="@null"
+        android:hint="@string/aboutMe"
+        android:layout_marginBottom="20sp"
+        />
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/radioGroupSex">
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/male"
+            android:id="@+id/male"
+            />
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/female"
+            android:id="@+id/female"
+
+            />
+    </RadioGroup>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

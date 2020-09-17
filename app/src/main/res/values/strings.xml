@@ -21,5 +21,9 @@
     <string name="logout">logout</string>
 
     <string name="settings">settings</string>
+    <string name="phone">phone</string>
+    <string name="back">back</string>
+    <string name="confirm">confim</string>
+    <string name="aboutMe">About me</string>
 
 </resources>
