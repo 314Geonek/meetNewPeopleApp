@@ -15,6 +15,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="?android:attr/buttonBarButtonStyle"
         android:text="@string/logout"
         android:id="@+id/logout"
         android:onClick="signOut"
@@ -22,6 +23,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="?android:attr/buttonBarButtonStyle"
         android:text="@string/settings"
         android:id="@+id/settings"
         android:onClick="goToSettings"

@@ -5,8 +5,8 @@
     android:layout_gravity="center"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingLeft="40sp"
-    android:paddingRight="40sp"
+    android:paddingLeft="20sp"
+    android:paddingRight="20sp"
     android:paddingTop="20sp"
     android:paddingBottom="20sp"
     android:outlineProvider="bounds"
@@ -30,14 +30,15 @@
                 android:layout_height="300dp"
                 android:id="@+id/image"
                 android:scaleType="centerCrop"
-                />
+                android:contentDescription="@string/contentdescription" />
             <TextView
                 android:id="@+id/name"
                 android:textSize="30sp"
-                android:paddingLeft="20sp"
+                android:paddingStart="20sp"
+                android:paddingEnd="20sp"
                 android:textColor="@android:color/black"
-                android:gravity="center|left"
-                tools:text="hello"
+                android:gravity="center|start"
+                tools:text=""
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 

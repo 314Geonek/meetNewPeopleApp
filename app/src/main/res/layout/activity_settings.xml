@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,15 +10,18 @@
         android:layout_width="100sp"
         android:layout_height="100sp"
         android:id="@+id/profileImage"
-        android:src="@mipmap/ic_launcher"
-        android:layout_marginBottom="20sp"/>
+        android:src="@mipmap/ic_launcher_round"
+        android:layout_marginBottom="20sp"
+        android:contentDescription="@string/contentdescription" />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/name"
         android:background="@null"
         android:hint="@string/name"
-        android:layout_marginBottom="20sp" />
+        android:layout_marginBottom="20sp"
+        android:autofillHints=""
+        android:inputType="textPersonName" />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,7 +29,8 @@
         android:background="@null"
         android:hint="@string/phone"
         android:layout_marginBottom="20sp"
-        android:inputType="phone"/>
+        android:inputType="phone"
+        android:autofillHints="" />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,7 +38,8 @@
         android:background="@null"
         android:hint="@string/aboutMe"
         android:layout_marginBottom="20sp"
-        />
+        android:inputType="text"
+        android:importantForAutofill="no" />
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
