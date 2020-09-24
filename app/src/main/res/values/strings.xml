@@ -25,5 +25,7 @@
     <string name="back">back</string>
     <string name="confirm">confim</string>
     <string name="aboutMe">About me</string>
+    <string name="forgotPassword">"forgot password? "</string>
+    <string name="ResetPasswort">Reset password</string>
 
 </resources>

@@ -77,4 +77,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onStop();
         mAuth.removeAuthStateListener(firebaseAuthStateListener);
     }
+
+    public void goToResetPassword(View view) {
+        Intent intent=new Intent(LoginActivity.this, ResetPasswordActivity.class);
+        startActivity(intent);
+    }
 }
