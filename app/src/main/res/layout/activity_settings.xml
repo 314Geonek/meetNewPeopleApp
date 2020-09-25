@@ -45,19 +45,16 @@
         android:layout_height="wrap_content"
         android:id="@+id/radioGroupSex">
 
-        <RadioButton
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/male"
-            android:id="@+id/male"
-            />
-        <RadioButton
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/female"
-            android:id="@+id/female"
-
-            />
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/male"
+                android:id="@+id/male"/>
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/female"
+                android:id="@+id/female"/>
     </RadioGroup>
     <Button
         android:layout_width="match_parent"

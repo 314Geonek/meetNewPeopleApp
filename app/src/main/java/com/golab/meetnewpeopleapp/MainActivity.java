@@ -1,18 +1,19 @@
 package com.golab.meetnewpeopleapp;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.golab.meetnewpeopleapp.Cards.Array_Adapter;
+import com.golab.meetnewpeopleapp.Cards.cards;
+import com.golab.meetnewpeopleapp.matches.MatchesActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -108,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
                 if(snapshot.exists())
                 {
                     Toast.makeText(MainActivity.this, "Connection",Toast.LENGTH_LONG).show();
-                    usersDb.child(snapshot.getKey()).child("connections").child("mMtches").child(currentUId).setValue(true);
-                    usersDb.child(currentUId).child("connections").child("Mtches").child(snapshot.getKey()).setValue(true);
+                    usersDb.child(snapshot.getKey()).child("connections").child("Matches").child(currentUId).setValue(true);
+                    usersDb.child(currentUId).child("connections").child("Matches").child(snapshot.getKey()).setValue(true);
                 }
             }
 
@@ -129,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
                 if (dataSnapshot.exists()){
                     if (dataSnapshot.child("wantedSex").getValue() != null){
                         wantedSex = dataSnapshot.child("wantedSex").getValue().toString();
-                        getOtherProfiles();
                     }
                     else if (dataSnapshot.child("sex").getValue() != null){
                         userSex = dataSnapshot.child("sex").getValue().toString();
@@ -141,8 +141,9 @@ public class MainActivity extends AppCompatActivity {
                                 wantedSex = "Male";
                                 break;
                         }
-                        getOtherProfiles();
                     }
+                    getOtherProfiles();
+
                 }
             }
             @Override
@@ -156,8 +157,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.child("sex").getValue() != null) {
-                    if (dataSnapshot.exists()&& dataSnapshot.getKey()!=currentUId && dataSnapshot.child("sex").getValue().toString().equals(wantedSex)    &&  !dataSnapshot.child("connections").child("nope").hasChild(currentUId)&&  !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)) {
-                        cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString());
+                    if (dataSnapshot.exists()&& dataSnapshot.getKey().equals(currentUId) && dataSnapshot.child("sex").getValue().toString().equals(wantedSex)    &&  !dataSnapshot.child("connections").child("nope").hasChild(currentUId) &&  !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)) {
+                        String profileImageUrl = "default";
+                        if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
+                            profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+                        }
+                        cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl);
                         rowItems.add(item);
                         arrayAdapter.notifyDataSetChanged();
                     }
@@ -183,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
     public void goToSettings(View view) {
         Intent intent=new Intent(MainActivity.this, Settings.class);
         startActivity(intent);
+
     }
 
     public void signOut(View view) {
@@ -192,11 +198,9 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        rowItems.clear();
-        checkUserSex();
 
+    public void goToMatches(View view) {
+        Intent intent=new Intent(MainActivity.this, MatchesActivity.class);
+        startActivity(intent);
     }
 }
