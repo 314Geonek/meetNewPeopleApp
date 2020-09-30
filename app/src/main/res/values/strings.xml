@@ -29,5 +29,6 @@
     <string name="ResetPasswort">Reset password</string>
     <string name="contentdescription">contentDescription</string>
     <string name="Matches">Matches</string>
+    <string name="send">send</string>
 
 </resources>

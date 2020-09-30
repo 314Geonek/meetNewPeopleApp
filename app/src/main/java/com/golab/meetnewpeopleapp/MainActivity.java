@@ -109,8 +109,9 @@ public class MainActivity extends AppCompatActivity {
                 if(snapshot.exists())
                 {
                     Toast.makeText(MainActivity.this, "Connection",Toast.LENGTH_LONG).show();
-                    usersDb.child(snapshot.getKey()).child("connections").child("Matches").child(currentUId).setValue(true);
-                    usersDb.child(currentUId).child("connections").child("Matches").child(snapshot.getKey()).setValue(true);
+                    String chatKey = FirebaseDatabase.getInstance().getReference().child("Chat").push().getKey();
+                    usersDb.child(snapshot.getKey()).child("connections").child("Matches").child(currentUId).child("ChatId").setValue(chatKey);
+                    usersDb.child(currentUId).child("connections").child("Matches").child(snapshot.getKey()).child("ChatId").setValue(chatKey);
                 }
             }
 
@@ -157,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.child("sex").getValue() != null) {
-                    if (dataSnapshot.exists()&& dataSnapshot.getKey().equals(currentUId) && dataSnapshot.child("sex").getValue().toString().equals(wantedSex)    &&  !dataSnapshot.child("connections").child("nope").hasChild(currentUId) &&  !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)) {
+                    if (dataSnapshot.exists()&& !dataSnapshot.getKey().equals(currentUId) && dataSnapshot.child("sex").getValue().toString().equals(wantedSex)    &&  !dataSnapshot.child("connections").child("nope").hasChild(currentUId) &&  !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)) {
                         String profileImageUrl = "default";
                         if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
                             profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
