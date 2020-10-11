@@ -5,10 +5,6 @@
     android:layout_gravity="center"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingLeft="20sp"
-    android:paddingRight="20sp"
-    android:paddingTop="20sp"
-    android:paddingBottom="20sp"
     android:outlineProvider="bounds"
     android:clipToPadding="false">
 
@@ -16,34 +12,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        app:cardCornerRadius="4dp"
         android:elevation="2dp"
         android:id="@+id/cardView">
-        <LinearLayout
+        <RelativeLayout
             android:layout_gravity="center"
-            android:layout_width="300dp"
-            android:layout_height="350dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
-
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="match_parent"
+                android:src="@mipmap/ic_launcher"
                 android:id="@+id/image"
                 android:scaleType="centerCrop"
                 android:contentDescription="@string/contentdescription" />
+
             <TextView
                 android:id="@+id/name"
-                android:textSize="30sp"
-                android:paddingStart="20sp"
-                android:paddingEnd="20sp"
-                android:textColor="@android:color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/image"
+                android:fontFamily="@font/seymour_one"
                 android:gravity="center|start"
-                tools:text=""
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </LinearLayout>
+                android:paddingBottom="20dp"
+                android:textAlignment="textStart"
+                android:textColor="#E91E63"
+                android:textSize="50sp"
+                android:textStyle="italic"
+                tools:text="Zbyszek" />
+        </RelativeLayout>
     </androidx.cardview.widget.CardView>
-
-
 </LinearLayout>

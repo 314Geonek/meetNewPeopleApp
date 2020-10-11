@@ -1,48 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/navBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="?android:attr/buttonBarButtonStyle"
-        android:text="@string/logout"
-        android:id="@+id/logout"
-        android:onClick="signOut"
-        />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="?android:attr/buttonBarButtonStyle"
-        android:text="@string/settings"
-        android:id="@+id/settings"
-        android:onClick="goToSettings"
-        />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="?android:attr/buttonBarButtonStyle"
-            android:text="@string/Matches"
-            android:id="@+id/goToMatches"
-            android:onClick="goToMatches"
-            />
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:background="@drawable/nav_bar"
+        >
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/logout"
+                        android:drawableTop="@drawable/szaryprofil50"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_weight="1"
+                        android:onClick="goToProfilMenuActivity"/>
+                    <Button
+                        android:id="@+id/settings"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:drawableTop="@drawable/czerwonydomek50"
+                        android:layout_weight="1" />
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableTop="@drawable/szarychat50"
+                        android:id="@+id/goToMatches"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_weight="1"
+                        android:onClick="goToMatches"/>
     </LinearLayout>
+
     <com.lorentzos.flingswipe.SwipeFlingAdapterView
         android:id="@+id/frame"
-        android:background="#ffeee9e2"
-        android:layout_width="match_parent"
+        android:layout_below="@+id/navBar"
+        android:layout_above="@+id/ok123"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
         app:rotation_degrees="15.5"
         tools:context=".MyActivity" />
 
-</LinearLayout>
+    <RelativeLayout
+        android:id="@+id/ok123"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:paddingBottom="5dp">
+        <Button
+            android:id="@+id/btnNo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/nanie"
+            android:onClick="btnSwipe" />
+        <Button
+            android:id="@+id/btnOk"
+            android:layout_toEndOf="@id/btnNo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:attr/buttonBarButtonStyle"
+            android:background="@drawable/natak"
+            android:onClick="btnSwipe"
+
+            />
+    </RelativeLayout>
+
+</RelativeLayout>

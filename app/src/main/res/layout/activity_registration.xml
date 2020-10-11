@@ -1,57 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Registration"
-    android:orientation="vertical">
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/email"
+    android:orientation="vertical"
+    android:background="#eb1e63">
+
+<EditText
         android:id="@+id/email"
+        android:layout_width="300dp"
+        android:layout_height="45dp"
+        android:textColor="#fabfd3"
+        android:textColorHint="#fabfd3"
+        android:backgroundTint="#fabfd3"
+        android:drawableStart="@drawable/mail30"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"
         android:inputType="textEmailAddress"
+        android:hint="@string/email"
         android:importantForAutofill="no" />
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/password"
         android:id="@+id/password"
+        android:layout_below="@+id/email"
+        android:layout_width="300dp"
+        android:layout_height="45dp"
+        android:textColor="#fabfd3"
+        android:textColorHint="#fabfd3"
+        android:backgroundTint="#fabfd3"
+        android:drawableStart="@drawable/password30"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/password"
         android:inputType="textPassword"
         android:importantForAutofill="no" />
 
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/name"
         android:id="@+id/name"
+        android:layout_below="@id/password"
+        android:layout_width="300dp"
+        android:layout_height="45dp"
+        android:textColor="#fabfd3"
+        android:textColorHint="#fabfd3"
+        android:backgroundTint="#fabfd3"
+        android:drawableStart="@drawable/facet30"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/name"
         android:inputType="textPersonName"
         android:importantForAutofill="no" />
     <RadioGroup
-        android:layout_width="match_parent"
+        android:id="@+id/radioGroup"
+        android:layout_below="@+id/name"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:id="@+id/radioGroup">
+        android:orientation="horizontal"
+        android:backgroundTint="#fabfd3"
+        android:layout_marginBottom="20dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="#fabfd3"
+        >
 
         <RadioButton
-            android:layout_width="match_parent"
+            android:id="@+id/male"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="@string/male"
+            android:button="@null"
+            android:textAlignment="center"
+            android:drawableTop="@drawable/facet30"
+            android:background="@drawable/radio_button_round_left"
+            android:textColor="#fabfd3"
+
             />
         <RadioButton
-            android:layout_width="match_parent"
+            android:id="@+id/female"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:button="@null"
+            android:drawableTop="@drawable/kobieta30"
             android:text="@string/female"
+            android:background="@drawable/radio_button_round_right"
+            android:textColor="#fabfd3"
+
             />
     </RadioGroup>
-
-
-
-
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/register"
         android:id="@+id/register"
+        android:layout_below="@+id/radioGroup"
+        android:layout_width="300dp"
+        android:layout_height="45dp"
+        android:background="@drawable/button_round"
+        android:layout_centerHorizontal="true"
+        android:text="@string/register"
         />
 
-</LinearLayout>
+</RelativeLayout>

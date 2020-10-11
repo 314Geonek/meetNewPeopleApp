@@ -6,37 +6,81 @@
     android:layout_height="match_parent"
     tools:context=".chat.ChatActivity"
     android:orientation="vertical">
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/sendLayout" >
-        <androidx.recyclerview.widget.RecyclerView
+        <LinearLayout
+            android:id="@+id/navBarChat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/recyclerView"
-            android:scrollbars="vertical"
-            android:nestedScrollingEnabled="false"
-            />
-    </androidx.core.widget.NestedScrollView>
-    <LinearLayout
-        android:id="@+id/sendLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
-    <EditText
-        android:layout_weight="0.8"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/userMessage"
-        android:hint="Message...."/>
-        <Button
-            android:layout_weight="0.2"
-            android:width="0dp"
-            android:layout_width="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
+            android:background="@drawable/nav_bar">
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/btnBack"
+                        android:drawableTop="@drawable/szaryprofil50"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:onClick="goBack"
+                        android:layout_weight="1" />
+                <RelativeLayout
+                    android:id="@id/container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4">
+                    <TextView
+                        android:id="@+id/tvMatchName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@+id/ibMatchpic"
+                        />
+                    <ImageButton
+                        android:layout_alignParentRight="true"
+                        android:id="@+id/ibMatchpic"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="10dp"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        />
+
+                </RelativeLayout>
+        </LinearLayout>
+        <androidx.core.widget.NestedScrollView
+            android:layout_below="@+id/navBarChat"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/sendLayout" >
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/recyclerView"
+                    android:scrollbars="vertical"
+                    android:nestedScrollingEnabled="false"
+                    />
+        </androidx.core.widget.NestedScrollView>
+        <LinearLayout
+            android:id="@+id/sendLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/send"
-            android:id="@+id/send"
-            android:onClick="sendMessage"/>
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+                    <EditText
+                        android:layout_weight="0.8"
+                        android:layout_width="0dp"
+                        android:layout_height="45dp"
+                        android:drawableStart="@drawable/separator"
+                        android:id="@+id/userMessage"
+                        android:background="@drawable/round_edt_text_messenger"
+                        android:hint="@string/message"
+                        android:importantForAutofill="no"
+                        android:inputType="text" />
+                    <Button
+                        android:layout_weight="0.2"
+                        android:width="0dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/send"
+                        android:id="@+id/send"
+                        android:onClick="sendMessage"/>
 </LinearLayout>
 </RelativeLayout>

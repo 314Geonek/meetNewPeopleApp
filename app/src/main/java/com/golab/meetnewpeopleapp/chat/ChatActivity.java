@@ -6,14 +6,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.golab.meetnewpeopleapp.MainActivity;
+import com.golab.meetnewpeopleapp.ProfilMenuActivity;
 import com.golab.meetnewpeopleapp.R;
 import com.golab.meetnewpeopleapp.matches.MatchesAdapter;
 import com.golab.meetnewpeopleapp.matches.MatchesObject;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -21,6 +28,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,19 +47,18 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mChatLayoutManager;
     private String currentUserID, matchId;
     private EditText mMessage;
-    private DatabaseReference mDatabaseUser, mDatabaseChat;
+    private CollectionReference mDbChat;
+    private FirebaseFirestore db;
     private String chatId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         mMessage= (EditText) findViewById(R.id.userMessage);
+        db= FirebaseFirestore.getInstance();
         matchId = getIntent().getExtras().getString("matchId");
         currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        mDatabaseUser = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID).child("connections").child("Matches").child(matchId).child("ChatId");
-        mDatabaseChat = FirebaseDatabase.getInstance().getReference().child("Chat");
         getChatId();
-
         mRecyclerView= (RecyclerView) findViewById(R.id.recyclerView);
         mRecyclerView.setNestedScrollingEnabled(false);
         mRecyclerView.setHasFixedSize(false);
@@ -60,67 +73,67 @@ public class ChatActivity extends AppCompatActivity {
     }
     private void getChatId()
     {
-        mDatabaseUser.addListenerForSingleValueEvent(new ValueEventListener() {
+        db.collection("users").document(currentUserID).collection("matches").document(matchId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists())
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                if(task.isSuccessful())
                 {
-                    chatId=snapshot.getValue().toString();
-                    mDatabaseChat = mDatabaseChat.child(chatId);
+                    if(task.getResult().get("chatId")!=null){
+                    chatId = task.getResult().get("chatId").toString();
+                    mDbChat= FirebaseFirestore.getInstance().collection("chats").document(chatId).collection("messages");
                     getChatMessages();
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                }
 
             }
         });
+
     }
 
     private void getChatMessages() {
-        mDatabaseChat.addChildEventListener(new ChildEventListener() {
+        mDbChat .addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                if(snapshot.exists())
-                {   System.out.println("dsadaas");
-                    String message= null;
-                    String createdBy = null;
-                    System.out.println(snapshot.child("text").getValue().toString());
-                    if(snapshot.child("text").getValue()!=null)
-                    {
-                        message= snapshot.child("text").getValue().toString();
-
-                    }
-                    if(snapshot.child("writer").getValue()!=null)
-                    {
-                        createdBy= snapshot.child("writer").getValue().toString();
-                    }
-                    if(message!=null && createdBy!=null)
-                    {
-                        Boolean currentUserBoolean =createdBy.equals(currentUserID) ? true : false;
-                        ChatObject newMessage = new ChatObject(message,currentUserBoolean);
-                        resultsMessages.add(newMessage);
-                        mChatAdapter.notifyDataSetChanged();
-                    }
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    return;
                 }
-            }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                    switch (dc.getType()) {
+                        case ADDED:
+                            String message= null;
+                            String createdBy = null;
+                            if(dc.getDocument().get("text")!=null)
+                            {
+                                message=dc.getDocument().get("text").toString();
+                            }
+                            if(dc.getDocument().get("writer")!=null)
+                            {
+                                createdBy= dc.getDocument().get("writer").toString();
+                            }
+                            System.out.println(createdBy.concat(message));
+                            if(message!=null && createdBy!=null)
+                            {
+                                Boolean currentUserBoolean =createdBy.equals(currentUserID) ? true : false;
+                                System.out.println(currentUserBoolean);
 
-            }
+                                ChatObject newMessage = new ChatObject(message,currentUserBoolean);
+                                resultsMessages.add(newMessage);
+                                mChatAdapter.notifyDataSetChanged();
+                            }
+                            break;
+                        case MODIFIED:
 
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-            }
+                            break;
+                        case REMOVED:
+                            break;
+                    }
 
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-            }
+                }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
             }
         });
     }
@@ -129,12 +142,18 @@ public class ChatActivity extends AppCompatActivity {
     String messageText= mMessage.getText().toString();
     if(!messageText.isEmpty())
     {
-        DatabaseReference newMessageDb = mDatabaseChat.push();
         Map newMessage= new HashMap();
         newMessage.put("writer", currentUserID);
         newMessage.put("text", messageText);
-        newMessageDb.setValue(newMessage);
+        mDbChat.document().set(newMessage);
     }
     mMessage.setText(null);
+    }
+
+
+
+    public void goBack(View view) {
+        finish();
+        return;
     }
 }

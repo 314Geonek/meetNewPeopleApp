@@ -1,5 +1,6 @@
 package com.golab.meetnewpeopleapp;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,19 +15,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -40,7 +41,7 @@ public class Settings extends AppCompatActivity {
     private Button mBack, mConfirm;
     private ImageView mProfileImage;
     private FirebaseAuth mAuth;
-    private DatabaseReference mCustomerDatabase;
+    private FirebaseFirestore db;
     private String userID, name, phone, aboutMe, profileImageUrl;
     private RadioGroup mRadioGroupSex;
     private Uri resultUri;
@@ -55,12 +56,37 @@ public class Settings extends AppCompatActivity {
         mProfileImage = (ImageView) findViewById(R.id.profileImage);
         mBack = (Button) findViewById(R.id.back);
         mConfirm = (Button) findViewById(R.id.confirm);
+        db = FirebaseFirestore.getInstance();
+        mRadioGroupSex.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                RadioButton male = findViewById(R.id.male);
+                RadioButton female = findViewById(R.id.female);
+                RadioButton both = findViewById(R.id.both);
+                if (male.getId()==radioGroup.getCheckedRadioButtonId())
+                {
+                    male.setBackgroundResource(R.drawable.radio_button_round_left_selected);
+                    female.setBackgroundResource(R.drawable.radio_button_round_right);
+                    both.setBackgroundResource(R.drawable.radio_button_mid);
+                }
+                else if(female.getId()==radioGroup.getCheckedRadioButtonId())
+                {
+                    female.setBackgroundResource(R.drawable.radio_button_round_right_selected);
+                    male.setBackgroundResource(R.drawable.radio_button_round_left);
+                    both.setBackgroundResource(R.drawable.radio_button_mid);
 
+                }
+                else{
+                    female.setBackgroundResource(R.drawable.radio_button_round_right);
+                    male.setBackgroundResource(R.drawable.radio_button_round_left);
+                    both.setBackgroundResource(R.drawable.radio_button_mid_selected);
+                }
+
+
+            }
+        });
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
-
-        mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(userID);
-
         getUserInfo();
         mProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,12 +112,12 @@ public class Settings extends AppCompatActivity {
     }
     private void getUserInfo()
     {
-        mCustomerDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        db.collection("users").document(mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists() && snapshot.getChildrenCount()>0)
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()&&task.getResult().exists())
                 {
-                    Map<String, Object> map = (Map<String,Object>) snapshot.getValue();
+                    Map<String, Object> map = (Map<String,Object>)  task.getResult().getData();
                     if(map.get("name")!=null)
                     {
                             name = map.get("name").toString();
@@ -118,22 +144,23 @@ public class Settings extends AppCompatActivity {
                             case "Female":
                                 mRadioGroupSex.check(R.id.female);
                                 break;
+                            case "Both":
+                                mRadioGroupSex.check(R.id.both);
                             default: break;
                         }
                     }
-                    if(map.get("profileImageUrl")!=null)
+                    if(!map.get("profileImageUrl").equals("default"))
                     {
-                            profileImageUrl = map.get("profileImageUrl").toString();
-                            Glide.with(getApplication()).load(profileImageUrl).into(mProfileImage);
+                        profileImageUrl = map.get("profileImageUrl").toString();
+                        Glide.with(getApplication()).asBitmap().load(profileImageUrl).into(mProfileImage);
+
+
                     }
 
                 }
             }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
 
-            }
         });
     }
     private void saveUserInformation() {
@@ -144,24 +171,32 @@ public class Settings extends AppCompatActivity {
         userInfo.put("name",name);
         userInfo.put("phone",phone);
         userInfo.put("aboutMe",aboutMe);
-        userInfo.put("wantedSex", mRadioGroupSex.getCheckedRadioButtonId()==R.id.male ? "Male" : "Female");
-        mCustomerDatabase.updateChildren(userInfo);
+        if(R.id.female==mRadioGroupSex.getCheckedRadioButtonId())
+        {
+            userInfo.put("wantedSex", "Feale");
+
+        }
+        else if(R.id.male==mRadioGroupSex.getCheckedRadioButtonId())
+        {
+            userInfo.put("wantedSex", "Male");
+        }
+        else{
+            userInfo.put("wantedSex", "Male Female");
+        }
+        db.collection("users").document(mAuth.getCurrentUser().getUid()).update(userInfo);
         if(resultUri!= null)
-        {   ///not sure final
+        {
             final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profileImages").child(userID);
             Bitmap bitmap = null;
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resultUri);
-            }
-            catch (Exception e)
+                  bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resultUri);
+            }            catch (Exception e)
             {
                 e.printStackTrace();
             }
-
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] data = baos.toByteArray();
-
             UploadTask uploadTask = filePath.putBytes(data);
             uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -171,13 +206,15 @@ public class Settings extends AppCompatActivity {
                         public void onSuccess(Uri uri) {
                             Map newImage = new HashMap();
                             newImage.put("profileImageUrl", uri.toString());
-                            mCustomerDatabase.updateChildren(newImage);
+                            System.out.println("succes");
+                            db.collection("users").document(mAuth.getCurrentUser().getUid()).update(newImage);
                             finish();
                             return;
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
+                            System.out.println("error");
                             finish();
                             return;
                         }
@@ -193,9 +230,11 @@ public class Settings extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 1 && resultCode == Activity.RESULT_OK)
         {
-            final Uri imageUri = data.getData();
-            resultUri = imageUri;
-            mProfileImage.setImageURI(resultUri);
+                 final Uri imageUri = data.getData();
+                 resultUri = imageUri;
+                 Glide.with(getApplication()).asBitmap().load(resultUri).into(mProfileImage);
+
+
         }
     }
 }

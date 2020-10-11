@@ -6,11 +6,14 @@
     android:orientation="horizontal"
     android:padding="20sp">
     <ImageView
-        android:layout_width="50sp"        android:layout_height="50sp"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
         android:src="@mipmap/ic_launcher"
-        android:id="@+id/MatchImage"/>
+        android:id="@+id/MatchImage"
+        android:contentDescription="@string/picture" />
     <LinearLayout
-        android:paddingLeft="20sp"
+        android:paddingStart="20sp"
+        android:paddingEnd="20sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -19,12 +22,10 @@
             android:paddingBottom="20sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Match's Name"
             android:id="@+id/MatchName"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Match's ID"
             android:layout_gravity="center"
             android:id="@+id/Matchid"/>
     </LinearLayout>

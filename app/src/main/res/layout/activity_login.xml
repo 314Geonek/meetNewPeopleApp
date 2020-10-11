@@ -1,34 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".LoginActivity"
-    android:orientation="vertical">
-    <EditText
-        android:layout_width="match_parent"
+    android:background="#eb1e63">
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/email"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
+    <EditText
         android:id="@+id/email"
-        android:inputType="textEmailAddress"
-        android:importantForAutofill="no" />
+        android:layout_width="300dp"
+        android:layout_height="45dp"
+        android:textColor="#fabfd3"
+        android:textColorHint="#fabfd3"
+        android:backgroundTint="#fabfd3"
+        android:drawableStart="@drawable/mail30"
+        android:hint="@string/email"
+        android:importantForAutofill="no"
+        android:inputType="textEmailAddress" />
+
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/password"
         android:id="@+id/password"
-        android:inputType="textPassword"
-        android:importantForAutofill="no" />
+        android:layout_below="@+id/email"
+        android:layout_width="300dp"
+        android:layout_height="45dp"
+        android:textColor="#fabfd3"
+        android:textColorHint="#fabfd3"
+        android:backgroundTint="#fabfd3"
+        android:drawableStart="@drawable/password30"
+        android:layout_marginTop="15dp"
+        android:hint="@string/password"
+        android:importantForAutofill="no"
+        android:inputType="textPassword" />
+
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/forgotPassword"
-        android:onClick="goToResetPassword"/>
+        android:id="@+id/forgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_marginTop="10dp"
+        android:textColor="#fabfd3"
+        android:layout_below="@+id/password"
+        android:layout_alignEnd="@+id/password"
+        android:background="#00000000"
+        android:onClick="goToResetPassword"
+        android:text="@string/forgotPassword" />
+
     <Button
-        android:layout_width="match_parent"
+        android:layout_below="@+id/forgotPassword"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button_round"
         android:text="@string/login"
         android:id="@+id/login"
+        android:textAllCaps="false"
+        android:layout_marginTop="10dp"
         />
+    </RelativeLayout>
 
-</LinearLayout>
+
+</RelativeLayout>

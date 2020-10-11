@@ -19,6 +19,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_reset_password);
         mEmail=(EditText) findViewById(R.id.emailForReset);
         mAuth= FirebaseAuth.getInstance();
+
     }
 
     public void back(View view) {
