@@ -173,7 +173,7 @@ public class Settings extends AppCompatActivity {
         userInfo.put("aboutMe",aboutMe);
         if(R.id.female==mRadioGroupSex.getCheckedRadioButtonId())
         {
-            userInfo.put("wantedSex", "Feale");
+            userInfo.put("wantedSex", "Female");
 
         }
         else if(R.id.male==mRadioGroupSex.getCheckedRadioButtonId())

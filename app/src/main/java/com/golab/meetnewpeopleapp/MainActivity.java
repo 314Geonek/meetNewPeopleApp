@@ -29,15 +29,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.local.QueryResult;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String userSex,  currentUId;
     private  List<String> wantedSex;
+    private boolean result;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,57 +86,57 @@ public class MainActivity extends AppCompatActivity {
             public void onScroll(float scrollProgressPercent) { }});
     }
     private void swipe(String direction)
-    {
-        cards object = (cards) rowItems.get(0);
+    {   cards object = (cards) rowItems.get(0);
         String userId= object.getUserId();
-        Map swipe = new HashMap();
-        if(direction.equals("left"))
-        swipe.put("swipe",false);
-        else {
-            swipe.put("swipe", true);
-            isMatch(userId);
-        }
-        System.out.println(direction);
-        db.collection("users").document(userId).collection("swipes").document(currentUId).set(swipe);
+          Map swipe = new HashMap();
+            if(direction.equals("left"))
+                swipe.put("swipe",false);
+            else{
+                    swipe.put("swipe", true);
+                    isMatch(userId);
+                }
+        db.collection("users").document(userId).collection("SwipedBy").document(currentUId).set(swipe);
         rowItems.remove(0);
         arrayAdapter.notifyDataSetChanged();
     }
 
 
+
     private void isMatch(final String userId) {
-        db.collection("users").document(currentUId).collection("swipes").document(userId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        db.collection("users").document(currentUId).collection("SwipedBy").document(userId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.exists())
-                {   String id = db.collection("chats").document().getId();
+                if((Boolean)documentSnapshot.get("swipe")==true)
+                {   String id = db.collection("Matches").document().getId();
                     Map testMessage = new HashMap();
                     testMessage.put("Owner",null);
-                    db.collection("chats").document(id).set(testMessage);
+                    db.collection("Matches").document(id).collection("Messages").document().set(testMessage);
                     Map chatId = new HashMap();
-                    chatId.put("chatId",id);
-                    db.collection("users").document(userId).collection("matches").document(currentUId).set(chatId);
-                    db.collection("users").document(currentUId).collection("matches").document(userId).set(chatId);
-                    Toast.makeText(MainActivity.this, "Connection",Toast.LENGTH_LONG).show();
+                    chatId.put("matchId",id);
+                    db.collection("users").document(userId).collection("Matches").document(currentUId).set(chatId);
+                    db.collection("users").document(currentUId).collection("Matches").document(userId).set(chatId);
                 }
-
             }
         });
+
+
     }
 
 
     public void checkUserSex(){
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        wantedSex=new ArrayList<>();
         db.collection("users").document(currentUId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful())
                 {       if(task.getResult().get("wantedSex")!=null)
                         {
-                                if(task.getResult().get("wantedSex").equals("Male"))
-                                    wantedSex.add("Male");
-                                if(task.getResult().get("wantedSex").equals("Feale"))
-                                    wantedSex.add("Female");
-
+                                if(task.getResult().get("wantedSex").toString().contains("Male"))
+                                { wantedSex.add("Male"); }
+                                if(task.getResult().get("wantedSex").toString().contains("Female"))
+                                {  wantedSex.add("Female");
+                                                }
 
                         }
                         else{
@@ -139,56 +145,46 @@ public class MainActivity extends AppCompatActivity {
                                     userSex = task.getResult().get("sex").toString();
                                     wantedSex.add(userSex.equals("Male") ? "Female" : "Male");
                                 }
-
-
                             }
                         getOtherProfiles();
                 }
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                return;
             }
         });
     }
 
     public void getOtherProfiles() {
-        db.collection("users").whereIn("wantedSex", wantedSex)
-        db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        Query query =  db.collection("users").whereIn("sex", wantedSex).whereNotEqualTo(FieldPath.documentId(), currentUId);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (final QueryDocumentSnapshot document : task.getResult()) {
-                        if(wantedSex.contains(document.get("sex").toString()) && document.getId()!=currentUId)
-                        {
-                                document.getReference().collection("swipes").document(currentUId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        if(!documentSnapshot.exists())
-                                        {
-                                            String profileImageUrl = "default";
-                                            if (!document.get("profileImageUrl").toString().equals("default")) {
-                                                profileImageUrl = document.get("profileImageUrl").toString();
-                                            }
-                                            cards item = new cards(document.getId(), document.get("name").toString(), profileImageUrl);
-                                            rowItems.add(item);
-                                            arrayAdapter.notifyDataSetChanged();
-                                        }
-                                    }
-                                });
+                        checkOrswiped(document);
                         }
-                    }
-                    }
+                    }}
+        });
+    }
+    private void checkOrswiped(final QueryDocumentSnapshot snapshot)
+    {
+        snapshot.getReference().collection("SwipedBy").document(currentUId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (!documentSnapshot.exists()) {
+                    addToRowItems(snapshot);
+                }
             }
         });
-
-
+    }
+    private void addToRowItems(DocumentSnapshot snapshot)
+    {
+        String profileImageUrl = "default";
+        if (!snapshot.get("profileImageUrl").toString().equals("default")) {
+            profileImageUrl = snapshot.get("profileImageUrl").toString();
         }
-
-
-
+        cards item = new cards(snapshot.getId(), snapshot.get("name").toString(), profileImageUrl);
+        rowItems.add(item);
+        arrayAdapter.notifyDataSetChanged();
+    }
 
     public void goToMatches(View view) {
         Intent intent=new Intent(MainActivity.this, MatchesActivity.class);
@@ -199,11 +195,11 @@ public class MainActivity extends AppCompatActivity {
         String direction = view.getId() == R.id.btnOk ? "right" : "left";
         if(!rowItems.isEmpty())
         swipe(direction);
-
     }
 
+
     public void goToProfilMenuActivity(View view) {
-        Intent intent=new Intent(MainActivity.this, ProfilMenuActivity.class);
+        Intent intent=new Intent(MainActivity.this, MyProfileActivity.class);
         startActivity(intent);
     }
 }

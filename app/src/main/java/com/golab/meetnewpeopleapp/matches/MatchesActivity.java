@@ -55,7 +55,7 @@ public class MatchesActivity extends AppCompatActivity {
     }
 
     private void getUserMatchesId() {
-        db.collection("users").document(currentUserID).collection("matches").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("users").document(currentUserID).collection("Matches").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
@@ -89,35 +89,6 @@ public class MatchesActivity extends AppCompatActivity {
                         resultsMatches.add(obj);
                         mMatchesAdapter.notifyDataSetChanged();
                     }
-
-            }
-        });
-
-
-        DatabaseReference userDb = FirebaseDatabase.getInstance().getReference().child("Users").child(key);
-        userDb.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists())
-                {
-                    String userId = snapshot.getKey();
-                    String name = "";
-                    String profileImageUrl = "";
-                    if(snapshot.child("name").getValue()!=null)
-                    {
-                        name = snapshot.child("name").getValue().toString();
-                    }
-                    if(snapshot.child("profileImageUrl").getValue()!=null){
-                        profileImageUrl = snapshot.child("profileImageUrl").getValue().toString();
-                    }
-                    MatchesObject obj = new MatchesObject(userId, name, profileImageUrl);
-                    resultsMatches.add(obj);
-                    mMatchesAdapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });

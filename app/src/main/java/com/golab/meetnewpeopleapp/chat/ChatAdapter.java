@@ -6,6 +6,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,13 +41,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolders> {
         if(chatList.get(position).getCurrentUser())
         {
             holder.mMessage.setGravity(Gravity.END);
-            holder.mMessage.setTextColor(Color.parseColor("#404040"));
-            holder.mContainer.setBackgroundColor(Color.parseColor("#F4F4F4"));
+            holder.mMessage.setTextColor(Color.parseColor("#ffffff"));
+            holder.mContainer.setBackgroundColor(Color.parseColor("#2db4c8"));
         }
         else {
             holder.mMessage.setGravity(Gravity.START);
-            holder.mMessage.setTextColor(Color.parseColor("#ffffff"));
-            holder.mContainer.setBackgroundColor(Color.parseColor("#2db4c8"));
+            holder.mMessage.setTextColor(Color.parseColor("#404040"));
+            holder.mContainer.setBackgroundColor(Color.parseColor("#F4F4F4"));
         }
     }
     @Override
