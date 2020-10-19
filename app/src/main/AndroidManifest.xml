@@ -12,7 +12,8 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/full_screen_key">
-        <activity android:name=".MyProfileActivity"></activity>
+        <activity android:name=".Description_Activity"></activity>
+        <activity android:name=".MyProfileActivity" />
         <activity android:name=".ProfilMenuActivity" />
         <activity android:name=".chat.ChatActivity" />
         <activity android:name=".matches.MatchesActivity" />
@@ -20,14 +21,17 @@
         <activity android:name=".Settings" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".Registration" />
-        <activity android:name=".ChooseLoginOrRegistrationActivity">
+        <activity
+            android:name=".ChooseLoginOrRegistrationActivity"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".MainActivity" />
 
         <meta-data
             android:name="preloaded_fonts"

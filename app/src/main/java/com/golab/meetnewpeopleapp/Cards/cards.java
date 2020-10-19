@@ -13,6 +13,10 @@ public class cards {
         this.profileImageUrl = profileImageUrl;
     }
 
+    public cards() {
+
+    }
+
     public String getUserId(){
         return userId;
     }

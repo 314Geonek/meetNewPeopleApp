@@ -7,15 +7,14 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/navBar"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal"
-        android:background="@drawable/nav_bar"
-        >
-                    <Button
+        android:background="@drawable/nav_bar">
+                    <androidx.appcompat.widget.AppCompatButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/logout"
@@ -23,14 +22,14 @@
                         style="?android:attr/buttonBarButtonStyle"
                         android:layout_weight="1"
                         android:onClick="goToProfilMenuActivity"/>
-                    <Button
+                      <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/settings"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="?android:attr/buttonBarButtonStyle"
                         android:drawableTop="@drawable/czerwonydomek50"
                         android:layout_weight="1" />
-                    <Button
+                     <androidx.appcompat.widget.AppCompatButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:drawableTop="@drawable/szarychat50"
@@ -38,21 +37,20 @@
                         style="?android:attr/buttonBarButtonStyle"
                         android:layout_weight="1"
                         android:onClick="goToMatches"/>
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <com.lorentzos.flingswipe.SwipeFlingAdapterView
         android:id="@+id/frame"
         android:layout_below="@+id/navBar"
         android:layout_above="@+id/ok123"
+        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
         app:rotation_degrees="15.5"
         tools:context=".MyActivity" />
 
-    <RelativeLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/ok123"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -75,9 +73,7 @@
             android:layout_height="wrap_content"
             style="?android:attr/buttonBarButtonStyle"
             android:background="@drawable/natak"
-            android:onClick="btnSwipe"
-
-            />
-    </RelativeLayout>
+            android:onClick="btnSwipe" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </RelativeLayout>

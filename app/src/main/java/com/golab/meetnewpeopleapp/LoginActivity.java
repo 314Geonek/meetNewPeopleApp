@@ -31,6 +31,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
+        mLogin= findViewById(R.id.login);
+        mEmail=findViewById(R.id.email);
+        mPassword=findViewById(R.id.password);
         firebaseAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -45,10 +48,6 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         };
-        mLogin= findViewById(R.id.login);
-        mEmail=findViewById(R.id.email);
-        mPassword=findViewById(R.id.password);
-
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,14 +62,21 @@ public class LoginActivity extends AppCompatActivity {
                             {
                                 throw task.getException();
                             }
-                            catch (FirebaseAuthInvalidUserException ERROR_USER_NOT_FOUND)
-                            {
-                                Toast.makeText(LoginActivity.this, "Email not found", Toast.LENGTH_SHORT).show();
-
-                            }
-                            catch (Exception e)
-                            {
+                            catch (Exception e) {
+                                System.out.println(e.getMessage().toString());
                                 Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                                switch (e.getMessage()) {
+                                    case "There is no user record corresponding to this identifier. The user may have been deleted.":
+                                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.notFoundEmail), Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case "The password is invalid or the user does not have a password.":
+                                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.wrongPassword), Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case "A network error (such as timeout, interrupted connection or unreachable host) has occurred.":
+                                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.networkError), Toast.LENGTH_SHORT).show();
+                                        break;
+                                }
                             }
                         }
                     }

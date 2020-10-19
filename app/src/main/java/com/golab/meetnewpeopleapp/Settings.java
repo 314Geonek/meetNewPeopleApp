@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
@@ -28,11 +29,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirestoreRegistrar;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +51,8 @@ public class Settings extends AppCompatActivity {
     private String userID, name, phone, aboutMe, profileImageUrl;
     private RadioGroup mRadioGroupSex;
     private Uri resultUri;
+    private StorageReference mStorageRef;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,45 +63,48 @@ public class Settings extends AppCompatActivity {
         mAboutMe = (EditText) findViewById(R.id.aboutMe);
         mProfileImage = (ImageView) findViewById(R.id.profileImage);
         mBack = (Button) findViewById(R.id.back);
+        mStorageRef = FirebaseStorage.getInstance().getReference();
         mConfirm = (Button) findViewById(R.id.confirm);
         db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        userID = mAuth.getCurrentUser().getUid();
+
         mRadioGroupSex.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 RadioButton male = findViewById(R.id.male);
                 RadioButton female = findViewById(R.id.female);
                 RadioButton both = findViewById(R.id.both);
+
                 if (male.getId()==radioGroup.getCheckedRadioButtonId())
                 {
                     male.setBackgroundResource(R.drawable.radio_button_round_left_selected);
                     female.setBackgroundResource(R.drawable.radio_button_round_right);
                     both.setBackgroundResource(R.drawable.radio_button_mid);
                 }
-                else if(female.getId()==radioGroup.getCheckedRadioButtonId())
-                {
-                    female.setBackgroundResource(R.drawable.radio_button_round_right_selected);
-                    male.setBackgroundResource(R.drawable.radio_button_round_left);
-                    both.setBackgroundResource(R.drawable.radio_button_mid);
+                    else if(female.getId()==radioGroup.getCheckedRadioButtonId())
+                    {
+                        female.setBackgroundResource(R.drawable.radio_button_round_right_selected);
+                        male.setBackgroundResource(R.drawable.radio_button_round_left);
+                        both.setBackgroundResource(R.drawable.radio_button_mid);
 
-                }
-                else{
-                    female.setBackgroundResource(R.drawable.radio_button_round_right);
-                    male.setBackgroundResource(R.drawable.radio_button_round_left);
-                    both.setBackgroundResource(R.drawable.radio_button_mid_selected);
-                }
-
-
+                    }
+                        else{
+                            female.setBackgroundResource(R.drawable.radio_button_round_right);
+                            male.setBackgroundResource(R.drawable.radio_button_round_left);
+                            both.setBackgroundResource(R.drawable.radio_button_mid_selected);
+                            }
             }
         });
-        mAuth = FirebaseAuth.getInstance();
-        userID = mAuth.getCurrentUser().getUid();
         getUserInfo();
+
         mProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                startActivityForResult(intent,1);
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(intent, "Select Picture"), 71);
             }
         });
         mConfirm.setOnClickListener(new View.OnClickListener() {
@@ -149,16 +160,17 @@ public class Settings extends AppCompatActivity {
                             default: break;
                         }
                     }
+
                     if(!map.get("profileImageUrl").equals("default"))
                     {
                         profileImageUrl = map.get("profileImageUrl").toString();
-                        Glide.with(getApplication()).asBitmap().load(profileImageUrl).into(mProfileImage);
+                        Glide.with(getApplication()).load(profileImageUrl).into(mProfileImage);
 
-
+                    }
                     }
 
                 }
-            }
+
 
 
         });
@@ -174,7 +186,6 @@ public class Settings extends AppCompatActivity {
         if(R.id.female==mRadioGroupSex.getCheckedRadioButtonId())
         {
             userInfo.put("wantedSex", "Female");
-
         }
         else if(R.id.male==mRadioGroupSex.getCheckedRadioButtonId())
         {
@@ -184,57 +195,36 @@ public class Settings extends AppCompatActivity {
             userInfo.put("wantedSex", "Male Female");
         }
         db.collection("users").document(mAuth.getCurrentUser().getUid()).update(userInfo);
+
         if(resultUri!= null)
         {
-            final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profileImages").child(userID);
-            Bitmap bitmap = null;
-            try {
-                  bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resultUri);
-            }            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] data = baos.toByteArray();
-            UploadTask uploadTask = filePath.putBytes(data);
+            final StorageReference storageReference = mStorageRef.child("profileImageUrl/"+userID);
+            final UploadTask uploadTask = storageReference.putFile(resultUri);
             uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Map newImage = new HashMap();
-                            newImage.put("profileImageUrl", uri.toString());
-                            System.out.println("succes");
-                            db.collection("users").document(mAuth.getCurrentUser().getUid()).update(newImage);
-                            finish();
-                            return;
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            System.out.println("error");
-                            finish();
-                            return;
-                        }
-                    });
+                            taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Map newImage = new HashMap();
+                                    newImage.put("profileImageUrl",uri.toString());
+                                    db.collection("users").document(userID).update(newImage);
+                                    finish();
+                                }
+                            });
                 }
             });
         }
-        else {finish();}
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1 && resultCode == Activity.RESULT_OK)
+        if(requestCode == 71 && resultCode == RESULT_OK
+                && data != null && data.getData() != null )
         {
-                 final Uri imageUri = data.getData();
-                 resultUri = imageUri;
-                 Glide.with(getApplication()).asBitmap().load(resultUri).into(mProfileImage);
-
-
+            resultUri = data.getData();
+            Glide.with(getApplication()).asBitmap().load(resultUri).into(mProfileImage);
         }
     }
 }

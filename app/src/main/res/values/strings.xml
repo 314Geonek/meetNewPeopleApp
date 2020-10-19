@@ -34,5 +34,14 @@
     <string name="preferedGender">Prefered Gender</string>
     <string name="message">Message....</string>
     <string name="picture">Picture</string>
+    <string name="notFoundEmail">Email not Found</string>
+    <string name="wrongPassword">Incorrect password</string>
+    <string name="networkError">Network error</string>
+    <string name="myGender">My Gender</string>
+    <string name="searchedGender">I want to find</string>
+    <string name="myPicture">My picture</string>
+    <string name="uHaveToSelectYourGender">You have to select your own Gender</string>
+    <string name="uHaveToSelectSearchedGender">You have to select gender, you\' re looking for</string>
+    <string name="uHaveTOAddPhoto">Show yourself to other (Add picture)</string>
 
 </resources>

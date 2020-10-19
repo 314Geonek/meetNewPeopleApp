@@ -23,12 +23,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.errorprone.annotations.Var;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -50,11 +44,10 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
     private Array_Adapter arrayAdapter;
     private FirebaseAuth mAuth;
-    List<cards> rowItems;
+    private  List<cards> rowItems;
     private FirebaseFirestore db;
     private String userSex,  currentUId;
     private  List<String> wantedSex;
-    private boolean result;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,17 +126,16 @@ public class MainActivity extends AppCompatActivity {
                 {       if(task.getResult().get("wantedSex")!=null)
                         {
                                 if(task.getResult().get("wantedSex").toString().contains("Male"))
-                                { wantedSex.add("Male"); }
+                                        wantedSex.add("Male");
                                 if(task.getResult().get("wantedSex").toString().contains("Female"))
-                                {  wantedSex.add("Female");
-                                                }
-
+                                        wantedSex.add("Female");
                         }
                         else{
                                 if(task.getResult().get("sex")!=null)
                                 {
                                     userSex = task.getResult().get("sex").toString();
                                     wantedSex.add(userSex.equals("Male") ? "Female" : "Male");
+
                                 }
                             }
                         getOtherProfiles();
@@ -201,5 +193,10 @@ public class MainActivity extends AppCompatActivity {
     public void goToProfilMenuActivity(View view) {
         Intent intent=new Intent(MainActivity.this, MyProfileActivity.class);
         startActivity(intent);
+    }
+    public void  goToDescription(View view) {
+
+           Intent intent=new Intent(MainActivity.this, MyProfileActivity.class);
+          startActivity(intent);
     }
 }
