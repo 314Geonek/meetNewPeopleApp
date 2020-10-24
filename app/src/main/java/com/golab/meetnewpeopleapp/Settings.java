@@ -18,7 +18,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -51,6 +53,8 @@ public class Settings extends AppCompatActivity {
     private String userID, name, phone, aboutMe, profileImageUrl;
     private RadioGroup mRadioGroupSex;
     private Uri resultUri;
+    private SeekBar mSeekBar;
+    private TextView mSeekBarDesc;
     private StorageReference mStorageRef;
 
     @Override
@@ -60,6 +64,8 @@ public class Settings extends AppCompatActivity {
         mRadioGroupSex = (RadioGroup) findViewById(R.id.radioGroupSex);
         mName  = (EditText) findViewById(R.id.name);
         mPhone = (EditText) findViewById(R.id.phone);
+        mSeekBar = (SeekBar) findViewById(R.id.seekBar);
+        mSeekBarDesc = (TextView) findViewById(R.id.seekBarDesc);
         mAboutMe = (EditText) findViewById(R.id.aboutMe);
         mProfileImage = (ImageView) findViewById(R.id.profileImage);
         mBack = (Button) findViewById(R.id.back);
@@ -97,7 +103,6 @@ public class Settings extends AppCompatActivity {
             }
         });
         getUserInfo();
-
         mProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

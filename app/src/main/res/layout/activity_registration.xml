@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context=".Registration"
+    android:background="#eb1e63"
+    >
+<androidx.appcompat.widget.LinearLayoutCompat
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Registration"
     android:gravity="center"
-    android:orientation="vertical"
-    android:background="#eb1e63">
+    android:orientation="vertical">
     <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/email"
                 android:layout_width="300dp"
@@ -34,7 +38,7 @@
                 android:importantForAutofill="no" />
 
     <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/name"
+                android:id="@+id/nameMy"
                 android:layout_below="@id/password"
                 android:layout_width="300dp"
                 android:layout_height="45dp"
@@ -167,6 +171,8 @@
                 android:background="@drawable/button_round"
                 android:layout_centerHorizontal="true"
                 android:text="@string/register"
+                android:layout_marginBottom="40dp"
                 />
 
 </androidx.appcompat.widget.LinearLayoutCompat>
+</ScrollView>

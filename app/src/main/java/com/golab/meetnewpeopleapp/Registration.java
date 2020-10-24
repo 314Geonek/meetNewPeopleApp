@@ -10,6 +10,7 @@ import androidx.core.widget.TextViewCompat;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,6 +36,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -68,7 +70,7 @@ public class Registration extends AppCompatActivity {
         mEmail = (EditText) findViewById(R.id.email);
         mPhoto = findViewById(R.id.myProfilImage);
         mPassword = (EditText) findViewById(R.id.password);
-        mName = (EditText) findViewById(R.id.name);
+        mName = (EditText) findViewById(R.id.nameMy);
         mRadioGroupMyGender = (RadioGroup) findViewById(R.id.radioGroupMyGender);
         mRadioGroupSearchedGender = (RadioGroup) findViewById(R.id.radioGroupSearchedGender);
         mRadioGroupMyGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -140,34 +142,35 @@ public class Registration extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task)
                             {
-                                if (!task.isSuccessful())
+                                if (task.isSuccessful())
                                 {
-                                    try
-                                    {
-                                        throw task.getException();
-                                    }
-                                    catch (FirebaseAuthWeakPasswordException weakPassword)
-                                    {
-                                        Toast.makeText(Registration.this, "Weak password", Toast.LENGTH_SHORT).show();
-                                    }
-                                    catch (FirebaseAuthInvalidCredentialsException malformedEmail)
-                                    {
-                                        Toast.makeText(Registration.this, "Malformed email", Toast.LENGTH_SHORT).show();
-
-                                    }
-                                    catch (FirebaseAuthUserCollisionException existEmail)
-                                    {
-                                        Toast.makeText(Registration.this, "Email exists", Toast.LENGTH_SHORT).show();
-
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        Toast.makeText(Registration.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                                else{
                                     saveUserData();
                                 }
+                                else  {
+                                        try
+                                        {
+                                            throw task.getException();
+                                        }
+                                        catch (FirebaseAuthWeakPasswordException weakPassword)
+                                        {
+                                            Toast.makeText(Registration.this, "Weak password", Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch (FirebaseAuthInvalidCredentialsException malformedEmail)
+                                        {
+                                            Toast.makeText(Registration.this, "Malformed email", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                        catch (FirebaseAuthUserCollisionException existEmail)
+                                        {
+                                            Toast.makeText(Registration.this, "Email exists", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            Toast.makeText(Registration.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
 
                             }
                         }
@@ -185,12 +188,23 @@ public class Registration extends AppCompatActivity {
             }
         });
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 71 && resultCode == RESULT_OK
+                && data != null && data.getData() != null )
+        {
+            resultUri = data.getData();
+            Glide.with(getApplication()).asBitmap().load(resultUri).into(mPhoto);
+        }
+    }
     private void saveUserData()
     {
         String userId = mAuth.getCurrentUser().getUid();
         Map userInfo = new HashMap<>();
-        userInfo.put("name", mName.getText());
+        userInfo.put("name", mName.getText().toString());
         userInfo.put("sex", getMySex());
+        userInfo.put("searchingRange","Unlimited");
         userInfo.put("wantedSex", getSearchedSex());
         db = FirebaseFirestore.getInstance();
         db.collection("users").document(userId).set(userInfo);
@@ -219,8 +233,7 @@ public class Registration extends AppCompatActivity {
     private boolean isDataCorrect() {
         boolean output=true;
         String error="";
-        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
-        if(mEmail.getText().toString().trim().matches(emailPattern)||mEmail.getText().length()<3)
+        if(!android.util.Patterns.EMAIL_ADDRESS.matcher(mEmail.getText().toString()).matches())
         {
             mEmail.setError("Email not Validate");
             output=false;
@@ -262,16 +275,7 @@ public class Registration extends AppCompatActivity {
             default: return "";
         }
     }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 71 && resultCode == RESULT_OK
-                && data != null && data.getData() != null )
-        {
-            resultUri = data.getData();
-            Glide.with(getApplication()).asBitmap().load(resultUri).into(mPhoto);
-        }
-    }
+
     private String getMySex()
     {
         return mRadioGroupMyGender.getCheckedRadioButtonId()==R.id.male ? "Male" : "Female";

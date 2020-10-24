@@ -60,6 +60,7 @@
         android:id="@+id/login"
         android:textAllCaps="false"
         android:layout_marginTop="10dp"
+        android:onClick="logIn"
         />
     </RelativeLayout>
 

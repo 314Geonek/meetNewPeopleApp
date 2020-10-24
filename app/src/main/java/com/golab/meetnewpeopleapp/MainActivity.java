@@ -3,7 +3,13 @@ package com.golab.meetnewpeopleapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,6 +34,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -46,7 +53,9 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private  List<cards> rowItems;
     private FirebaseFirestore db;
+    private String searchingRange;
     private String userSex,  currentUId;
+    private  GeoPoint geoPoint;
     private  List<String> wantedSex;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +63,12 @@ public class MainActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+        geoPoint=null;
         mAuth = FirebaseAuth.getInstance();
         db=  FirebaseFirestore.getInstance();
         currentUId = mAuth.getCurrentUser().getUid();
+        getSearchingRange();
+        getMyCurrentLocation();
         checkUserSex();
         rowItems = new ArrayList<cards>();
         arrayAdapter = new Array_Adapter(this, R.layout.item, rowItems );
@@ -112,12 +124,23 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
+    }
+    private void getMyCurrentLocation()
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1000);
+        else {
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+            Map myCurrentLocation = new HashMap();
+            myCurrentLocation.put("lastLocation", geoPoint);
+            db.collection("users").document(currentUId).update(myCurrentLocation);
+        }
 
     }
 
-
-    public void checkUserSex(){
+    private void checkUserSex(){
         wantedSex=new ArrayList<>();
         db.collection("users").document(currentUId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -143,15 +166,37 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    private void getSearchingRange()
+    {
+        db.collection("users").document(currentUId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.get("searchingRange")!=null)
+                    searchingRange = documentSnapshot.get("searchingRange").toString();
+            }
+        });
 
-    public void getOtherProfiles() {
+    }
+    private void checkDistance(final QueryDocumentSnapshot snapshot)
+    {   if(searchingRange.contains("Unlimited"))
+        if(snapshot.get("lastLocation")!=null)
+        {
+            GeoPoint otheruserLocation = (GeoPoint) snapshot.get("lastLocation");
+            float [] dist = new float[1];
+            Location.distanceBetween(otheruserLocation.getLatitude(), otheruserLocation.getLongitude(), geoPoint.getLatitude(), geoPoint.getLongitude(), dist);
+            dist[0] *= 0.000621371192f;
+            if(dist[0]<=Float.parseFloat(searchingRange));
+            checkOrswiped(snapshot);
+        }
+    }
+    private void getOtherProfiles() {
         Query query =  db.collection("users").whereIn("sex", wantedSex).whereNotEqualTo(FieldPath.documentId(), currentUId);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (final QueryDocumentSnapshot document : task.getResult()) {
-                        checkOrswiped(document);
+                        checkDistance(document);
                         }
                     }}
         });
@@ -167,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     private void addToRowItems(DocumentSnapshot snapshot)
     {
         String profileImageUrl = "default";
@@ -177,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
         rowItems.add(item);
         arrayAdapter.notifyDataSetChanged();
     }
+
 
     public void goToMatches(View view) {
         Intent intent=new Intent(MainActivity.this, MatchesActivity.class);
