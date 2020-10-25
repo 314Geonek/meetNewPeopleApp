@@ -7,6 +7,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.golab.meetnewpeopleapp.R;
@@ -14,12 +17,12 @@ import com.golab.meetnewpeopleapp.R;
 
 public class ChatViewHolders extends RecyclerView.ViewHolder implements View.OnClickListener {
             public TextView mMessage;
-            public LinearLayout mContainer;
+            public ConstraintLayout mContainer;
             public ChatViewHolders(View itemView)
             {
                 super(itemView);
                 itemView.setOnClickListener(this);
-                mMessage = itemView.findViewById(R.id.message);
+                mMessage =  itemView.findViewById(R.id.message);
                 mContainer = itemView.findViewById(R.id.container);
             }
 

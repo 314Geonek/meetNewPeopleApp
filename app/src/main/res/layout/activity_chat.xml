@@ -31,22 +31,22 @@
                                 android:id="@+id/tvMatchName"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:paddingLeft="10dp"
+                                android:paddingHorizontal="10dp"
                                 android:layout_centerVertical="true"
-                                android:layout_toLeftOf="@+id/ibMatchpic"
+                                android:layout_toStartOf="@+id/ibMatchpic"
                                 android:text="dgfgfdfgsdf"
                                 android:textSize="24sp"
                                 android:textStyle="bold"
                                 tools:text="dsfds" />
                                 <ImageButton
-                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentEnd="true"
                                     android:id="@+id/ibMatchpic"
                                     android:layout_centerVertical="true"
-                                    android:layout_marginRight="10dp"
-                                    android:background="@mipmap/ic_launcher_round"
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
-                                    />
+                                    android:layout_marginEnd="10dp"
+                                    android:background="#ffeee9e2"
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:contentDescription="adsdas" />
 
                         </RelativeLayout>
         </LinearLayout>
@@ -54,7 +54,7 @@
             android:layout_below="@+id/navBarChat"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/sendLayout" >
+            android:layout_above="@+id/sendLayout">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
@@ -69,19 +69,19 @@
             android:id="@+id/sendLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal">
                     <EditText
                         android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="45dp"
-                        android:drawableStart="@drawable/separator"
                         android:id="@+id/userMessage"
                         android:background="@drawable/round_edt_text_messenger"
                         android:hint="@string/message"
                         android:importantForAutofill="no"
-                        android:inputType="text" />
+                        android:inputType="text"
+                        android:paddingHorizontal="10dp"/>
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"

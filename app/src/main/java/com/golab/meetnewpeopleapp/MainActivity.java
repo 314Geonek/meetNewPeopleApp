@@ -42,6 +42,7 @@ import com.google.firebase.firestore.local.QueryResult;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.lang.reflect.Array;
+import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -51,17 +52,15 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
     private Array_Adapter arrayAdapter;
     private FirebaseAuth mAuth;
-    private  List<cards> rowItems;
+    private List<cards> rowItems;
     private FirebaseFirestore db;
     private String searchingRange;
     private String userSex,  currentUId;
-    private  GeoPoint geoPoint;
-    private  List<String> wantedSex;
+    private GeoPoint geoPoint;
+    private List<String> wantedSex;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
         geoPoint=null;
         mAuth = FirebaseAuth.getInstance();
@@ -132,10 +131,18 @@ public class MainActivity extends AppCompatActivity {
         else {
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
-            Map myCurrentLocation = new HashMap();
-            myCurrentLocation.put("lastLocation", geoPoint);
-            db.collection("users").document(currentUId).update(myCurrentLocation);
+            if(location==null)
+            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+            try {
+                geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+                Map myCurrentLocation = new HashMap();
+                myCurrentLocation.put("lastLocation", geoPoint);
+                db.collection("users").document(currentUId).update(myCurrentLocation);
+            }catch (Exception e)
+            {
+                Log.d("Gps and vire disabled","Gps and vire disabled" );
+            }
         }
 
     }
@@ -178,8 +185,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void checkDistance(final QueryDocumentSnapshot snapshot)
-    {   if(searchingRange.contains("Unlimited"))
-        if(snapshot.get("lastLocation")!=null)
+    {   if(searchingRange==null)
+        {
+            checkOrswiped(snapshot);
+        }
+        if(searchingRange.contains("Unlimited"))
+        {
+            checkOrswiped(snapshot);
+        }
+        else if(snapshot.get("lastLocation")!=null)
         {
             GeoPoint otheruserLocation = (GeoPoint) snapshot.get("lastLocation");
             float [] dist = new float[1];
@@ -188,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
             if(dist[0]<=Float.parseFloat(searchingRange));
             checkOrswiped(snapshot);
         }
+
     }
     private void getOtherProfiles() {
         Query query =  db.collection("users").whereIn("sex", wantedSex).whereNotEqualTo(FieldPath.documentId(), currentUId);

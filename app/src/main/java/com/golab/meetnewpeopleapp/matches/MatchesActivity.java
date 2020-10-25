@@ -6,12 +6,14 @@ import androidx.constraintlayout.solver.widgets.Snapshot;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import com.golab.meetnewpeopleapp.MainActivity;
+import com.golab.meetnewpeopleapp.MyProfileActivity;
 import com.golab.meetnewpeopleapp.ProfilMenuActivity;
 import com.golab.meetnewpeopleapp.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -50,6 +52,7 @@ public class MatchesActivity extends AppCompatActivity {
     }
 
     private void getUserMatchesId() {
+        
         db.collection("users").document(currentUserID).collection("Matches").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -94,6 +97,13 @@ public class MatchesActivity extends AppCompatActivity {
     }
 
     public void goToMainActivity(View view) {
+        finish();
+        return;
+    }
+
+    public void goToMyProfile(View view) {
+        Intent intent=new Intent(MatchesActivity.this, MyProfileActivity.class);
+        startActivity(intent);
         finish();
         return;
     }

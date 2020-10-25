@@ -34,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
         mLogin= findViewById(R.id.login);
         mEmail=findViewById(R.id.email);
         mPassword=findViewById(R.id.password);
+        mAuth = FirebaseAuth.getInstance();
         firebaseAuthStateListener = new FirebaseAuth.AuthStateListener()
         {
             @Override
@@ -72,7 +73,6 @@ public class LoginActivity extends AppCompatActivity {
 
         final String email= mEmail.getText().toString();
         final String password= mPassword.getText().toString();
-        mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithEmailAndPassword(email, password).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {

@@ -2,16 +2,21 @@ package com.golab.meetnewpeopleapp.chat;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.golab.meetnewpeopleapp.R;
+import com.google.common.io.Resources;
 
 import java.util.List;
 
@@ -34,20 +39,21 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolders> {
         ChatViewHolders cvh = new ChatViewHolders(layoutView);
         return cvh;
     }
-
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolders holder, int position) {
         holder.mMessage.setText(chatList.get(position).getMessage());
         if(chatList.get(position).getCurrentUser())
-        {
-            holder.mMessage.setGravity(Gravity.END);
+        {   ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) holder.mMessage.getLayoutParams();
             holder.mMessage.setTextColor(Color.parseColor("#ffffff"));
-            holder.mContainer.setBackgroundColor(Color.parseColor("#2db4c8"));
+            holder.mMessage.setBackgroundResource(R.drawable.chat_item_right);
+            holder.mMessage.requestLayout();
         }
         else {
-            holder.mMessage.setGravity(Gravity.START);
-            holder.mMessage.setTextColor(Color.parseColor("#404040"));
-            holder.mContainer.setBackgroundColor(Color.parseColor("#F4F4F4"));
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) holder.mMessage.getLayoutParams();
+            params.rightToRight = ConstraintLayout.LayoutParams.UNSET;
+            params.leftToLeft =R.id.parent;
+            holder.mMessage.setTextColor(Color.parseColor("#ffffff"));
+            holder.mMessage.setBackgroundResource(R.drawable.chat_item_left);
         }
     }
     @Override
