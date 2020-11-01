@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.golab.meetnewpeopleapp.R;
 
 import java.util.List;
@@ -41,7 +42,7 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesViewHolders> {
         holder.mMatchId.setText(matchesList.get(position).getUserId());
         holder.mMatchName.setText(matchesList.get(position).getName());
         if(!matchesList.get(position).getProfileImageUrl().equals("default")){
-            Glide.with(context).load(matchesList.get(position).getProfileImageUrl()).into(holder.mMatchImage);
+            Glide.with(context).load(matchesList.get(position).getProfileImageUrl()).apply(RequestOptions.circleCropTransform()).into(holder.mMatchImage);
         }
     }
     @Override

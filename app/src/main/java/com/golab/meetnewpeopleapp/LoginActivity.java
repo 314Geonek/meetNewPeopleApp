@@ -30,10 +30,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        mLogin= findViewById(R.id.login);
-        mEmail=findViewById(R.id.email);
-        mPassword=findViewById(R.id.password);
         mAuth = FirebaseAuth.getInstance();
         firebaseAuthStateListener = new FirebaseAuth.AuthStateListener()
         {
@@ -50,6 +46,10 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         };
+        setContentView(R.layout.activity_login);
+        mLogin= findViewById(R.id.login);
+        mEmail=findViewById(R.id.email);
+        mPassword=findViewById(R.id.password);
     }
     @Override
     protected void onStart()

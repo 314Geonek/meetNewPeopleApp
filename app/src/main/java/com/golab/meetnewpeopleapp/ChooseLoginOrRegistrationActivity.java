@@ -19,6 +19,22 @@ public class ChooseLoginOrRegistrationActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener firebaseAuthStateListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mAuth = FirebaseAuth.getInstance();
+        firebaseAuthStateListener = new FirebaseAuth.AuthStateListener()
+        {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth)
+            {
+                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null)
+                {
+                    Intent intent = new Intent(ChooseLoginOrRegistrationActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+
+            }
+        };
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_login_or_registration);
         mLogin= findViewById(R.id.login);
@@ -42,21 +58,18 @@ public class ChooseLoginOrRegistrationActivity extends AppCompatActivity {
                 return;
             }
         });
-        mAuth = FirebaseAuth.getInstance();
-        firebaseAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                final FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
-                if(user != null)
-                {
-                    Intent intent=new Intent(ChooseLoginOrRegistrationActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                    return;
-                }
+    }
+    @Override
+    protected void onStart()
+    {
+        mAuth.addAuthStateListener(firebaseAuthStateListener);
+        super.onStart();
 
-            }
-        };
-
+    }
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        mAuth.removeAuthStateListener(firebaseAuthStateListener);
     }
 }

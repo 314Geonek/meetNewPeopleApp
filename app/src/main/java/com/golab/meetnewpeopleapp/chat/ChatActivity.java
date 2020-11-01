@@ -1,34 +1,26 @@
 package com.golab.meetnewpeopleapp.chat;
 
-import androidx.annotation.DrawableRes;
+import androidx.annotation.Dimension;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.golab.meetnewpeopleapp.MainActivity;
-import com.golab.meetnewpeopleapp.ProfilMenuActivity;
 import com.golab.meetnewpeopleapp.R;
-import com.golab.meetnewpeopleapp.matches.MatchesAdapter;
-import com.golab.meetnewpeopleapp.matches.MatchesObject;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
@@ -36,7 +28,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -55,7 +46,7 @@ public class ChatActivity extends AppCompatActivity {
     private String matchId;
     private TextView mName;
     private ImageButton ibPicture;
-
+    private NestedScrollView nestedScrollView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,10 +56,10 @@ public class ChatActivity extends AppCompatActivity {
         userMatchId = getIntent().getExtras().getString("matchId");
         mName = findViewById(R.id.tvMatchName);
         ibPicture=findViewById(R.id.ibMatchpic);
+        nestedScrollView= findViewById(R.id.nestedScrollView);
         currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         getMatchId();
         fillNavBar();
-
         mRecyclerView= (RecyclerView) findViewById(R.id.recyclerView);
         mRecyclerView.setNestedScrollingEnabled(false);
         mRecyclerView.setHasFixedSize(false);
@@ -114,7 +105,7 @@ public class ChatActivity extends AppCompatActivity {
     });
     }
     private void getChatMessages() {
-        mDbChat.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        mDbChat.orderBy("writed").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
@@ -135,10 +126,10 @@ public class ChatActivity extends AppCompatActivity {
                                 ChatObject newMessage = new ChatObject(content,currentUserBoolean);
                                 resultsMessages.add(newMessage);
                                 mChatAdapter.notifyDataSetChanged();
+                                nestedScrollView.fullScroll(View.FOCUS_DOWN);
                             }
                             break;
                         case MODIFIED:
-
                             break;
                         case REMOVED:
                             break;
@@ -157,6 +148,7 @@ public class ChatActivity extends AppCompatActivity {
         Map newMessage= new HashMap();
         newMessage.put("writerId", currentUserID);
         newMessage.put("content", messageText);
+        newMessage.put("writed", Timestamp.now().toDate());
         mDbChat.document().set(newMessage);
     }
     mMessage.setText(null);

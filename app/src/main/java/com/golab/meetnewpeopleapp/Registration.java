@@ -143,27 +143,15 @@ public class Registration extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task)
                             {
                                 if (task.isSuccessful())
-                                {
-                                    saveUserData();
-                                }
+                                { saveUserData();}
                                 else  {
                                         try
                                         {
                                             throw task.getException();
                                         }
-                                        catch (FirebaseAuthWeakPasswordException weakPassword)
-                                        {
-                                            Toast.makeText(Registration.this, "Weak password", Toast.LENGTH_SHORT).show();
-                                        }
-                                        catch (FirebaseAuthInvalidCredentialsException malformedEmail)
-                                        {
-                                            Toast.makeText(Registration.this, "Malformed email", Toast.LENGTH_SHORT).show();
-
-                                        }
                                         catch (FirebaseAuthUserCollisionException existEmail)
                                         {
-                                            Toast.makeText(Registration.this, "Email exists", Toast.LENGTH_SHORT).show();
-
+                                            Toast.makeText(Registration.this, getResources().getString(R.string.emailExists), Toast.LENGTH_SHORT).show();
                                         }
                                         catch (Exception e)
                                         {

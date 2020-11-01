@@ -43,7 +43,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolders> {
     public void onBindViewHolder(@NonNull ChatViewHolders holder, int position) {
         holder.mMessage.setText(chatList.get(position).getMessage());
         if(chatList.get(position).getCurrentUser())
-        {   ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) holder.mMessage.getLayoutParams();
+        {
             holder.mMessage.setTextColor(Color.parseColor("#ffffff"));
             holder.mMessage.setBackgroundResource(R.drawable.chat_item_right);
             holder.mMessage.requestLayout();

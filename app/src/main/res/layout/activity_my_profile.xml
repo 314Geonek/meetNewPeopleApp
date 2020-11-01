@@ -47,34 +47,17 @@
             android:layout_width="0dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/navToDataEdit"
+            app:layout_constraintBottom_toTopOf="@+id/btnGoToProfileEdit"
             app:layout_constraintTop_toBottomOf="@+id/navBar"/>
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/navToDataEdit"
-            android:layout_width="wrap_content"
-            android:layout_height="70dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent">
                 <androidx.appcompat.widget.AppCompatImageButton
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     android:id="@+id/btnGoToProfileEdit"
                     android:layout_width="wrap_content"
-                    android:layout_marginEnd="20dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/ustawieniaczerwone50"
                     android:onClick="goToProfileEdit"
                      />
-                <androidx.appcompat.widget.AppCompatImageButton
-                    android:id="@+id/btnGoToPreferences"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/ustawieniaczerwone50"
-                    />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

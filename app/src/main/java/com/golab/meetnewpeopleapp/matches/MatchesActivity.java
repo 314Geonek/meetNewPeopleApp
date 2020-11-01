@@ -2,19 +2,14 @@ package com.golab.meetnewpeopleapp.matches;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.solver.widgets.Snapshot;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.LinearLayout;
 
-import com.golab.meetnewpeopleapp.MainActivity;
 import com.golab.meetnewpeopleapp.MyProfileActivity;
-import com.golab.meetnewpeopleapp.ProfilMenuActivity;
 import com.golab.meetnewpeopleapp.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
