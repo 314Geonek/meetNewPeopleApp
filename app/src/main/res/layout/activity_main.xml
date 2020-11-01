@@ -76,4 +76,5 @@
             android:background="@drawable/natak"
             android:onClick="btnSwipe" />
     </androidx.appcompat.widget.LinearLayoutCompat>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
