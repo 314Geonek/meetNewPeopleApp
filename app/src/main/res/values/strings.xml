@@ -45,5 +45,7 @@
     <string name="uHaveTOAddPhoto">Show yourself to other (Add picture)</string>
     <string name="SearchingRange">Searching Range</string>
     <string name="emailExists">Your email already exists</string>
+    <string name="Unlimider">Unlimited</string>
+    <string name="tenKm">10km</string>
 
 </resources>

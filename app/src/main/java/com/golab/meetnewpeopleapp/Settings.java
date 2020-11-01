@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,12 +38,17 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.ramotion.fluidslider.FluidSlider;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 
 public class Settings extends AppCompatActivity {
     private EditText mName, mPhone, mAboutMe;
@@ -53,7 +59,7 @@ public class Settings extends AppCompatActivity {
     private String userID, name, phone, aboutMe, profileImageUrl;
     private RadioGroup mRadioGroupSex;
     private Uri resultUri;
-    private SeekBar mSeekBar;
+
     private TextView mSeekBarDesc;
     private StorageReference mStorageRef;
 
@@ -64,8 +70,6 @@ public class Settings extends AppCompatActivity {
         mRadioGroupSex = (RadioGroup) findViewById(R.id.radioGroupSex);
         mName  = (EditText) findViewById(R.id.name);
         mPhone = (EditText) findViewById(R.id.phone);
-        mSeekBar = (SeekBar) findViewById(R.id.seekBar);
-        mSeekBarDesc = (TextView) findViewById(R.id.seekBarDesc);
         mAboutMe = (EditText) findViewById(R.id.aboutMe);
         mProfileImage = (ImageView) findViewById(R.id.profileImage);
         mBack = (Button) findViewById(R.id.back);
@@ -74,7 +78,28 @@ public class Settings extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
+        final FluidSlider slider = findViewById(R.id.seekBar);
 
+        slider.setBeginTrackingListener(new Function0<Unit>() {
+            @Override
+            public Unit invoke() {
+                return Unit.INSTANCE;
+            }
+        });
+        slider.setPositionListener(new Function1<Float, Unit>() {
+            @Override
+            public Unit invoke(Float pos) {
+                final String value = String.valueOf( (int)((1 - pos) * 100) );
+                slider.setBubbleText(value);
+                return Unit.INSTANCE;
+            }
+        });
+        slider.setEndTrackingListener(new Function0<Unit>() {
+            @Override
+            public Unit invoke() {
+                return Unit.INSTANCE;
+            }
+        });
         mRadioGroupSex.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
