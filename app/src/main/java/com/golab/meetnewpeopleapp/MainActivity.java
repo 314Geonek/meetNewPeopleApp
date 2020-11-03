@@ -179,8 +179,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.get("searchingRange")!=null)
-                    searchingRange = documentSnapshot.get("searchingRange").toString();
-            }
+                {}//searchingRange = documentSnapshot.get("searchingRange").toString();
+                }
         });
 
     }
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
         {
             checkOrswiped(snapshot);
         }
-        if(searchingRange.contains("Unlimited"))
+        else if(searchingRange.contains("Unlimited"))
         {
             checkOrswiped(snapshot);
         }
