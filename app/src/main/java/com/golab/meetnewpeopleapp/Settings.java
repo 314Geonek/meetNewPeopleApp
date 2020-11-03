@@ -59,7 +59,7 @@ public class Settings extends AppCompatActivity {
     private String userID, name, phone, aboutMe, profileImageUrl;
     private RadioGroup mRadioGroupSex;
     private Uri resultUri;
-
+    private FluidSlider slider;
     private TextView mSeekBarDesc;
     private StorageReference mStorageRef;
 
@@ -78,25 +78,21 @@ public class Settings extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
-        final FluidSlider slider = findViewById(R.id.seekBar);
-
-        slider.setBeginTrackingListener(new Function0<Unit>() {
-            @Override
-            public Unit invoke() {
-                return Unit.INSTANCE;
-            }
-        });
+        slider = findViewById(R.id.seekBar);
         slider.setPositionListener(new Function1<Float, Unit>() {
+
             @Override
             public Unit invoke(Float pos) {
-                final String value = String.valueOf( (int)((1 - pos) * 100) );
-                slider.setBubbleText(value);
+                final String value = String.valueOf((int)( pos * 500));
+                slider.setBubbleText(value.concat(" km"));
                 return Unit.INSTANCE;
             }
+
         });
         slider.setEndTrackingListener(new Function0<Unit>() {
             @Override
             public Unit invoke() {
+
                 return Unit.INSTANCE;
             }
         });
@@ -197,7 +193,24 @@ public class Settings extends AppCompatActivity {
                         Glide.with(getApplication()).load(profileImageUrl).into(mProfileImage);
 
                     }
+                    if(map.get("searchingRange")!=null)
+                    {
+                        if(map.get("searchingRange").toString().equals("Unlimited"))
+                        {}
+                        else{
+                             String possition = map.get("searchingRange").toString();
+                            slider.setBubbleText(possition);
+                            possition = possition.substring(0, possition.length()-3);
+                             System.out.println("/"+possition+"/");
+                             float currentpossition =((Float.parseFloat(possition))/500);
+                             slider.setPosition(currentpossition);
+                             slider.getPo
+                        }
+
+
                     }
+                    }
+
 
                 }
 

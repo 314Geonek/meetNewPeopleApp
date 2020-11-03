@@ -145,7 +145,7 @@
     android:layout_centerHorizontal="true"
     android:layout_height="wrap_content"
     android:minHeight="40dp"
-    app:start_text="@string/tenKm"
-    app:end_text="@string/Unlimider"
+    app:end_text="500km"
+    app:start_text="10km"
     />
 </RelativeLayout>
