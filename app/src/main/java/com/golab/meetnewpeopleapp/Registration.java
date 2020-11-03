@@ -122,11 +122,15 @@ public class Registration extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user !=null){
-                    Intent intent = new Intent(Registration.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                    return;
+                if (user != null) {
+                    if (!user.isEmailVerified()) {
+                        Toast.makeText(Registration.this, getResources().getString(R.string.notVerifiedEmail), Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Intent intent = new Intent(Registration.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
                 }
             }
         };
@@ -143,7 +147,10 @@ public class Registration extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task)
                             {
                                 if (task.isSuccessful())
-                                { saveUserData();}
+                                {
+                                    mAuth.getCurrentUser().sendEmailVerification();
+                                    saveUserData();
+                                }
                                 else  {
                                         try
                                         {

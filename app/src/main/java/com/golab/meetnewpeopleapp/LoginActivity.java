@@ -37,13 +37,16 @@ public class LoginActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth)
             {
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user != null)
-                {
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
+                if (user != null) {
+                    if (!user.isEmailVerified()) {
+                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.notVerifiedEmail), Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
                 }
-
             }
         };
         setContentView(R.layout.activity_login);
