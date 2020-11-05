@@ -13,24 +13,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.golab.meetnewpeopleapp.Cards.Array_Adapter;
 import com.golab.meetnewpeopleapp.Cards.cards;
 import com.golab.meetnewpeopleapp.matches.MatchesActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.errorprone.annotations.Var;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -38,13 +28,9 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.local.QueryResult;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
-import java.lang.reflect.Array;
-import java.security.spec.ECField;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private String searchingRange;
     private String userSex,  currentUId;
     private GeoPoint geoPoint;
-    private List<String> wantedSex;
+    private List<String> lookingFor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,9 +52,8 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db=  FirebaseFirestore.getInstance();
         currentUId = mAuth.getCurrentUser().getUid();
-        getSearchingRange();
         getMyCurrentLocation();
-        checkUserSex();
+        getDatailsOfSearching();
         rowItems = new ArrayList<cards>();
         arrayAdapter = new Array_Adapter(this, R.layout.item, rowItems );
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
@@ -89,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScroll(float scrollProgressPercent) { }});
     }
+
+
+
     private void swipe(String direction)
     {   cards object = (cards) rowItems.get(0);
         String userId= object.getUserId();
@@ -111,15 +99,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.exists())
-                if((Boolean)documentSnapshot.get("swipe")==true)
-                {   String id = db.collection("Matches").document().getId();
-                    Map testMessage = new HashMap();
-                    testMessage.put("Owner",null);
-                    db.collection("Matches").document(id).collection("Messages").document().set(testMessage);
-                    Map chatId = new HashMap();
-                    chatId.put("matchId",id);
-                    db.collection("users").document(userId).collection("Matches").document(currentUId).set(chatId);
-                    db.collection("users").document(currentUId).collection("Matches").document(userId).set(chatId);
+                if((Boolean)documentSnapshot.get("swipe"))
+                {
+                    Map match = new HashMap();
+                    match.put("id1", currentUId);
+                    match.put("id2", userId);
+                    db.collection("users").document().set(match);
                 }
             }
         });
@@ -147,42 +132,25 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void checkUserSex(){
-        wantedSex=new ArrayList<>();
+    private void getDatailsOfSearching(){
+        lookingFor =new ArrayList<>();
         db.collection("users").document(currentUId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful())
-                {       if(task.getResult().get("wantedSex")!=null)
+                {       if(task.getResult().get("lookingFor")!=null)
                         {
-                                if(task.getResult().get("wantedSex").toString().contains("Male"))
-                                        wantedSex.add("Male");
-                                if(task.getResult().get("wantedSex").toString().contains("Female"))
-                                        wantedSex.add("Female");
+                                if(task.getResult().get("lookingFor").toString().contains("Male"))
+                                        lookingFor.add("Male");
+                                if(task.getResult().get("lookingFor").toString().contains("Female"))
+                                        lookingFor.add("Female");
                         }
-                        else{
-                                if(task.getResult().get("sex")!=null)
-                                {
-                                    userSex = task.getResult().get("sex").toString();
-                                    wantedSex.add(userSex.equals("Male") ? "Female" : "Male");
-
-                                }
-                            }
+                    if(task.getResult().get("searchingRange")!=null)
+                    {}
                         getOtherProfiles();
                 }
             }
         });
-    }
-    private void getSearchingRange()
-    {
-        db.collection("users").document(currentUId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.get("searchingRange")!=null)
-                {}//searchingRange = documentSnapshot.get("searchingRange").toString();
-                }
-        });
-
     }
     private void checkDistance(final QueryDocumentSnapshot snapshot)
     {   if(searchingRange==null)
@@ -205,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void getOtherProfiles() {
-        Query query =  db.collection("users").whereIn("sex", wantedSex).whereNotEqualTo(FieldPath.documentId(), currentUId);
+        Query query =  db.collection("users").whereIn("sex", lookingFor).whereNotEqualTo(FieldPath.documentId(), currentUId);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

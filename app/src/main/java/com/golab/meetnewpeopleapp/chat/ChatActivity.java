@@ -112,7 +112,6 @@ public class ChatActivity extends AppCompatActivity {
                 if (e != null) {
                     return;
                 }
-
                 for (DocumentChange dc : snapshots.getDocumentChanges()) {
                     switch (dc.getType()) {
                         case ADDED:
@@ -134,9 +133,7 @@ public class ChatActivity extends AppCompatActivity {
                         case REMOVED:
                             break;
                     }
-
                 }
-
             }
         });
     }

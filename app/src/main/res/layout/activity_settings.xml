@@ -146,6 +146,5 @@
     android:layout_height="wrap_content"
     android:minHeight="40dp"
     app:end_text="500km"
-    app:start_text="10km"
-    />
+    app:start_text="10km"/>
 </RelativeLayout>
