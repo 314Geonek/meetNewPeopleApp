@@ -198,9 +198,9 @@ public class Registration extends AppCompatActivity {
         String userId = mAuth.getCurrentUser().getUid();
         Map userInfo = new HashMap<>();
         userInfo.put("name", mName.getText().toString());
-        userInfo.put("sex", getMySex());
+        userInfo.put("gender", getMySex());
         userInfo.put("searchingRange","Unlimited");
-        userInfo.put("wantedSex", getSearchedSex());
+        userInfo.put("lookingFor", getSearchedSex());
         db = FirebaseFirestore.getInstance();
         db.collection("users").document(userId).set(userInfo);
         savePhoto(userId);

@@ -51,7 +51,7 @@ import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 
 public class Settings extends AppCompatActivity {
-    private EditText mName, mPhone, mAboutMe;
+    private EditText mName, mAboutMe;
     private Button mBack, mConfirm;
     private ImageView mProfileImage;
     private FirebaseAuth mAuth;
@@ -69,7 +69,6 @@ public class Settings extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
         mRadioGroupSex = (RadioGroup) findViewById(R.id.radioGroupSex);
         mName  = (EditText) findViewById(R.id.name);
-        mPhone = (EditText) findViewById(R.id.phone);
         mAboutMe = (EditText) findViewById(R.id.aboutMe);
         mProfileImage = (ImageView) findViewById(R.id.profileImage);
         mBack = (Button) findViewById(R.id.back);
@@ -160,17 +159,12 @@ public class Settings extends AppCompatActivity {
                             name = map.get("name").toString();
                             mName.setText(name);
                     }
-                    if(map.get("phone")!=null)
-                    {
-                            phone = map.get("phone").toString();
-                            mPhone.setText(phone);
-                    }
                     if(map.get("aboutMe")!=null)
                     {
                             aboutMe = map.get("aboutMe").toString();
                             mAboutMe.setText(aboutMe);
                     }
-                    if(map.get("wantedSex")!=null)
+                    if(map.get("lookingFor")!=null)
                     {
                         String wantedSex = map.get("wantedSex").toString();
                         switch (wantedSex)
@@ -204,7 +198,6 @@ public class Settings extends AppCompatActivity {
                              System.out.println("/"+possition+"/");
                              float currentpossition =((Float.parseFloat(possition))/500);
                              slider.setPosition(currentpossition);
-                             slider.getPo
                         }
 
 
@@ -220,22 +213,20 @@ public class Settings extends AppCompatActivity {
     }
     private void saveUserInformation() {
         name =  mName.getText().toString();
-        phone = mPhone.getText().toString();
         aboutMe = mAboutMe.getText().toString();
         Map userInfo = new HashMap();
         userInfo.put("name",name);
-        userInfo.put("phone",phone);
         userInfo.put("aboutMe",aboutMe);
         if(R.id.female==mRadioGroupSex.getCheckedRadioButtonId())
         {
-            userInfo.put("wantedSex", "Female");
+            userInfo.put("lookingFor", "Female");
         }
         else if(R.id.male==mRadioGroupSex.getCheckedRadioButtonId())
         {
-            userInfo.put("wantedSex", "Male");
+            userInfo.put("lookingFor", "Male");
         }
         else{
-            userInfo.put("wantedSex", "Male Female");
+            userInfo.put("lookingFor", "Male Female");
         }
         db.collection("users").document(mAuth.getCurrentUser().getUid()).update(userInfo);
 

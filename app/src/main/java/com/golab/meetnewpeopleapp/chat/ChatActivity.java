@@ -72,26 +72,24 @@ public class ChatActivity extends AppCompatActivity {
     private List<ChatObject> getDataSetChat() {
         return resultsMessages;
     }
+
     private void getMatchId()
     {
-        db.collection("users").document(currentUserID).collection("Matches").document(userMatchId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-                if(task.isSuccessful())
-                if(task!=null)
+        List<String> ids = new ArrayList<>();
+        ids.add(currentUserID);
+        ids.add(userMatchId);
+        db.collection("Matches").whereIn("id1",ids).whereIn("id2", ids).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        @Override
+        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+            for (DocumentSnapshot snapshot:queryDocumentSnapshots) {
+                if(!snapshot.get("id1").toString().equals(snapshot.get("id2")))
                 {
-                    if(task.getResult().get("matchId")!=null){
-                    matchId = task.getResult().get("matchId").toString();
-                    mDbChat= FirebaseFirestore.getInstance().collection("Matches").document(matchId).collection("Messages");
+                    mDbChat= FirebaseFirestore.getInstance().collection("Matches").document(snapshot.getId()).collection("Messages");
                     getChatMessages();
                 }
-
-                }
-
             }
-        });
-
+        }
+    });
     }
     private void fillNavBar()
     {    db.collection("users").document(userMatchId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
