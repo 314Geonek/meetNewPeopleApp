@@ -188,7 +188,7 @@ public class Registration extends AppCompatActivity {
         }
     }
     private void saveUserData()
-    {   if(boolean)(mAuth.getCurrentUser().getUid())
+    {
         String userId = mAuth.getCurrentUser().getUid();
         Map userInfo = new HashMap<>();
         userInfo.put("name", mName.getText().toString());
