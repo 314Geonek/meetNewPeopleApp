@@ -31,7 +31,7 @@
     <string name="Matches">Matches</string>
     <string name="send">Send</string>
     <string name="both">Both</string>
-    <string name="preferedGender">Prefered Gender</string>
+    <string name="preferedGender">Preferred Gender</string>
     <string name="message">Message....</string>
     <string name="picture">Picture</string>
     <string name="notFoundEmail">Email not Found</string>
@@ -46,5 +46,7 @@
     <string name="SearchingRange">Searching Range</string>
     <string name="emailExists">Your email already exists</string>
     <string name="notVerifiedEmail">You email is not verified</string>
+    <string name="verifyYourMail">please verify your email</string>
+    <string name="todo">TODO</string>
 
 </resources>

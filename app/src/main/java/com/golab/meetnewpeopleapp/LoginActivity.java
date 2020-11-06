@@ -37,9 +37,10 @@ public class LoginActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth)
             {
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user != null) {
+                if (user != null){
                     if (!user.isEmailVerified()) {
-                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.notVerifiedEmail), Toast.LENGTH_SHORT).show();
+                        user.sendEmailVerification();
+                        Toast.makeText(LoginActivity.this, user.getEmail() +"  "+ getResources().getString(R.string.notVerifiedEmail), Toast.LENGTH_SHORT).show();
                     }
                     else {
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -84,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
     private void loginErrorHandler(Exception e)
-    {
+    {       if(e.getMessage()!=null)
             switch (e.getMessage())
             {
                 case "There is no user record corresponding to this identifier. The user may have been deleted.":

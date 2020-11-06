@@ -123,14 +123,9 @@ public class Registration extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
-                    if (!user.isEmailVerified()) {
-                        Toast.makeText(Registration.this, getResources().getString(R.string.notVerifiedEmail), Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        Intent intent = new Intent(Registration.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
+                    Intent intent = new Intent(Registration.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
                 }
             }
         };
@@ -148,7 +143,6 @@ public class Registration extends AppCompatActivity {
                             {
                                 if (task.isSuccessful())
                                 {
-                                    mAuth.getCurrentUser().sendEmailVerification();
                                     saveUserData();
                                 }
                                 else  {
@@ -194,7 +188,7 @@ public class Registration extends AppCompatActivity {
         }
     }
     private void saveUserData()
-    {
+    {   if(boolean)(mAuth.getCurrentUser().getUid())
         String userId = mAuth.getCurrentUser().getUid();
         Map userInfo = new HashMap<>();
         userInfo.put("name", mName.getText().toString());
@@ -218,12 +212,10 @@ public class Registration extends AppCompatActivity {
                         Map newImage = new HashMap();
                         newImage.put("profileImageUrl",uri.toString());
                         db.collection("users").document(userId).update(newImage);
-                        finish();
                     }
                 });
             }
         });
-
     }
     private boolean isDataCorrect() {
         boolean output=true;
@@ -278,6 +270,7 @@ public class Registration extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        mAuth.signOut();
         mAuth.addAuthStateListener(firebaseAuthStateListener);
     }
 
@@ -285,6 +278,7 @@ public class Registration extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         mAuth.removeAuthStateListener(firebaseAuthStateListener);
+        mAuth.signOut();
     }
 
 }

@@ -32,10 +32,7 @@ public class ChooseLoginOrRegistrationActivity extends AppCompatActivity {
             {
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
-                    if (!user.isEmailVerified()) {
-                        Toast.makeText(ChooseLoginOrRegistrationActivity.this, getResources().getString(R.string.notVerifiedEmail), Toast.LENGTH_SHORT).show();
-                    }
-                    else {
+                    if (user.isEmailVerified()) {
                         Intent intent = new Intent(ChooseLoginOrRegistrationActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
@@ -50,7 +47,6 @@ public class ChooseLoginOrRegistrationActivity extends AppCompatActivity {
                 Intent intent=new Intent(ChooseLoginOrRegistrationActivity.this, LoginActivity.class);
                 startActivity(intent);
                 finish();
-                return;
             }
         });
         mRegistration.setOnClickListener(new View.OnClickListener() {
@@ -59,7 +55,6 @@ public class ChooseLoginOrRegistrationActivity extends AppCompatActivity {
                 Intent intent=new Intent(ChooseLoginOrRegistrationActivity.this, Registration.class);
                 startActivity(intent);
                 finish();
-                return;
             }
         });
     }

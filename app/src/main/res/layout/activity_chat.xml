@@ -22,7 +22,6 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:paddingHorizontal="10dp"
-                                android:text="dgfgfdfgsdf"
                                 android:textSize="24sp"
                                 android:textStyle="bold"
                                 app:layout_constraintLeft_toRightOf="@id/btnBack"
@@ -36,7 +35,6 @@
                                     android:layout_width="60dp"
                                     android:layout_height="60dp"
                                     android:layout_margin="8dp"
-                                    android:contentDescription="adsdas"
                                     app:layout_constraintRight_toRightOf="parent"
                                     app:layout_constraintTop_toTopOf="parent"/>
 
@@ -79,6 +77,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/message_send"
                         android:id="@+id/send"
-                        android:onClick="sendMessage"/>
+                        android:onClick="sendMessage"
+                        android:contentDescription="@string/todo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
