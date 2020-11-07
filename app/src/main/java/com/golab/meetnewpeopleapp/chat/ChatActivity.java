@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -47,6 +48,7 @@ public class ChatActivity extends AppCompatActivity {
     private TextView mName;
     private ImageButton ibPicture;
     private NestedScrollView nestedScrollView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,12 +56,13 @@ public class ChatActivity extends AppCompatActivity {
         mMessage= (EditText) findViewById(R.id.userMessage);
         db= FirebaseFirestore.getInstance();
         matchId = getIntent().getExtras().getString("chatKey");
-        userMatchId = matchId = getIntent().getExtras().getString("secondUserId");
+        userMatchId = getIntent().getExtras().getString("secondUserId");
         mName = findViewById(R.id.tvMatchName);
         ibPicture=findViewById(R.id.ibMatchpic);
         nestedScrollView= findViewById(R.id.nestedScrollView);
         currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         mDbChat= FirebaseFirestore.getInstance().collection("Matches").document(matchId).collection("Messages");
+        System.out.println(mDbChat.getPath().toString());
         fillNavBar();
         getChatMessages();
         mRecyclerView= (RecyclerView) findViewById(R.id.recyclerView);
@@ -69,6 +72,8 @@ public class ChatActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mChatLayoutManager);
         mChatAdapter = new ChatAdapter(getDataSetChat(), ChatActivity.this);
         mRecyclerView.setAdapter(mChatAdapter);
+
+
     }
     private ArrayList<ChatObject> resultsMessages = new ArrayList <ChatObject>();
     private List<ChatObject> getDataSetChat() {
@@ -103,12 +108,12 @@ public class ChatActivity extends AppCompatActivity {
                             ChatObject newMessage = new ChatObject(content, currentUserBoolean);
                             resultsMessages.add(newMessage);
                             mChatAdapter.notifyDataSetChanged();
-                            nestedScrollView.fullScroll(View.FOCUS_DOWN);
-                        
                     }
                 }
             }
         });
+        nestedScrollView.fullScroll(View.FOCUS_DOWN);
+
     }
 
     public void sendMessage(View view) {
