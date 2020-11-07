@@ -1,12 +1,9 @@
 package com.golab.meetnewpeopleapp.matches;
 
 import android.content.Context;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,9 +38,10 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesViewHolders> {
     public void onBindViewHolder(@NonNull MatchesViewHolders holder, int position) {
         holder.mMatchId.setText(matchesList.get(position).getUserId());
         holder.mMatchName.setText(matchesList.get(position).getName());
-        if(!matchesList.get(position).getProfileImageUrl().equals("default")){
-            Glide.with(context).load(matchesList.get(position).getProfileImageUrl()).apply(RequestOptions.circleCropTransform()).into(holder.mMatchImage);
-        }
+        holder.setMatchId(matchesList.get(position).getMatchId());
+        holder.setUserId(matchesList.get(position).getUserId());
+        Glide.with(context).load(matchesList.get(position).getProfileImageUrl()).apply(RequestOptions.circleCropTransform()).into(holder.mMatchImage);
+
     }
     @Override
     public int getItemCount() {

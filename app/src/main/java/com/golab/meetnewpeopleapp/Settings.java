@@ -166,7 +166,7 @@ public class Settings extends AppCompatActivity {
                     }
                     if(map.get("lookingFor")!=null)
                     {
-                        String wantedSex = map.get("wantedSex").toString();
+                        String wantedSex = map.get("lookingFor").toString();
                         switch (wantedSex)
                         {
                             case "Male":

@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                     Map match = new HashMap();
                     match.put("id1", currentUId);
                     match.put("id2", userId);
-                    db.collection("users").document().set(match);
+                    db.collection("Matches").document().set(match);
                 }
             }
         });
@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void getOtherProfiles() {
-        Query query =  db.collection("users").whereIn("sex", lookingFor).whereNotEqualTo(FieldPath.documentId(), currentUId);
+        Query query =  db.collection("users").whereIn("gender", lookingFor).whereNotEqualTo(FieldPath.documentId(), currentUId);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

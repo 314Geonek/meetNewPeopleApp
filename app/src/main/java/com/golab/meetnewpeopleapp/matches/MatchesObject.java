@@ -4,10 +4,20 @@ public class MatchesObject {
     private String userId;
     private String name;
     private String profileImageUrl;
-    public MatchesObject (String userId, String name, String profileImageUrl){
+    private String matchId;
+    public MatchesObject (String userId, String name, String profileImageUrl, String matchId){
         this.userId = userId;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
+        this.matchId = matchId;
+    }
+
+    public String getMatchId() {
+        return matchId;
+    }
+
+    public void setMatchId(String matchId) {
+        this.matchId = matchId;
     }
 
     public String getUserId(){

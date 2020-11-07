@@ -20,6 +20,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,17 +44,22 @@ public class MatchesActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mMatchesAdapter);
         db = FirebaseFirestore.getInstance();
         currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        getUserMatchesId();
+        getUserMatchesId("id1");
+        getUserMatchesId("id2");
+
     }
 
-    private void getUserMatchesId() {
-        
-        db.collection("users").document(currentUserID).collection("Matches").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    private void getUserMatchesId(String id) {
+        db.collection("Matches").whereEqualTo(id, currentUserID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                FetchMatchInformation(document.getId());
+                                String key;
+                                if(document.get("id1") !=null && document.get("id2")!=null)
+                                {   String matchId=document.getId();
+                                    key = currentUserID.equals(document.get("id1").toString()) ? document.get("id2").toString() : document.get("id2").toString();
+                                    FetchMatchInformation(key, matchId);}
                             }
                         }
                     }
@@ -61,14 +67,14 @@ public class MatchesActivity extends AppCompatActivity {
 
     }
 
-    private void FetchMatchInformation(final  String key) {
+    private void FetchMatchInformation(final  String key, final String matchId) {
         db.collection("users").document(key).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if(task.getResult().exists())
                     {
                         Map tsk = task.getResult().getData();
-                        String userId = key;
+                        String userId = task.getResult().getId();
                         String name = "";
                         String profileImageUrl = "";
                         if(tsk.get("name")!=null)
@@ -78,7 +84,7 @@ public class MatchesActivity extends AppCompatActivity {
                         if(tsk.get("profileImageUrl")!=null){
                             profileImageUrl = tsk.get("profileImageUrl").toString();
                         }
-                        MatchesObject obj = new MatchesObject(userId, name, profileImageUrl);
+                        MatchesObject obj = new MatchesObject(userId, name, profileImageUrl, matchId );
                         resultsMatches.add(obj);
                         mMatchesAdapter.notifyDataSetChanged();
                     }

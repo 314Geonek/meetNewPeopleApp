@@ -278,7 +278,6 @@ public class Registration extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         mAuth.removeAuthStateListener(firebaseAuthStateListener);
-        mAuth.signOut();
     }
 
 }

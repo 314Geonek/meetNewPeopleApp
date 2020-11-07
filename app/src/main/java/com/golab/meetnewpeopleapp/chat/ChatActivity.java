@@ -53,13 +53,15 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
         mMessage= (EditText) findViewById(R.id.userMessage);
         db= FirebaseFirestore.getInstance();
-        userMatchId = getIntent().getExtras().getString("matchId");
+        matchId = getIntent().getExtras().getString("chatKey");
+        userMatchId = matchId = getIntent().getExtras().getString("secondUserId");
         mName = findViewById(R.id.tvMatchName);
         ibPicture=findViewById(R.id.ibMatchpic);
         nestedScrollView= findViewById(R.id.nestedScrollView);
         currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        getMatchId();
+        mDbChat= FirebaseFirestore.getInstance().collection("Matches").document(matchId).collection("Messages");
         fillNavBar();
+        getChatMessages();
         mRecyclerView= (RecyclerView) findViewById(R.id.recyclerView);
         mRecyclerView.setNestedScrollingEnabled(false);
         mRecyclerView.setHasFixedSize(false);
@@ -73,24 +75,6 @@ public class ChatActivity extends AppCompatActivity {
         return resultsMessages;
     }
 
-    private void getMatchId()
-    {
-        List<String> ids = new ArrayList<>();
-        ids.add(currentUserID);
-        ids.add(userMatchId);
-        db.collection("Matches").whereIn("id1",ids).whereIn("id2", ids).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-        @Override
-        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-            for (DocumentSnapshot snapshot:queryDocumentSnapshots) {
-                if(!snapshot.get("id1").toString().equals(snapshot.get("id2")))
-                {
-                    mDbChat= FirebaseFirestore.getInstance().collection("Matches").document(snapshot.getId()).collection("Messages");
-                    getChatMessages();
-                }
-            }
-        }
-    });
-    }
     private void fillNavBar()
     {    db.collection("users").document(userMatchId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
         @Override
@@ -111,25 +95,16 @@ public class ChatActivity extends AppCompatActivity {
                     return;
                 }
                 for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                    switch (dc.getType()) {
-                        case ADDED:
+                        String content = dc.getDocument().get("content") != null ? dc.getDocument().get("content").toString() : null;
+                        String writerId = dc.getDocument().get("writerId") != null ? dc.getDocument().get("writerId").toString() : null;
 
-                            String content  = dc.getDocument().get("content")!=null ? dc.getDocument().get("content").toString() : null;
-                            String writerId = dc.getDocument().get("writerId")!=null ? dc.getDocument().get("writerId").toString() : null;
-
-                            if(content!=null && writerId!=null)
-                            {
-                                Boolean currentUserBoolean =writerId.equals(currentUserID) ? true : false;
-                                ChatObject newMessage = new ChatObject(content,currentUserBoolean);
-                                resultsMessages.add(newMessage);
-                                mChatAdapter.notifyDataSetChanged();
-                                nestedScrollView.fullScroll(View.FOCUS_DOWN);
-                            }
-                            break;
-                        case MODIFIED:
-                            break;
-                        case REMOVED:
-                            break;
+                        if (content != null && writerId != null) {
+                            Boolean currentUserBoolean = writerId.equals(currentUserID) ? true : false;
+                            ChatObject newMessage = new ChatObject(content, currentUserBoolean);
+                            resultsMessages.add(newMessage);
+                            mChatAdapter.notifyDataSetChanged();
+                            nestedScrollView.fullScroll(View.FOCUS_DOWN);
+                        
                     }
                 }
             }
@@ -144,6 +119,7 @@ public class ChatActivity extends AppCompatActivity {
         newMessage.put("writerId", currentUserID);
         newMessage.put("content", messageText);
         newMessage.put("writed", Timestamp.now().toDate());
+        System.out.println(mDbChat.getPath());
         mDbChat.document().set(newMessage);
     }
     mMessage.setText(null);
