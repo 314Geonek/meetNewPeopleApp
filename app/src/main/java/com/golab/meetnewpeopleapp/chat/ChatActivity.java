@@ -47,32 +47,27 @@ public class ChatActivity extends AppCompatActivity {
     private String matchId;
     private TextView mName;
     private ImageButton ibPicture;
-    private NestedScrollView nestedScrollView;
-    private ArrayList<ChatObject> resultsMessages = new ArrayList <ChatObject>();
+    private ArrayList<ChatObject> resultsMessages;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        mMessage= (EditText) findViewById(R.id.userMessage);
-        db= FirebaseFirestore.getInstance();
         matchId = getIntent().getExtras().getString("chatKey");
         userMatchId = getIntent().getExtras().getString("secondUserId");
-        mName = findViewById(R.id.tvMatchName);
-        ibPicture=findViewById(R.id.ibMatchpic);
-        nestedScrollView= findViewById(R.id.nestedScrollView);
+        mMessage= (EditText) findViewById(R.id.userMessage);
+        mName = (TextView) findViewById(R.id.tvMatchName);
+        ibPicture=(ImageButton) findViewById(R.id.ibMatchpic);
+        mRecyclerView= (RecyclerView) findViewById(R.id.recyclerView);
+        resultsMessages = new ArrayList <ChatObject>();
+        db= FirebaseFirestore.getInstance();
         currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         mDbChat= FirebaseFirestore.getInstance().collection("Matches").document(matchId).collection("Messages");
         fillNavBar();
         getChatMessages();
-        mRecyclerView= (RecyclerView) findViewById(R.id.recyclerView);
-        mRecyclerView.setNestedScrollingEnabled(false);
-        mRecyclerView.setHasFixedSize(false);
         mChatLayoutManager = new LinearLayoutManager(ChatActivity.this);
         mRecyclerView.setLayoutManager(mChatLayoutManager);
         mChatAdapter = new ChatAdapter(resultsMessages, ChatActivity.this);
         mRecyclerView.setAdapter(mChatAdapter);
-
-
     }
     private void fillNavBar()
     {    db.collection("users").document(userMatchId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {

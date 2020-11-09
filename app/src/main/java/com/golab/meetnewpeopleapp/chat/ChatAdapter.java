@@ -3,14 +3,17 @@ package com.golab.meetnewpeopleapp.chat;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebStorage;
 import android.widget.ImageView;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,28 +39,27 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolders> {
         View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat, null, false);
         RecyclerView.LayoutParams lp= new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutView.setLayoutParams(lp);
-        ChatViewHolders cvh = new ChatViewHolders(layoutView);
-        return cvh;
+        ChatViewHolders chatViewHolders = new ChatViewHolders(layoutView);
+        return chatViewHolders;
     }
+
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolders holder, int position) {
-        System.out.println(position);
-        System.out.println(chatList.get(position).getMessage());
-        System.out.println(chatList.get(position).getCurrentUser());
-
+        LinearLayoutCompat.LayoutParams params = (LinearLayoutCompat.LayoutParams) holder.mContainer.getLayoutParams();
         if(chatList.get(position).getCurrentUser())
-        {
-            holder.mMessage.setTextColor(Color.parseColor("#ffffff"));
+        {   params.gravity = Gravity.END;
+            params.rightMargin = 0;
+            params.leftMargin = 200;
             holder.mMessage.setBackgroundResource(R.drawable.chat_item_right);
-
         }
         else{
-            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) holder.mMessage.getLayoutParams();
-            params.rightToRight = ConstraintLayout.LayoutParams.UNSET;
-            params.leftToLeft =R.id.parent;
-            holder.mMessage.setTextColor(Color.parseColor("#ffffff"));
+            params.gravity = Gravity.START;
+            params.leftMargin = 0;
+            params.rightMargin = 200;
             holder.mMessage.setBackgroundResource(R.drawable.chat_item_left);
         }
+        holder.mContainer.setLayoutParams(params);
+        holder.mMessage.setTextColor(Color.parseColor("#ffffff"));
         holder.mMessage.setText(chatList.get(position).getMessage());
     }
     @Override

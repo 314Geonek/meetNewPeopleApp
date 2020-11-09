@@ -17,7 +17,7 @@ import com.golab.meetnewpeopleapp.R;
 
 public class ChatViewHolders extends RecyclerView.ViewHolder implements View.OnClickListener {
             public TextView mMessage;
-            public ConstraintLayout mContainer;
+            public LinearLayoutCompat mContainer;
             public ChatViewHolders(View itemView)
             {
                 super(itemView);
