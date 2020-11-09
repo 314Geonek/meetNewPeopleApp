@@ -48,7 +48,7 @@ public class ChatActivity extends AppCompatActivity {
     private TextView mName;
     private ImageButton ibPicture;
     private NestedScrollView nestedScrollView;
-
+    private ArrayList<ChatObject> resultsMessages = new ArrayList <ChatObject>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +62,6 @@ public class ChatActivity extends AppCompatActivity {
         nestedScrollView= findViewById(R.id.nestedScrollView);
         currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         mDbChat= FirebaseFirestore.getInstance().collection("Matches").document(matchId).collection("Messages");
-        System.out.println(mDbChat.getPath().toString());
         fillNavBar();
         getChatMessages();
         mRecyclerView= (RecyclerView) findViewById(R.id.recyclerView);
@@ -70,16 +69,11 @@ public class ChatActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(false);
         mChatLayoutManager = new LinearLayoutManager(ChatActivity.this);
         mRecyclerView.setLayoutManager(mChatLayoutManager);
-        mChatAdapter = new ChatAdapter(getDataSetChat(), ChatActivity.this);
+        mChatAdapter = new ChatAdapter(resultsMessages, ChatActivity.this);
         mRecyclerView.setAdapter(mChatAdapter);
 
 
     }
-    private ArrayList<ChatObject> resultsMessages = new ArrayList <ChatObject>();
-    private List<ChatObject> getDataSetChat() {
-        return resultsMessages;
-    }
-
     private void fillNavBar()
     {    db.collection("users").document(userMatchId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
         @Override
@@ -87,7 +81,8 @@ public class ChatActivity extends AppCompatActivity {
             if(document.exists())
             mName.setText(document.get("name").toString());
             if(!document.get("profileImageUrl").toString().equals("default"))
-            Glide.with(getApplication()).load(document.get("profileImageUrl").toString()).apply(RequestOptions.circleCropTransform()).into(ibPicture);
+            Glide.with(getApplication()).load(document.get("profileImageUrl").toString()).apply(RequestOptions.circleCropTransform())
+                    .into(ibPicture);
         }
     });
     }
@@ -99,35 +94,32 @@ public class ChatActivity extends AppCompatActivity {
                 if (e != null) {
                     return;
                 }
-                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                for (DocumentChange dc : snapshots.getDocumentChanges())
+                        if(dc.getType().toString().equals("ADDED")){
                         String content = dc.getDocument().get("content") != null ? dc.getDocument().get("content").toString() : null;
                         String writerId = dc.getDocument().get("writerId") != null ? dc.getDocument().get("writerId").toString() : null;
-
                         if (content != null && writerId != null) {
                             Boolean currentUserBoolean = writerId.equals(currentUserID) ? true : false;
                             ChatObject newMessage = new ChatObject(content, currentUserBoolean);
                             resultsMessages.add(newMessage);
                             mChatAdapter.notifyDataSetChanged();
-                    }
+                        }
                 }
             }
         });
-        nestedScrollView.fullScroll(View.FOCUS_DOWN);
-
     }
 
     public void sendMessage(View view) {
-    String messageText= mMessage.getText().toString();
-    if(!messageText.isEmpty())
-    {
-        Map newMessage= new HashMap();
-        newMessage.put("writerId", currentUserID);
-        newMessage.put("content", messageText);
-        newMessage.put("writed", Timestamp.now().toDate());
-        System.out.println(mDbChat.getPath());
-        mDbChat.document().set(newMessage);
-    }
-    mMessage.setText(null);
+        String messageText= mMessage.getText().toString();
+        if(!messageText.isEmpty())
+        {
+            Map newMessage= new HashMap();
+            newMessage.put("writerId", currentUserID);
+            newMessage.put("content", messageText);
+            newMessage.put("writed", Timestamp.now().toDate());
+            mDbChat.document().set(newMessage);
+        }
+        mMessage.setText(null);
     }
 
 

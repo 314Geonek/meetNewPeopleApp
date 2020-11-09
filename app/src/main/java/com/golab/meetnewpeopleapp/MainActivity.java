@@ -95,7 +95,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void isMatch(final String userId) {
-        db.collection("users").document(currentUId).collection("SwipedBy").document(userId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        db.collection("users").document(currentUId).collection("SwipedBy").
+                document(userId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.exists())

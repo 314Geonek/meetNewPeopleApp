@@ -1,6 +1,7 @@
 package com.golab.meetnewpeopleapp.matches;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,12 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesViewHolders> {
 
     @Override
     public void onBindViewHolder(@NonNull MatchesViewHolders holder, int position) {
-        holder.mMatchId.setText(matchesList.get(position).getUserId());
+        if(matchesList.get(position).getLastMessage()!=null) {
+            holder.lastMessage.setText(matchesList.get(position).getLastMessage().getMessage());
+            holder.lastMessage.setTextSize(15);
+        if(!matchesList.get(position).getLastMessage().getCurrentUser())
+            holder.lastMessage.setTypeface(null, Typeface.BOLD);
+        }
         holder.mMatchName.setText(matchesList.get(position).getName());
         holder.setMatchId(matchesList.get(position).getMatchId());
         holder.setUserId(matchesList.get(position).getUserId());

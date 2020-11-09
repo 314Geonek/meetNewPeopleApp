@@ -1,15 +1,19 @@
 package com.golab.meetnewpeopleapp.matches;
 
+import com.golab.meetnewpeopleapp.chat.ChatObject;
+
 public class MatchesObject {
     private String userId;
     private String name;
     private String profileImageUrl;
     private String matchId;
-    public MatchesObject (String userId, String name, String profileImageUrl, String matchId){
+    private ChatObject lastMessage;
+    public MatchesObject (String userId, String name, String profileImageUrl, String matchId, ChatObject lastMessage){
         this.userId = userId;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
         this.matchId = matchId;
+        this.lastMessage= lastMessage;
     }
 
     public String getMatchId() {
@@ -44,5 +48,9 @@ public class MatchesObject {
 
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
+    }
+
+    public ChatObject getLastMessage() {
+        return lastMessage;
     }
 }

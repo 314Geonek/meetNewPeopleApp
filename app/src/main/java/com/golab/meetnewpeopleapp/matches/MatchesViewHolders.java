@@ -13,7 +13,7 @@ import com.golab.meetnewpeopleapp.chat.ChatActivity;
 
 
 public class MatchesViewHolders extends RecyclerView.ViewHolder implements View.OnClickListener {
-            public TextView mMatchId;
+            public TextView lastMessage;
             public TextView mMatchName;
             public ImageView mMatchImage;
             private String matchId;
@@ -22,19 +22,10 @@ public class MatchesViewHolders extends RecyclerView.ViewHolder implements View.
             {
                 super(itemView);
                 itemView.setOnClickListener(this);
-                mMatchId = (TextView) itemView.findViewById(R.id.Matchid);
+                lastMessage = (TextView) itemView.findViewById(R.id.Matchid);
                 mMatchName = (TextView) itemView.findViewById(R.id.MatchName);
                 mMatchImage = (ImageView) itemView.findViewById(R.id.MatchImage);
             }
-
-    public String getMatchId() {
-        return matchId;
-    }
-
-    public void setMatchId(String matchId) {
-        this.matchId = matchId;
-    }
-
     @Override
             public void onClick(View view)
             {
@@ -45,11 +36,9 @@ public class MatchesViewHolders extends RecyclerView.ViewHolder implements View.
                 intent.putExtras(b);
                 view.getContext().startActivity(intent);
             }
-
-    public String getUserId() {
-        return userId;
+    public void setMatchId(String matchId) {
+        this.matchId = matchId;
     }
-
     public void setUserId(String userId) {
         this.userId = userId;
     }

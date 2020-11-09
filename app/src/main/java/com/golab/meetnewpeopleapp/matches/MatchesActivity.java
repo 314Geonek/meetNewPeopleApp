@@ -11,13 +11,18 @@ import android.view.View;
 
 import com.golab.meetnewpeopleapp.MyProfileActivity;
 import com.golab.meetnewpeopleapp.R;
+import com.golab.meetnewpeopleapp.chat.ChatObject;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -58,7 +63,7 @@ public class MatchesActivity extends AppCompatActivity {
                                 String key;
                                 if(document.get("id1") !=null && document.get("id2")!=null)
                                 {   String matchId=document.getId();
-                                    key = currentUserID.equals(document.get("id1").toString()) ? document.get("id2").toString() : document.get("id2").toString();
+                                    key = currentUserID.equals(document.get("id1").toString()) ? document.get("id2").toString() : document.get("id1").toString();
                                     FetchMatchInformation(key, matchId);}
                             }
                         }
@@ -84,13 +89,30 @@ public class MatchesActivity extends AppCompatActivity {
                         if(tsk.get("profileImageUrl")!=null){
                             profileImageUrl = tsk.get("profileImageUrl").toString();
                         }
-                        MatchesObject obj = new MatchesObject(userId, name, profileImageUrl, matchId );
-                        resultsMatches.add(obj);
-                        mMatchesAdapter.notifyDataSetChanged();
+                        fetchLastMessage(userId, name, profileImageUrl, matchId);
                     }
 
             }
         });
+    }
+    private void fetchLastMessage(final String userId,final String name,final  String profileImageUrl, final String matchID)
+    {
+        db.collection("Matches").document(matchID).collection("Messages").orderBy("writed", Query.Direction.DESCENDING).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                ChatObject chatObject = null;
+                if(task.isSuccessful())
+                    for (DocumentSnapshot ds: task.getResult()) {
+                        boolean isCreatedByCurrentUser = ds.get("writerId").equals(currentUserID) ? true : false;
+                        chatObject= new ChatObject(ds.get("content").toString(),isCreatedByCurrentUser);
+                    }
+                MatchesObject obj = new MatchesObject(userId, name, profileImageUrl, matchID, chatObject);
+                resultsMatches.add(obj);
+                mMatchesAdapter.notifyDataSetChanged();
+            }
+        });
+
+
     }
 
     private List<MatchesObject> getDataSetMatchers() {

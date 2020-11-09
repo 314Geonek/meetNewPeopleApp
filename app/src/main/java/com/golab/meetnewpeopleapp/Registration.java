@@ -146,12 +146,10 @@ public class Registration extends AppCompatActivity {
                                     saveUserData();
                                 }
                                 else  {
-                                        try
-                                        {
-                                            throw task.getException();
-                                        }
-                                        catch (FirebaseAuthUserCollisionException existEmail)
-                                        {
+                                    try
+                                    { throw task.getException(); }
+                                    catch (FirebaseAuthUserCollisionException existEmail)
+                                    {
                                             Toast.makeText(Registration.this, getResources().getString(R.string.emailExists), Toast.LENGTH_SHORT).show();
                                         }
                                         catch (Exception e)
@@ -159,8 +157,6 @@ public class Registration extends AppCompatActivity {
                                             Toast.makeText(Registration.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     }
-
-
                             }
                         }
                 );
@@ -190,7 +186,7 @@ public class Registration extends AppCompatActivity {
     private void saveUserData()
     {
         String userId = mAuth.getCurrentUser().getUid();
-        Map userInfo = new HashMap<>();
+        HashMap userInfo = new HashMap<>();
         userInfo.put("name", mName.getText().toString());
         userInfo.put("gender", getMySex());
         userInfo.put("searchingRange","Unlimited");
@@ -209,7 +205,7 @@ public class Registration extends AppCompatActivity {
                 taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Map newImage = new HashMap();
+                        HashMap newImage = new HashMap();
                         newImage.put("profileImageUrl",uri.toString());
                         db.collection("users").document(userId).update(newImage);
                     }
@@ -221,34 +217,25 @@ public class Registration extends AppCompatActivity {
         boolean output=true;
         String error="";
         if(!android.util.Patterns.EMAIL_ADDRESS.matcher(mEmail.getText().toString()).matches())
-        {
-            mEmail.setError("Email not Validate");
-            output=false;
-        }
+        {   mEmail.setError("Email not Validate");
+            output=false; }
         if(mRadioGroupSearchedGender.getCheckedRadioButtonId()== -1)
         {   error = error.concat( getResources().getString(R.string.uHaveToSelectSearchedGender)).concat("\n");
-            output=false;
-        }
+            output=false; }
         if(mRadioGroupMyGender.getCheckedRadioButtonId()==-1)
         {   error = error.concat( getResources().getString(R.string.uHaveToSelectYourGender).concat("\n"));
-            output=false;
-        }
+            output=false; }
         if(mPassword.getText().length()<6)
-        {
-            mPassword.setError("Password too short <6");
-            output=false;
-        }
+        {   mPassword.setError("Password too short <6");
+            output=false; }
         if(mName.getText().length()<3)
-        {
-            mName.setError("Name too short <3");
-            output=false;
-        }
+        {   mName.setError("Name too short <3");
+            output=false; }
         if(resultUri==null)
         {   error = error.concat( getResources().getString(R.string.uHaveTOAddPhoto).concat("\n"));
-            output=false;
-        }
+            output=false; }
         if(!error.isEmpty())
-        Toast.makeText(Registration.this,error,Toast.LENGTH_SHORT).show();
+            Toast.makeText(Registration.this,error,Toast.LENGTH_SHORT).show();
         return output;
     }
 

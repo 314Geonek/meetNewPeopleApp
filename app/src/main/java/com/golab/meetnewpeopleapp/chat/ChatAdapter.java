@@ -41,20 +41,24 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolders> {
     }
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolders holder, int position) {
-        holder.mMessage.setText(chatList.get(position).getMessage());
+        System.out.println(position);
+        System.out.println(chatList.get(position).getMessage());
+        System.out.println(chatList.get(position).getCurrentUser());
+
         if(chatList.get(position).getCurrentUser())
         {
             holder.mMessage.setTextColor(Color.parseColor("#ffffff"));
             holder.mMessage.setBackgroundResource(R.drawable.chat_item_right);
-            holder.mMessage.requestLayout();
+
         }
-        else {
+        else{
             ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) holder.mMessage.getLayoutParams();
             params.rightToRight = ConstraintLayout.LayoutParams.UNSET;
             params.leftToLeft =R.id.parent;
             holder.mMessage.setTextColor(Color.parseColor("#ffffff"));
             holder.mMessage.setBackgroundResource(R.drawable.chat_item_left);
         }
+        holder.mMessage.setText(chatList.get(position).getMessage());
     }
     @Override
     public int getItemCount() {
