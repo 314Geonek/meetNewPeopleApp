@@ -190,6 +190,7 @@ public class Registration extends AppCompatActivity {
         userInfo.put("name", mName.getText().toString());
         userInfo.put("gender", getMySex());
         userInfo.put("lookingFor", getSearchedSex());
+        userInfo.put("searchingRange", 50);
         db = FirebaseFirestore.getInstance();
         db.collection("users").document(userId).set(userInfo);
         savePhoto(userId);

@@ -40,15 +40,14 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private List<cards> rowItems;
     private FirebaseFirestore db;
-    private String searchingRange;
+    private Float searchingRange;
     private String currentUId;
-    private GeoPoint geoPoint;
+    private Location myLocation;
     private List<String> lookingFor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        geoPoint=null;
         mAuth = FirebaseAuth.getInstance();
         db=  FirebaseFirestore.getInstance();
         currentUId = mAuth.getCurrentUser().getUid();
@@ -119,11 +118,10 @@ public class MainActivity extends AppCompatActivity {
             Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             if(location==null)
             location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
             try {
-                geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+                myLocation = location;
                 Map myCurrentLocation = new HashMap();
-                myCurrentLocation.put("lastLocation", geoPoint);
+                myCurrentLocation.put("lastLocation", location);
                 db.collection("users").document(currentUId).update(myCurrentLocation);
             }catch (Exception e)
             {
@@ -147,8 +145,9 @@ public class MainActivity extends AppCompatActivity {
                                         lookingFor.add("Female");
                         }
                         if(task.getResult().get("searchingRange")!=null)
+                        if(!task.getResult().get("searchingRange").toString().equals("false"))
                         {
-                            searchingRange = task.getResult().get("searchingRange").toString();
+                            searchingRange = Float.parseFloat(task.getResult().get("searchingRange").toString());
                         }
                         else searchingRange=null;
                         getOtherProfiles();
@@ -157,19 +156,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void checkDistance(final QueryDocumentSnapshot snapshot)
-//    {   if(searchingRange.equals("false"))
-    {{
-            checkOrswiped(snapshot);
+    {
+
+        if(snapshot.get("lastLocation")!=null)
+        {
+            Location otherUserLocation= new Location("otherUserLocation");
+            GeoPoint tmp = (GeoPoint)snapshot.get("lastLocation");
+            otherUserLocation.setLatitude(tmp.getLatitude());
+            otherUserLocation.setLongitude(tmp.getLongitude());
+            int distance = (int)(myLocation.distanceTo(otherUserLocation)/1000);
+            if(searchingRange==null || distance<=searchingRange)
+                addToRowItems(snapshot, distance);
         }
-//        else if(snapshot.get("lastLocation")!=null)
-//        {
-//            GeoPoint otheruserLocation = (GeoPoint) snapshot.get("lastLocation");
-//            float [] dist = new float[1];
-//            Location.distanceBetween(otheruserLocation.getLatitude(), otheruserLocation.getLongitude(), geoPoint.getLatitude(), geoPoint.getLongitude(), dist);
-//            dist[0] *= 0.000621371192f;
-//            if(dist[0]<=Float.parseFloat(searchingRange));
-//                 checkOrswiped(snapshot);
-//        }
 
     }
     private void getOtherProfiles() {
@@ -179,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (final QueryDocumentSnapshot document : task.getResult()) {
-                        checkDistance(document);
+                        checkOrswiped(document);
                         }
                     }}
         });
@@ -190,19 +188,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (!documentSnapshot.exists()) {
-                    addToRowItems(snapshot);
+                    checkDistance(snapshot);
                 }
             }
         });
     }
 
-    private void addToRowItems(DocumentSnapshot snapshot)
+    private void addToRowItems(DocumentSnapshot snapshot, final int disance)
     {
         String profileImageUrl = "default";
         if (!snapshot.get("profileImageUrl").toString().equals("default")) {
             profileImageUrl = snapshot.get("profileImageUrl").toString();
         }
-        cards item = new cards(snapshot.getId(), snapshot.get("name").toString(), profileImageUrl);
+        cards item = new cards(snapshot.getId(), snapshot.get("name").toString(), profileImageUrl, disance);
         rowItems.add(item);
         arrayAdapter.notifyDataSetChanged();
     }

@@ -48,5 +48,6 @@
     <string name="notVerifiedEmail">You email is not verified</string>
     <string name="verifyYourMail">please verify your email</string>
     <string name="todo">TODO</string>
+    <string name="away">km away</string>
 
 </resources>

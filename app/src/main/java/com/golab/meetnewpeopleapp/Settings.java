@@ -87,7 +87,8 @@ public class Settings extends AppCompatActivity {
                 final String value = String.valueOf((int)(2 + ( pos * 198)));
                 slider.setBubbleText(value.concat(" km"));
                 return Unit.INSTANCE; }
-        });
+        }
+        );
         mRadioGroupSex.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -189,18 +190,15 @@ public class Settings extends AppCompatActivity {
                         Glide.with(getApplication()).load(profileImageUrl).into(mProfileImage);
 
                     }
-                    if(map.get("searchingRange")==null) {
+                    if(map.get("searchingRange")!=null)
+                    if(map.get("searchingRange").toString().equals("false")) {
                         rangeSwitch.setChecked(false);
                     }
                     else
                         {
                             rangeSwitch.setChecked(true);
                             Float value = Float.parseFloat(map.get("searchingRange").toString());
-                           System.out.println(value);
                             value = (value - 2)/198f;
-
-//                                    (value-1) /200f;
-                            System.out.println(value);
                             slider.setPosition(value);
                             }
 
@@ -231,7 +229,7 @@ public class Settings extends AppCompatActivity {
                 userInfo.put("lookingFor", "Male Female");
                 }
 
-            userInfo.put("searchingRange",rangeSwitch.isChecked() ?  slider.getBubbleText().substring(0, slider.getBubbleText().length()-3) : null);
+            userInfo.put("searchingRange",rangeSwitch.isChecked() ?  slider.getBubbleText().substring(0, slider.getBubbleText().length()-3) : "false");
             db.collection("users").document(mAuth.getCurrentUser().getUid()).update(userInfo);
 
         if(resultUri!= null)

@@ -7,10 +7,12 @@ public class cards {
     private String userId;
     private String name;
     private String profileImageUrl;
-    public cards (String userId, String name, String profileImageUrl){
+    private int distance;
+    public cards (String userId, String name, String profileImageUrl, int distance){
         this.userId = userId;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
+        this.distance = distance;
     }
 
     public cards() {
@@ -41,5 +43,9 @@ public class cards {
 
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
+    }
+
+    public int getDistance() {
+        return distance;
     }
 }
