@@ -170,6 +170,7 @@ public class Settings extends AppCompatActivity {
                     if(map.get("lookingFor")!=null)
                     {
                         String wantedSex = map.get("lookingFor").toString();
+                        System.out.println(wantedSex);
                         switch (wantedSex)
                         {
                             case "Male":
@@ -178,7 +179,7 @@ public class Settings extends AppCompatActivity {
                             case "Female":
                                 mRadioGroupSex.check(R.id.female);
                                 break;
-                            case "Both":
+                            case "Male Female":
                                 mRadioGroupSex.check(R.id.both);
                             default: break;
                         }

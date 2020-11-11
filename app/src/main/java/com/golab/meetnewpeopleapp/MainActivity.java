@@ -116,25 +116,26 @@ public class MainActivity extends AppCompatActivity {
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1000);
         else {
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if(location==null)
-            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if(location==null)
-            location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-
-            try {
+            List<String> providers = locationManager.getProviders(true);
+            Location location = null;
+            for (String provider : providers) {
+                Location l = locationManager.getLastKnownLocation(provider);
+                if (l == null) {
+                    continue;
+                }
+                if (location == null || l.getAccuracy() < location.getAccuracy()) {
+                    location = l;
+                }
+            }
                 GeoPoint lastLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
                 myLocation = location;
                 Map myCurrentLocation = new HashMap();
                 myCurrentLocation.put("lastLocation", lastLocation);
                 db.collection("users").document(currentUId).update(myCurrentLocation);
-            }catch (Exception e)
-            {
-                Log.d("Gps and vire disabled","Gps and vire disabled" );
-
-        }}
+            }
 
     }
+
 
     private void getDatailsOfSearching(){
         lookingFor =new ArrayList<>();
