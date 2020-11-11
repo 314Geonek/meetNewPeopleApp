@@ -40,6 +40,7 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.firebase.storage.internal.Sleeper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -124,6 +125,10 @@ public class Registration extends AppCompatActivity {
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
                     Intent intent = new Intent(Registration.this, LoginActivity.class);
+                    Bundle b = new Bundle();
+                    b.putString("email", user.getEmail().concat(" "));
+                    intent.putExtras(b);
+                    mAuth.signOut();
                     startActivity(intent);
                     finish();
                 }
@@ -143,6 +148,7 @@ public class Registration extends AppCompatActivity {
                             {
                                 if (task.isSuccessful())
                                 {
+                                    Toast.makeText(Registration.this, getResources().getString(R.string.notVerifiedEmail), Toast.LENGTH_LONG);
                                     saveUserData();
                                 }
                                 else  {
@@ -257,7 +263,8 @@ public class Registration extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mAuth.signOut();
+        if(mAuth.getCurrentUser()!=null)
+            mAuth.signOut();
         mAuth.addAuthStateListener(firebaseAuthStateListener);
     }
 

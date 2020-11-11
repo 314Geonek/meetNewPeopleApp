@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +32,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        if(getIntent().getExtras().getString("email")!=null )
+        Toast.makeText(LoginActivity.this, getIntent().getExtras().getString("email").concat(getResources().getString(R.string.notVerifiedEmail)), Toast.LENGTH_LONG).show();
+
         mAuth = FirebaseAuth.getInstance();
         firebaseAuthStateListener = new FirebaseAuth.AuthStateListener()
         {
@@ -42,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (!user.isEmailVerified()) {
                         user.sendEmailVerification();
                         Toast.makeText(LoginActivity.this, user.getEmail() +"  "+ getResources().getString(R.string.notVerifiedEmail), Toast.LENGTH_SHORT).show();
+                        mAuth.signOut();
                     }
                     else {
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);

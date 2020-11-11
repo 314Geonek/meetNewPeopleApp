@@ -59,7 +59,7 @@ public class Settings extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private SwitchCompat rangeSwitch;
     private FirebaseFirestore db;
-    private String userID, name, phone, aboutMe, profileImageUrl;
+    private String userID, name, aboutMe, profileImageUrl;
     private RadioGroup mRadioGroupSex;
     private Uri resultUri;
     private FluidSlider slider;
@@ -169,9 +169,9 @@ public class Settings extends AppCompatActivity {
                     }
                     if(map.get("lookingFor")!=null)
                     {
-                        String wantedSex = map.get("lookingFor").toString();
-                        System.out.println(wantedSex);
-                        switch (wantedSex)
+                        String lookingFor = map.get("lookingFor").toString();
+                        System.out.println(lookingFor);
+                        switch (lookingFor)
                         {
                             case "Male":
                                 mRadioGroupSex.check(R.id.male);
