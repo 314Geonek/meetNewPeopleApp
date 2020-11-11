@@ -186,7 +186,7 @@ public class Registration extends AppCompatActivity {
     private void saveUserData()
     {
         String userId = mAuth.getCurrentUser().getUid();
-        HashMap userInfo = new HashMap<>();
+        Map userInfo = new HashMap<>();
         userInfo.put("name", mName.getText().toString());
         userInfo.put("gender", getMySex());
         userInfo.put("lookingFor", getSearchedSex());

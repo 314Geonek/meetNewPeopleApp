@@ -7,6 +7,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -118,16 +119,20 @@ public class MainActivity extends AppCompatActivity {
             Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             if(location==null)
             location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if(location==null)
+            location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+
             try {
+                GeoPoint lastLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
                 myLocation = location;
                 Map myCurrentLocation = new HashMap();
-                myCurrentLocation.put("lastLocation", location);
+                myCurrentLocation.put("lastLocation", lastLocation);
                 db.collection("users").document(currentUId).update(myCurrentLocation);
             }catch (Exception e)
             {
                 Log.d("Gps and vire disabled","Gps and vire disabled" );
-            }
-        }
+
+        }}
 
     }
 
