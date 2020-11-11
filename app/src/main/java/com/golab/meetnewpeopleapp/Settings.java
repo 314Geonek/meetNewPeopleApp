@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -55,12 +57,12 @@ public class Settings extends AppCompatActivity {
     private Button mBack, mConfirm;
     private ImageView mProfileImage;
     private FirebaseAuth mAuth;
+    private SwitchCompat rangeSwitch;
     private FirebaseFirestore db;
     private String userID, name, phone, aboutMe, profileImageUrl;
     private RadioGroup mRadioGroupSex;
     private Uri resultUri;
     private FluidSlider slider;
-    private TextView mSeekBarDesc;
     private StorageReference mStorageRef;
 
     @Override
@@ -74,26 +76,17 @@ public class Settings extends AppCompatActivity {
         mBack = (Button) findViewById(R.id.back);
         mStorageRef = FirebaseStorage.getInstance().getReference();
         mConfirm = (Button) findViewById(R.id.confirm);
+        rangeSwitch = (SwitchCompat) findViewById(R.id.switcher);
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
         slider = findViewById(R.id.seekBar);
         slider.setPositionListener(new Function1<Float, Unit>() {
-
             @Override
             public Unit invoke(Float pos) {
-                final String value = String.valueOf((int)( pos * 500));
+                final String value = String.valueOf((int)(2 + ( pos * 198)));
                 slider.setBubbleText(value.concat(" km"));
-                return Unit.INSTANCE;
-            }
-
-        });
-        slider.setEndTrackingListener(new Function0<Unit>() {
-            @Override
-            public Unit invoke() {
-
-                return Unit.INSTANCE;
-            }
+                return Unit.INSTANCE; }
         });
         mRadioGroupSex.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -118,8 +111,7 @@ public class Settings extends AppCompatActivity {
                         else{
                             female.setBackgroundResource(R.drawable.radio_button_round_right);
                             male.setBackgroundResource(R.drawable.radio_button_round_left);
-                            both.setBackgroundResource(R.drawable.radio_button_mid_selected);
-                            }
+                            both.setBackgroundResource(R.drawable.radio_button_mid_selected); }
             }
         });
         getUserInfo();
@@ -143,6 +135,16 @@ public class Settings extends AppCompatActivity {
             public void onClick(View view) {
                 finish();
                 return;
+            }
+        });
+
+        //pokazywanie/ukrywanie slidera dystansu
+        rangeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                slider.setEnabled(isChecked);
+                slider.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                System.out.println(isChecked);
             }
         });
     }
@@ -187,21 +189,21 @@ public class Settings extends AppCompatActivity {
                         Glide.with(getApplication()).load(profileImageUrl).into(mProfileImage);
 
                     }
-                    if(map.get("searchingRange")!=null)
-                    {
-                        if(map.get("searchingRange").toString().equals("Unlimited"))
-                        {}
-                        else{
-                             String possition = map.get("searchingRange").toString();
-                            slider.setBubbleText(possition);
-                            possition = possition.substring(0, possition.length()-3);
-                             System.out.println("/"+possition+"/");
-                             float currentpossition =((Float.parseFloat(possition))/500);
-                             slider.setPosition(currentpossition);
-                        }
-
-
+                    if(map.get("searchingRange")==null) {
+                        rangeSwitch.setChecked(false);
                     }
+                    else
+                        {
+                            rangeSwitch.setChecked(true);
+                            Float value = Float.parseFloat(map.get("searchingRange").toString());
+                           System.out.println(value);
+                            value = (value - 2)/198f;
+
+//                                    (value-1) /200f;
+                            System.out.println(value);
+                            slider.setPosition(value);
+                            }
+
                     }
 
 
@@ -221,14 +223,16 @@ public class Settings extends AppCompatActivity {
         {
             userInfo.put("lookingFor", "Female");
         }
-        else if(R.id.male==mRadioGroupSex.getCheckedRadioButtonId())
-        {
-            userInfo.put("lookingFor", "Male");
-        }
-        else{
-            userInfo.put("lookingFor", "Male Female");
-        }
-        db.collection("users").document(mAuth.getCurrentUser().getUid()).update(userInfo);
+            else if(R.id.male==mRadioGroupSex.getCheckedRadioButtonId())
+            {
+                userInfo.put("lookingFor", "Male");
+            }
+            else{
+                userInfo.put("lookingFor", "Male Female");
+                }
+
+            userInfo.put("searchingRange",rangeSwitch.isChecked() ?  slider.getBubbleText().substring(0, slider.getBubbleText().length()-3) : null);
+            db.collection("users").document(mAuth.getCurrentUser().getUid()).update(userInfo);
 
         if(resultUri!= null)
         {
@@ -243,12 +247,12 @@ public class Settings extends AppCompatActivity {
                                     Map newImage = new HashMap();
                                     newImage.put("profileImageUrl",uri.toString());
                                     db.collection("users").document(userID).update(newImage);
-                                    finish();
                                 }
                             });
                 }
             });
         }
+        finish();
     }
 
     @Override

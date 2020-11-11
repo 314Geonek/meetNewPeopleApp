@@ -189,7 +189,6 @@ public class Registration extends AppCompatActivity {
         HashMap userInfo = new HashMap<>();
         userInfo.put("name", mName.getText().toString());
         userInfo.put("gender", getMySex());
-        userInfo.put("searchingRange","Unlimited");
         userInfo.put("lookingFor", getSearchedSex());
         db = FirebaseFirestore.getInstance();
         db.collection("users").document(userId).set(userInfo);

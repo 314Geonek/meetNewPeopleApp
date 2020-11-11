@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private List<cards> rowItems;
     private FirebaseFirestore db;
     private String searchingRange;
-    private String userSex,  currentUId;
+    private String currentUId;
     private GeoPoint geoPoint;
     private List<String> lookingFor;
     @Override
@@ -146,31 +146,30 @@ public class MainActivity extends AppCompatActivity {
                                 if(task.getResult().get("lookingFor").toString().contains("Female"))
                                         lookingFor.add("Female");
                         }
-                    if(task.getResult().get("searchingRange")!=null)
-                    {}
+                        if(task.getResult().get("searchingRange")!=null)
+                        {
+                            searchingRange = task.getResult().get("searchingRange").toString();
+                        }
+                        else searchingRange=null;
                         getOtherProfiles();
                 }
             }
         });
     }
     private void checkDistance(final QueryDocumentSnapshot snapshot)
-    {   if(searchingRange==null)
-        {
+//    {   if(searchingRange.equals("false"))
+    {{
             checkOrswiped(snapshot);
         }
-        else if(searchingRange.contains("Unlimited"))
-        {
-            checkOrswiped(snapshot);
-        }
-        else if(snapshot.get("lastLocation")!=null)
-        {
-            GeoPoint otheruserLocation = (GeoPoint) snapshot.get("lastLocation");
-            float [] dist = new float[1];
-            Location.distanceBetween(otheruserLocation.getLatitude(), otheruserLocation.getLongitude(), geoPoint.getLatitude(), geoPoint.getLongitude(), dist);
-            dist[0] *= 0.000621371192f;
-            if(dist[0]<=Float.parseFloat(searchingRange));
-            checkOrswiped(snapshot);
-        }
+//        else if(snapshot.get("lastLocation")!=null)
+//        {
+//            GeoPoint otheruserLocation = (GeoPoint) snapshot.get("lastLocation");
+//            float [] dist = new float[1];
+//            Location.distanceBetween(otheruserLocation.getLatitude(), otheruserLocation.getLongitude(), geoPoint.getLatitude(), geoPoint.getLongitude(), dist);
+//            dist[0] *= 0.000621371192f;
+//            if(dist[0]<=Float.parseFloat(searchingRange));
+//                 checkOrswiped(snapshot);
+//        }
 
     }
     private void getOtherProfiles() {
