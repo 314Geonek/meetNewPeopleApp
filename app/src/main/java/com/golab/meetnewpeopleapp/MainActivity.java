@@ -237,7 +237,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goToProfilMenuActivity(View view) {
-        Intent intent=new Intent(MainActivity.this, MyProfileActivity.class);
+        Intent intent=new Intent(MainActivity.this, ShowSingleProfileActivity.class);
+        Bundle b = new Bundle();
+        b.putString("id", currentUId);
+        intent.putExtras(b);
         startActivity(intent);
     }
     public void  goToDescription(View view) {

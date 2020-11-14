@@ -10,7 +10,7 @@
 <androidx.appcompat.widget.LinearLayoutCompat
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp"
+    android:paddingBottom="20dp"
     android:orientation="vertical">
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btnBack"
@@ -19,6 +19,7 @@
         android:layout_height="70dp"
         android:onClick="goBack"/>
     <androidx.appcompat.widget.AppCompatImageView
+        android:layout_margin="20dp"
         android:id="@+id/profileImage"
         android:layout_width="150dp"
         android:layout_height="150dp"

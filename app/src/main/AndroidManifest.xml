@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/full_screen_key">
     <activity android:name=".Description_Activity"/>
-        <activity android:name=".MyProfileActivity" />
+        <activity android:name=".ShowSingleProfileActivity" />
         <activity android:name=".chat.ChatActivity" />
         <activity android:name=".matches.MatchesActivity" />
         <activity android:name=".ResetPasswordActivity" />

@@ -18,7 +18,7 @@ public class Cards {
         city = snapshot.get("city")!=null ? snapshot.get("city").toString() : "";
         gender = snapshot.get("gender")!=null ? snapshot.get("gender").toString() : "";
         job = snapshot.get("job")!=null ? snapshot.get("job").toString() : "";
-        age = snapshot.get("job")!=null ? Timestamp.valueOf(snapshot.get("job").toString()).toString() : "";
+        //age = snapshot.get("job")!=null ? Timestamp.valueOf(snapshot.get("job").toString()).toString() : "";
         this.distance = distance;
     }
 

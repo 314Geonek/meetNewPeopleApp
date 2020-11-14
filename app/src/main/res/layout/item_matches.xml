@@ -23,10 +23,8 @@
         android:fontFamily="@font/artifika"
         android:paddingLeft="20dp"
         android:paddingBottom="20sp"
-        android:text="fdsfdssdfdsfdsdfsfdsfdsf"
         android:textSize="24sp"
         app:layout_constraintLeft_toRightOf="@+id/MatchImage"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/MatchImage" />
         <androidx.appcompat.widget.AppCompatTextView
             app:layout_constraintRight_toRightOf="parent"

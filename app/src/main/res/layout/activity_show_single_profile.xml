@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MyProfileActivity">
-
+    tools:context=".ShowSingleProfileActivity">
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/navBar"
         android:layout_width="match_parent"
@@ -18,6 +17,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/profile"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -34,31 +34,57 @@
                     android:onClick="goToMainActivity" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/goToMatches"
+                    android:id="@+id/btnMatchesActivity"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:drawableTop="@drawable/szarychat50"
                     android:onClick="goToMatches" />
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="60dp"
+            android:background="@drawable/back"
+            android:layout_marginStart="10dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_height="60dp"
+            android:onClick="goBack"/>
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <include layout="@layout/item"
+        <include
+            layout="@layout/item"
             android:layout_height="0dp"
             android:layout_width="0dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/btnGoToProfileEdit"
+            app:layout_constraintBottom_toTopOf="@+id/bottomBar"
             app:layout_constraintTop_toBottomOf="@+id/navBar"/>
 
-                <androidx.appcompat.widget.AppCompatImageButton
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:id="@+id/btnGoToProfileEdit"
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/bottomBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/icons8_settings_80"
-                    android:onClick="goToProfileEdit"
-                     />
+                    android:orientation="horizontal"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                            <androidx.appcompat.widget.AppCompatImageButton
+                                android:id="@+id/btnGoToProfileEdit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/icons8_settings_80"
+                                android:onClick="goToProfileEdit"/>
+
+                            <androidx.appcompat.widget.AppCompatImageButton
+                                android:id="@+id/btnRemoveMatch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone"
+                                android:background="@drawable/icons8_settings_80"
+                                android:onClick="removeMatch"/>
+
+                 </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>

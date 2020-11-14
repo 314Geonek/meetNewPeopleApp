@@ -8,6 +8,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -17,7 +18,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.golab.meetnewpeopleapp.MainActivity;
 import com.golab.meetnewpeopleapp.R;
+import com.golab.meetnewpeopleapp.ShowSingleProfileActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -75,6 +78,7 @@ public class ChatActivity extends AppCompatActivity {
         public void onSuccess(DocumentSnapshot document) {
             if(document.exists())
             mName.setText(document.get("name").toString());
+            ibPicture.setBackground(null);
             if(!document.get("profileImageUrl").toString().equals("default"))
             Glide.with(getApplication()).load(document.get("profileImageUrl").toString()).apply(RequestOptions.circleCropTransform())
                     .into(ibPicture);
@@ -122,5 +126,13 @@ public class ChatActivity extends AppCompatActivity {
     public void goBack(View view) {
         finish();
         return;
+    }
+
+    public void showProfile(View view) {
+        Intent intent=new Intent(ChatActivity.this, ShowSingleProfileActivity.class);
+        Bundle b = new Bundle();
+        b.putString("id", userMatchId);
+        intent.putExtras(b);
+        startActivity(intent);
     }
 }

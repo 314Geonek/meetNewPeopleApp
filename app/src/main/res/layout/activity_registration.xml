@@ -46,6 +46,7 @@
                 android:textColorHint="#fabfd3"
                 android:backgroundTint="#fabfd3"
                 android:drawableStart="@drawable/facet30"
+                android:maxLength="20"
                 android:hint="@string/name"
                 android:inputType="textPersonName"
                 android:importantForAutofill="no" />

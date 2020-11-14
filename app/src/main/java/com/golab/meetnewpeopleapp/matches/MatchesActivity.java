@@ -9,11 +9,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.golab.meetnewpeopleapp.MyProfileActivity;
+import com.golab.meetnewpeopleapp.ShowSingleProfileActivity;
 import com.golab.meetnewpeopleapp.R;
 import com.golab.meetnewpeopleapp.chat.ChatObject;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -22,10 +21,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.w3c.dom.Document;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -125,7 +121,10 @@ public class MatchesActivity extends AppCompatActivity {
     }
 
     public void goToMyProfile(View view) {
-        Intent intent=new Intent(MatchesActivity.this, MyProfileActivity.class);
+        Intent intent=new Intent(MatchesActivity.this, ShowSingleProfileActivity.class);
+        Bundle b =  new Bundle();
+        b.putString("id", currentUserID);
+        intent.putExtras(b);
         startActivity(intent);
         finish();
         return;
