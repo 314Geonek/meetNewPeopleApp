@@ -62,7 +62,6 @@ public class Registration extends AppCompatActivity {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-        System.out.println("no i login");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
         mAuth = FirebaseAuth.getInstance();
@@ -172,10 +171,8 @@ public class Registration extends AppCompatActivity {
         if(requestCode == 71 && resultCode == RESULT_OK
                 && data != null && data.getData() != null )
         {
-            RequestOptions options = new RequestOptions();
-            options.centerCrop();
             resultUri = data.getData();
-            Glide.with(getApplication()).load(resultCode).apply(options).into(mPhoto);
+            Glide.with(getApplication()).asBitmap().load(resultUri).into(mPhoto);
         }
     }
     private void saveUserData()

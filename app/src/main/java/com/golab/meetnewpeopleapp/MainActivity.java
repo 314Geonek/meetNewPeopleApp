@@ -5,19 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.GpsStatus;
 import android.location.Location;
-import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.golab.meetnewpeopleapp.Cards.Array_Adapter;
-import com.golab.meetnewpeopleapp.Cards.cards;
+import com.golab.meetnewpeopleapp.Cards.Cards;
 import com.golab.meetnewpeopleapp.matches.MatchesActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -32,6 +27,7 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
@@ -45,7 +41,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 public class MainActivity extends AppCompatActivity {
     private Array_Adapter arrayAdapter;
     private FirebaseAuth mAuth;
-    private List<cards> rowItems;
+    private List<Cards> rowItems;
     private FirebaseFirestore db;
     private Float searchingRange;
     private String currentUId;
@@ -63,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         currentUId = mAuth.getCurrentUser().getUid();
         getMyCurrentLocation();
         getDatailsOfSearching();
-        rowItems = new ArrayList<cards>();
+        rowItems = new ArrayList<Cards>();
         arrayAdapter = new Array_Adapter(this, R.layout.item, rowItems);
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
         flingContainer.setAdapter(arrayAdapter);
@@ -94,8 +90,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void swipe(String direction) {
-        cards object = (cards) rowItems.get(0);
-        String userId = object.getUserId();
+        Cards object = (Cards) rowItems.get(0);
+        String userId = object.getId();
         Map swipe = new HashMap();
         if (direction.equals("left"))
             swipe.put("swipe", false);
@@ -211,13 +207,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void addToRowItems(DocumentSnapshot snapshot, final int disance)
+    private void addToRowItems(DocumentSnapshot snapshot, final int distance)
     {
         String profileImageUrl = "default";
         if (!snapshot.get("profileImageUrl").toString().equals("default")) {
             profileImageUrl = snapshot.get("profileImageUrl").toString();
         }
-        cards item = new cards(snapshot.getId(), snapshot.get("name").toString(), profileImageUrl, disance);
+
+        Cards item = new Cards(snapshot, distance);
         rowItems.add(item);
         arrayAdapter.notifyDataSetChanged();
     }
@@ -244,8 +241,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
     public void  goToDescription(View view) {
-
-           Intent intent=new Intent(MainActivity.this, MyProfileActivity.class);
-          startActivity(intent);
+           Intent intent=new Intent(MainActivity.this, Description_Activity.class);
+           intent.putExtra("myObject", new Gson().toJson(rowItems.get(0)));
+           startActivity(intent);
     }
 }

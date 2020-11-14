@@ -54,13 +54,13 @@ import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 
 public class Settings extends AppCompatActivity {
-    private EditText mName, mAboutMe;
+    private EditText mName, mAboutMe, mJob, mCity;
     private Button mBack, mConfirm;
     private ImageView mProfileImage;
     private FirebaseAuth mAuth;
     private SwitchCompat rangeSwitch;
     private FirebaseFirestore db;
-    private String userID, name, aboutMe, profileImageUrl;
+    private String userID, name, aboutMe, profileImageUrl, job, city;
     private RadioGroup mRadioGroupSex;
     private Uri resultUri;
     private FluidSlider slider;
@@ -79,6 +79,8 @@ public class Settings extends AppCompatActivity {
         mConfirm = (Button) findViewById(R.id.confirm);
         rangeSwitch = (SwitchCompat) findViewById(R.id.switcher);
         db = FirebaseFirestore.getInstance();
+        mJob = findViewById(R.id.job);
+        mCity = findViewById(R.id.City);
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
         slider = findViewById(R.id.seekBar);
@@ -132,14 +134,6 @@ public class Settings extends AppCompatActivity {
                 saveUserInformation();
             }
         });
-        mBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-                return;
-            }
-        });
-
         //pokazywanie/ukrywanie slidera dystansu
         rangeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -162,6 +156,16 @@ public class Settings extends AppCompatActivity {
                     {
                             name = map.get("name").toString();
                             mName.setText(name);
+                    }
+                    if(map.get("city")!=null)
+                    {
+                        city = map.get("city").toString();
+                        mCity.setText(city);
+                    }
+                    if(map.get("job")!=null)
+                    {
+                        job = map.get("job").toString();
+                        mJob.setText(job);
                     }
                     if(map.get("aboutMe")!=null)
                     {
@@ -188,10 +192,9 @@ public class Settings extends AppCompatActivity {
 
                     if(!map.get("profileImageUrl").equals("default"))
                     {
-                        RequestOptions options = new RequestOptions();
-                        options.centerCrop();
+
                         profileImageUrl = map.get("profileImageUrl").toString();
-                        Glide.with(getApplication()).load(profileImageUrl).apply(options).into(mProfileImage);
+                        Glide.with(getApplication()).load(profileImageUrl).apply(RequestOptions.circleCropTransform()).into(mProfileImage);
 
                     }
                     if(map.get("searchingRange")!=null)
@@ -218,9 +221,13 @@ public class Settings extends AppCompatActivity {
     private void saveUserInformation() {
         name =  mName.getText().toString();
         aboutMe = mAboutMe.getText().toString();
+        city = mCity.getText().toString();
+        job = mJob.getText().toString();
         Map userInfo = new HashMap();
         userInfo.put("name",name);
         userInfo.put("aboutMe",aboutMe);
+        userInfo.put("job",job);
+        userInfo.put("city",city);
         if(R.id.female==mRadioGroupSex.getCheckedRadioButtonId())
         {
             userInfo.put("lookingFor", "Female");
@@ -263,10 +270,12 @@ public class Settings extends AppCompatActivity {
         if(requestCode == 71 && resultCode == RESULT_OK
                 && data != null && data.getData() != null )
         {
-            RequestOptions options = new RequestOptions();
-            options.centerCrop();
             resultUri = data.getData();
-            Glide.with(getApplication()).load(resultCode).apply(options).into(mProfileImage);
+            Glide.with(getApplication()).load(resultCode).apply(RequestOptions.circleCropTransform()).into(mProfileImage);
         }
+    }
+
+    public void goBack(View view) {
+        finish();
     }
 }

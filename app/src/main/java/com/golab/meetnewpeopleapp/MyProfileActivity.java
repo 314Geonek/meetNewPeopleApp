@@ -1,29 +1,20 @@
 package com.golab.meetnewpeopleapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.core.widget.ImageViewCompat;
 
-import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.golab.meetnewpeopleapp.Cards.Array_Adapter;
-import com.golab.meetnewpeopleapp.Cards.cards;
 import com.golab.meetnewpeopleapp.matches.MatchesActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.lorentzos.flingswipe.SwipeFlingAdapterView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MyProfileActivity extends AppCompatActivity{
     private FirebaseAuth mAuth;

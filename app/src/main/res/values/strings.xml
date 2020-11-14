@@ -49,5 +49,7 @@
     <string name="verifyYourMail">please verify your email</string>
     <string name="todo">TODO</string>
     <string name="away">km away</string>
+    <string name="city">City</string>
+    <string name="Job">job</string>
 
 </resources>

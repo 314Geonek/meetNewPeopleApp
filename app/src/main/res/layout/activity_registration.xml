@@ -51,7 +51,7 @@
                 android:importantForAutofill="no" />
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/aboutMe"
-        android:layout_below="@id/phone"
+        android:layout_below="@id/City"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:textColor="#fabfd3"
