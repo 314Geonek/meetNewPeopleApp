@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="preloaded_fonts" translatable="false">
+        <item>@font/artifika</item>
         <item>@font/audiowide</item>
         <item>@font/herr_von_muellerhoff</item>
         <item>@font/seymour_one</item>

@@ -2,6 +2,7 @@ package com.golab.meetnewpeopleapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Context;
@@ -18,6 +19,8 @@ import android.view.View;
 import com.golab.meetnewpeopleapp.Cards.Array_Adapter;
 import com.golab.meetnewpeopleapp.Cards.cards;
 import com.golab.meetnewpeopleapp.matches.MatchesActivity;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -36,6 +39,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+
 public class MainActivity extends AppCompatActivity {
     private Array_Adapter arrayAdapter;
     private FirebaseAuth mAuth;
@@ -44,54 +50,63 @@ public class MainActivity extends AppCompatActivity {
     private Float searchingRange;
     private String currentUId;
     private Location myLocation;
+    private FusedLocationProviderClient fusedLocationClient;
     private List<String> lookingFor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
-        db=  FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         currentUId = mAuth.getCurrentUser().getUid();
         getMyCurrentLocation();
         getDatailsOfSearching();
         rowItems = new ArrayList<cards>();
-        arrayAdapter = new Array_Adapter(this, R.layout.item, rowItems );
+        arrayAdapter = new Array_Adapter(this, R.layout.item, rowItems);
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
         flingContainer.setAdapter(arrayAdapter);
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
-            public void removeFirstObjectInAdapter() { }
+            public void removeFirstObjectInAdapter() {
+            }
+
             @Override
             public void onLeftCardExit(Object dataObject) {
                 swipe("left");
             }
+
             @Override
             public void onRightCardExit(Object dataObject) {
-             swipe("right");
+                swipe("right");
             }
+
             @Override
-            public void onAdapterAboutToEmpty(int itemsInAdapter) { }
+            public void onAdapterAboutToEmpty(int itemsInAdapter) {
+            }
+
             @Override
-            public void onScroll(float scrollProgressPercent) { }});
+            public void onScroll(float scrollProgressPercent) {
+            }
+        });
     }
 
 
-
-    private void swipe(String direction)
-    {   cards object = (cards) rowItems.get(0);
-        String userId= object.getUserId();
-          Map swipe = new HashMap();
-            if(direction.equals("left"))
-                swipe.put("swipe",false);
-            else{
-                    swipe.put("swipe", true);
-                    isMatch(userId);
-                }
+    private void swipe(String direction) {
+        cards object = (cards) rowItems.get(0);
+        String userId = object.getUserId();
+        Map swipe = new HashMap();
+        if (direction.equals("left"))
+            swipe.put("swipe", false);
+        else {
+            swipe.put("swipe", true);
+            isMatch(userId);
+        }
         db.collection("users").document(userId).collection("SwipedBy").document(currentUId).set(swipe);
         rowItems.remove(0);
         arrayAdapter.notifyDataSetChanged();
     }
-
 
 
     private void isMatch(final String userId) {
@@ -99,40 +114,36 @@ public class MainActivity extends AppCompatActivity {
                 document(userId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.exists())
-                if((Boolean)documentSnapshot.get("swipe"))
-                {
-                    Map match = new HashMap();
-                    match.put("id1", currentUId);
-                    match.put("id2", userId);
-                    db.collection("Matches").document().set(match);
-                }
+                if (documentSnapshot.exists())
+                    if ((Boolean) documentSnapshot.get("swipe")) {
+                        Map match = new HashMap();
+                        match.put("id1", currentUId);
+                        match.put("id2", userId);
+                        db.collection("Matches").document().set(match);
+                    }
             }
         });
     }
     private void getMyCurrentLocation()
     {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1000);
-        else {
-            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            List<String> providers = locationManager.getProviders(true);
-            Location location = null;
-            for (String provider : providers) {
-                Location l = locationManager.getLastKnownLocation(provider);
-                if (l == null) {
-                    continue;
-                }
-                if (location == null || l.getAccuracy() < location.getAccuracy()) {
-                    location = l;
-                }
-            }
-                GeoPoint lastLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
-                myLocation = location;
-                Map myCurrentLocation = new HashMap();
-                myCurrentLocation.put("lastLocation", lastLocation);
-                db.collection("users").document(currentUId).update(myCurrentLocation);
-            }
+        while (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, 1);
+        }
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            GeoPoint lastLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
+                            myLocation = location;
+                            Map myCurrentLocation = new HashMap();
+                            myCurrentLocation.put("lastLocation", lastLocation);
+                            db.collection("users").document(currentUId).update(myCurrentLocation);
+                        }
+                        else myLocation=null;
+
+                    }
+                });
 
     }
 
@@ -223,6 +234,11 @@ public class MainActivity extends AppCompatActivity {
         swipe(direction);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
 
     public void goToProfilMenuActivity(View view) {
         Intent intent=new Intent(MainActivity.this, MyProfileActivity.class);

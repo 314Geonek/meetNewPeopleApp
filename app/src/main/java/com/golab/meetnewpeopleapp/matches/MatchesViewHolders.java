@@ -22,7 +22,7 @@ public class MatchesViewHolders extends RecyclerView.ViewHolder implements View.
             {
                 super(itemView);
                 itemView.setOnClickListener(this);
-                lastMessage = (TextView) itemView.findViewById(R.id.Matchid);
+                lastMessage = (TextView) itemView.findViewById(R.id.lastMessage);
                 mMatchName = (TextView) itemView.findViewById(R.id.MatchName);
                 mMatchImage = (ImageView) itemView.findViewById(R.id.MatchImage);
             }

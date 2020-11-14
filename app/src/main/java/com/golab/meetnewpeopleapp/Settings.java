@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -187,8 +188,10 @@ public class Settings extends AppCompatActivity {
 
                     if(!map.get("profileImageUrl").equals("default"))
                     {
+                        RequestOptions options = new RequestOptions();
+                        options.centerCrop();
                         profileImageUrl = map.get("profileImageUrl").toString();
-                        Glide.with(getApplication()).load(profileImageUrl).into(mProfileImage);
+                        Glide.with(getApplication()).load(profileImageUrl).apply(options).into(mProfileImage);
 
                     }
                     if(map.get("searchingRange")!=null)
@@ -260,8 +263,10 @@ public class Settings extends AppCompatActivity {
         if(requestCode == 71 && resultCode == RESULT_OK
                 && data != null && data.getData() != null )
         {
+            RequestOptions options = new RequestOptions();
+            options.centerCrop();
             resultUri = data.getData();
-            Glide.with(getApplication()).asBitmap().load(resultUri).into(mProfileImage);
+            Glide.with(getApplication()).load(resultCode).apply(options).into(mProfileImage);
         }
     }
 }

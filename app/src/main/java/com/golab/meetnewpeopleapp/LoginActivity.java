@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        if(getIntent().getExtras().getString("email")!=null )
+        if(getIntent().getExtras()!=null )
         Toast.makeText(LoginActivity.this, getIntent().getExtras().getString("email").concat(getResources().getString(R.string.notVerifiedEmail)), Toast.LENGTH_LONG).show();
 
         mAuth = FirebaseAuth.getInstance();
@@ -65,6 +65,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart()
     {
         super.onStart();
+        if(null!=mAuth.getCurrentUser())
+            mAuth.signOut();
         mAuth.addAuthStateListener(firebaseAuthStateListener);
     }
     @Override

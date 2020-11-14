@@ -23,6 +23,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -58,10 +59,10 @@ public class Registration extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private FirebaseStorage mStorageRef;
-    private FirebaseAuth.AuthStateListener firebaseAuthStateListener;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+        System.out.println("no i login");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
         mAuth = FirebaseAuth.getInstance();
@@ -119,21 +120,7 @@ public class Registration extends AppCompatActivity {
             }
         });
 
-        firebaseAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user != null) {
-                    Intent intent = new Intent(Registration.this, LoginActivity.class);
-                    Bundle b = new Bundle();
-                    b.putString("email", user.getEmail().concat(" "));
-                    intent.putExtras(b);
-                    mAuth.signOut();
-                    startActivity(intent);
-                    finish();
-                }
-            }
-        };
+
         mRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -148,7 +135,7 @@ public class Registration extends AppCompatActivity {
                             {
                                 if (task.isSuccessful())
                                 {
-                                    Toast.makeText(Registration.this, getResources().getString(R.string.notVerifiedEmail), Toast.LENGTH_LONG);
+                                    mAuth.getCurrentUser().sendEmailVerification();
                                     saveUserData();
                                 }
                                 else  {
@@ -185,8 +172,10 @@ public class Registration extends AppCompatActivity {
         if(requestCode == 71 && resultCode == RESULT_OK
                 && data != null && data.getData() != null )
         {
+            RequestOptions options = new RequestOptions();
+            options.centerCrop();
             resultUri = data.getData();
-            Glide.with(getApplication()).asBitmap().load(resultUri).into(mPhoto);
+            Glide.with(getApplication()).load(resultCode).apply(options).into(mPhoto);
         }
     }
     private void saveUserData()
@@ -214,11 +203,26 @@ public class Registration extends AppCompatActivity {
                         HashMap newImage = new HashMap();
                         newImage.put("profileImageUrl",uri.toString());
                         db.collection("users").document(userId).update(newImage);
+                        goToLogin();
                     }
                 });
             }
         });
     }
+
+    private void goToLogin() {
+
+                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    Intent intent = new Intent(Registration.this, LoginActivity.class);
+                    Bundle b = new Bundle();
+                    b.putString("email", user.getEmail().concat(" "));
+                    intent.putExtras(b);
+                    mAuth.signOut();
+                    startActivity(intent);
+                    finish();
+
+    }
+
     private boolean isDataCorrect() {
         boolean output=true;
         String error="";
@@ -263,15 +267,12 @@ public class Registration extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if(mAuth.getCurrentUser()!=null)
-            mAuth.signOut();
-        mAuth.addAuthStateListener(firebaseAuthStateListener);
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mAuth.removeAuthStateListener(firebaseAuthStateListener);
     }
 
 }
