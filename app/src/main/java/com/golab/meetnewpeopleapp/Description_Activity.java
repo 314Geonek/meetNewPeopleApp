@@ -1,7 +1,6 @@
 package com.golab.meetnewpeopleapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
 
 import android.os.Bundle;
@@ -12,11 +11,17 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.golab.meetnewpeopleapp.Cards.Cards;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Description_Activity extends AppCompatActivity {
     private String jsonMyObject;
-    private  Cards profile;
+    private Cards profile;
     private AppCompatImageView profileImage;
     private TextView name, about, city, job;
     private RadioGroup gender;
@@ -37,6 +42,7 @@ public class Description_Activity extends AppCompatActivity {
         if (extras != null) {
             jsonMyObject = extras.getString("myObject");
             profile = new Gson().fromJson(jsonMyObject, Cards.class);
+            findViewById(R.id.reportBtn).setVisibility(!profile.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())? View.VISIBLE : View.GONE);
             fillData();
         }
 
@@ -63,5 +69,41 @@ public class Description_Activity extends AppCompatActivity {
 
     public void goBack(View view) {
         finish();
+    }
+
+    public void sendReport(View view) {
+        findViewById(R.id.groundsList).setVisibility(View.VISIBLE);
+    }
+    private void hideLayout() {
+        findViewById(R.id.groundsList).setVisibility(View.GONE);
+    }
+
+    public void repMessages(View View)
+    {
+        sendReportToDatabase("Messages");
+        hideLayout();
+    }
+
+    public void repDescription(View View)
+    {
+        sendReportToDatabase("Description");
+        hideLayout();
+    }
+    public void repPhoto(View view)
+    {
+        sendReportToDatabase("Photo");
+        hideLayout();
+    }
+    public void doNothing(View view){}
+    public void hideReports(View view)
+    {
+        hideLayout();
+    }
+    private void sendReportToDatabase(String description) {
+        Map report = new HashMap<>();
+        report.put("ReportedBy", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        report.put("Time", Timestamp.now());
+        report.put("Reason", description);
+        FirebaseFirestore.getInstance().collection("users").document(profile.getId()).collection("Reports").document().set(report);
     }
 }

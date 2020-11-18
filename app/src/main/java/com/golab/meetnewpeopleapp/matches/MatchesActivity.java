@@ -1,6 +1,7 @@
 package com.golab.meetnewpeopleapp.matches;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,8 +16,11 @@ import com.golab.meetnewpeopleapp.chat.ChatObject;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -58,7 +62,9 @@ public class MatchesActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String key;
                                 if(document.get("id1") !=null && document.get("id2")!=null)
-                                {   String matchId=document.getId();
+                                {
+                                    findViewById(R.id.tvNoMatches).setVisibility(View.GONE);
+                                    String matchId=document.getId();
                                     key = currentUserID.equals(document.get("id1").toString()) ? document.get("id2").toString() : document.get("id1").toString();
                                     FetchMatchInformation(key, matchId);}
                             }
@@ -67,6 +73,41 @@ public class MatchesActivity extends AppCompatActivity {
                 });
 
     }
+//  private void getId(String id){
+//        db.collection("Matches").document(matchID).collection("Messages").orderBy("writed", Query.Direction.DESCENDING).limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
+//            @Override
+//            public void onEvent(@Nullable QuerySnapshot snapshots,
+//                                @Nullable FirebaseFirestoreException e) {
+//                if (e != null) {
+//                    return;
+//                }
+//                for (DocumentChange dc : snapshots.getDocumentChanges())
+//                    if(dc.getType().toString().equals("ADDED")){
+//                        String content = dc.getDocument().get("content") != null ? dc.getDocument().get("content").toString() : null;
+//                        String author = dc.getDocument().get("writerId") != null ? dc.getDocument().get("content").toString() : null;
+//
+//                        ChatObject chatObject= new ChatObject(content, author.equals(currentUserID)?true : false);
+//                        MatchesObject obj = new MatchesObject(userId, name, profileImageUrl, matchID, chatObject);
+//                        int counter=-1;
+//                        for (int i = 0 ; i < resultsMatches.size();i++) {
+//                            System.out.println(resultsMatches.get(i).getMatchId());
+//                            if(matchID.equals(resultsMatches.get(i).getMatchId()))
+//                            {
+//                                counter=i;
+//                                break;
+//                            }
+//                        }
+//                        if(counter==-1)
+//                            resultsMatches.add(obj);
+//                        else
+//                            resultsMatches.set(counter, obj);
+//                        mMatchesAdapter.notifyDataSetChanged();
+//                    }
+//
+//            }
+//        });
+//    }
+
 
     private void FetchMatchInformation(final  String key, final String matchId) {
         db.collection("users").document(key).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -87,30 +128,44 @@ public class MatchesActivity extends AppCompatActivity {
                         }
                         fetchLastMessage(userId, name, profileImageUrl, matchId);
                     }
-
             }
         });
     }
-    private void fetchLastMessage(final String userId,final String name,final  String profileImageUrl, final String matchID)
-    {
-        db.collection("Matches").document(matchID).collection("Messages").orderBy("writed", Query.Direction.DESCENDING).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                ChatObject chatObject = null;
-                if(task.isSuccessful())
-                    for (DocumentSnapshot ds: task.getResult()) {
-                        boolean isCreatedByCurrentUser = ds.get("writerId").equals(currentUserID) ? true : false;
-                        chatObject= new ChatObject(ds.get("content").toString(),isCreatedByCurrentUser);
+
+private void fetchLastMessage(final String userId,final String name,final  String profileImageUrl, final String matchID) {
+    db.collection("Matches").document(matchID).collection("Messages").orderBy("writed", Query.Direction.DESCENDING).limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        @Override
+        public void onEvent(@Nullable QuerySnapshot snapshots,
+                            @Nullable FirebaseFirestoreException e) {
+            if (e != null) {
+                return;
+            }
+            for (DocumentChange dc : snapshots.getDocumentChanges())
+                if(dc.getType().toString().equals("ADDED")){
+                        String content = dc.getDocument().get("content") != null ? dc.getDocument().get("content").toString() : null;
+                        String author = dc.getDocument().get("writerId") != null ? dc.getDocument().get("content").toString() : null;
+
+                        ChatObject chatObject= new ChatObject(content, author.equals(currentUserID)?true : false);
+                        MatchesObject obj = new MatchesObject(userId, name, profileImageUrl, matchID, chatObject);
+                        int counter=-1;
+                        for (int i = 0 ; i < resultsMatches.size();i++) {
+                            System.out.println(resultsMatches.get(i).getMatchId());
+                            if(matchID.equals(resultsMatches.get(i).getMatchId()))
+                            {
+                                counter=i;
+                                break;
+                            }
+                        }
+                        if(counter==-1)
+                            resultsMatches.add(obj);
+                        else
+                            resultsMatches.set(counter, obj);
+                        mMatchesAdapter.notifyDataSetChanged();
                     }
-                MatchesObject obj = new MatchesObject(userId, name, profileImageUrl, matchID, chatObject);
-                resultsMatches.add(obj);
-                mMatchesAdapter.notifyDataSetChanged();
-            }
-        });
 
-
-    }
-
+        }
+    });
+}
     private List<MatchesObject> getDataSetMatchers() {
         return resultsMatches;
     }

@@ -25,22 +25,22 @@ public class ChooseLoginOrRegistrationActivity extends AppCompatActivity {
         mLogin= findViewById(R.id.login);
         mRegistration= findViewById(R.id.registration);
         mAuth = FirebaseAuth.getInstance();
-        firebaseAuthStateListener = new FirebaseAuth.AuthStateListener()
-        {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth)
-            {
-                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user != null) {
-                    if (user.isEmailVerified()) {
-                        Intent intent = new Intent(ChooseLoginOrRegistrationActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                }
-
-            }
-        };
+//        firebaseAuthStateListener = new FirebaseAuth.AuthStateListener()
+//        {
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth)
+//            {
+//                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//                if (user != null) {
+//                    if (user.isEmailVerified()) {
+//                        Intent intent = new Intent(ChooseLoginOrRegistrationActivity.this, MainActivity.class);
+//                        startActivity(intent);
+//                        finish();
+//                    }
+//                }
+//
+//            }
+//        };
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,7 +61,7 @@ public class ChooseLoginOrRegistrationActivity extends AppCompatActivity {
     @Override
     protected void onStart()
     {
-        mAuth.addAuthStateListener(firebaseAuthStateListener);
+    //    mAuth.addAuthStateListener(firebaseAuthStateListener);
         super.onStart();
 
     }
@@ -69,6 +69,6 @@ public class ChooseLoginOrRegistrationActivity extends AppCompatActivity {
     protected void onStop()
     {
         super.onStop();
-        mAuth.removeAuthStateListener(firebaseAuthStateListener);
+       // mAuth.removeAuthStateListener(firebaseAuthStateListener);
     }
 }

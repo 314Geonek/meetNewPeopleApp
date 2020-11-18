@@ -19,9 +19,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@mipmap/ic_launcher"
-                android:layout_gravity="bottom"
-                />
-
+                android:layout_gravity="bottom" />
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="75dp"
@@ -44,7 +42,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/away"
-
                 android:textColor="#fabfd3"
                 android:textSize="14sp"
                 android:textStyle="italic"/>

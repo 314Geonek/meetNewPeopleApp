@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F6F6Fb"
+    android:orientation="vertical">
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="@string/reason_of_report"/>
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/reasonOfReport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/compact_text_view_white"
+        android:textSize="18sp"
+        android:text="fsdsdfafdsadffsdsadfsfad"
+        />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="@string/reported_By"/>
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/nameOfReporter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:background="@drawable/compact_text_view_white"
+
+        android:text="fsdsdfafdsadffsdsadfsfad" />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="@string/date_of_report"/>
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/date"
+        android:layout_width="match_parent"
+        android:background="@drawable/compact_text_view_white"
+        android:textSize="18sp"
+        android:layout_height="wrap_content"
+        android:text="fsdsdfafdsadffsdsadfsfad" />
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

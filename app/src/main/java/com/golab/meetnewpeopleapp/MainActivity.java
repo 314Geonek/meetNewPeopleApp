@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.golab.meetnewpeopleapp.Cards.Array_Adapter;
 import com.golab.meetnewpeopleapp.Cards.Cards;
@@ -136,8 +137,10 @@ public class MainActivity extends AppCompatActivity {
                             myCurrentLocation.put("lastLocation", lastLocation);
                             db.collection("users").document(currentUId).update(myCurrentLocation);
                         }
-                        else myLocation=null;
-
+                        else {
+                            myLocation = null;
+                            Toast.makeText(MainActivity.this, getString(R.string.notFoundGps),Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
 
@@ -170,6 +173,10 @@ public class MainActivity extends AppCompatActivity {
     }
     private void checkDistance(final QueryDocumentSnapshot snapshot)
     {
+        if(myLocation==null)
+        {
+            addToRowItems(snapshot, "");
+        }
 
         if(snapshot.get("lastLocation")!=null)
         {
@@ -179,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
             otherUserLocation.setLongitude(tmp.getLongitude());
             int distance = (int)(myLocation.distanceTo(otherUserLocation)/1000);
             if(searchingRange==null || distance<=searchingRange)
-                addToRowItems(snapshot, distance);
+                addToRowItems(snapshot, Integer.toString(distance));
         }
 
     }
@@ -207,13 +214,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void addToRowItems(DocumentSnapshot snapshot, final int distance)
+    private void addToRowItems(DocumentSnapshot snapshot, String distance)
     {
-        String profileImageUrl = "default";
-        if (!snapshot.get("profileImageUrl").toString().equals("default")) {
-            profileImageUrl = snapshot.get("profileImageUrl").toString();
-        }
-
+        distance = distance.concat(getResources().getString(R.string.away));
         Cards item = new Cards(snapshot, distance);
         rowItems.add(item);
         arrayAdapter.notifyDataSetChanged();

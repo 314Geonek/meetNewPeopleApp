@@ -51,5 +51,14 @@
     <string name="away">km away</string>
     <string name="city">City</string>
     <string name="Job">job</string>
+    <string name="other_admin_saw_it">Other admin saw it</string>
+    <string name="reported_By">Reported by</string>
+    <string name="date_of_report">Date of report</string>
+    <string name="offensive_messages">Offensive Messages</string>
+    <string name="inappropriate_photo">Inappropriate Photo</string>
+    <string name="cancel">Cancel</string>
+    <string name="notFoundGps">Localization not found</string>
+    <string name="reason_of_report">Select reason of the report:</string>
+    <string name="no_matches_found">No matches found</string>
 
 </resources>

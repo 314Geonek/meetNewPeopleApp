@@ -31,7 +31,7 @@ public class Array_Adapter extends ArrayAdapter<Cards> {
         RequestOptions options = new RequestOptions();
         options.centerCrop();
         textView.setText(card_item.getName());
-        distanceText.setText(card_item.getDistance() +" "+ distanceText.getText());
+        distanceText.setText(card_item.getDistance());
         switch(card_item.getProfileImageUrl()){
             case "":
                 Glide.with(convertView.getContext()).load(R.mipmap.ic_launcher_round).apply(options).into(imageView);

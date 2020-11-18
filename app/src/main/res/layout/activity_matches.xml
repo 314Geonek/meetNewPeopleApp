@@ -1,55 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".matches.MatchesActivity">
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/navBar"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:layout_centerHorizontal="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         android:orientation="horizontal"
-        android:background="@drawable/nav_bar"
-        >
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnProfile"
-            android:drawableTop="@drawable/szaryprofil50"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_weight="1"
-            android:onClick="goToMyProfile"/>
-        <Button
-            android:id="@+id/btnMainActivity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="?android:attr/buttonBarButtonStyle"
-            android:drawableTop="@drawable/szarydomek50"
-            android:onClick="goToMainActivity"
-            android:layout_weight="1"
-            />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/czerwonychat50"
-            android:id="@+id/goToMatches"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_weight="1"
-           />
-    </LinearLayout>
+        android:background="@drawable/nav_bar">
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnProfile"
+                android:drawableTop="@drawable/szaryprofil50"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_weight="1"
+                android:onClick="goToMyProfile"/>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnMainActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle"
+                android:drawableTop="@drawable/szarydomek50"
+                android:onClick="goToMainActivity"
+                android:layout_weight="1" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/czerwonychat50"
+                android:id="@+id/goToMatches"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_weight="1" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
     <androidx.core.widget.NestedScrollView
         android:layout_below="@+id/navBar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/navBar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
        <androidx.recyclerview.widget.RecyclerView
            android:layout_width="match_parent"
-           android:layout_height="wrap_content"
+           android:layout_height="match_parent"
            android:id="@+id/recyclerView"
            android:scrollbars="vertical"
-           android:nestedScrollingEnabled="false"
-           />
+           android:nestedScrollingEnabled="false"/>
 
 
     </androidx.core.widget.NestedScrollView>
-</RelativeLayout>
+    <TextView
+        android:id="@+id/tvNoMatches"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="20dp"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/navBar"
+        android:text="@string/no_matches_found"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

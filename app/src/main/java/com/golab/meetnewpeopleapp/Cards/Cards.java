@@ -8,9 +8,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import java.sql.Timestamp;
 
 public class Cards {
-    private String id, name, aboutMe, profileImageUrl, city, gender, job, age;
-    private int distance;
-    public Cards(DocumentSnapshot snapshot, int distance) {
+    private String id, name, aboutMe, profileImageUrl, city, gender, job, age, distance;
+    public Cards(DocumentSnapshot snapshot, String distance) {
         id=snapshot.getId();
         name = snapshot.get("name")!=null ? snapshot.get("name").toString() : "";
         aboutMe = snapshot.get("aboutMe")!=null ? snapshot.get("aboutMe").toString() : "";
@@ -26,7 +25,7 @@ public class Cards {
         this.id = id;
     }
 
-    public int getDistance() {
+    public String getDistance() {
         return distance;
     }
 

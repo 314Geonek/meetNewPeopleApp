@@ -64,7 +64,7 @@ public class ShowSingleProfileActivity extends AppCompatActivity{
         @Override
         public void onSuccess(DocumentSnapshot documentSnapshot) {
             if(documentSnapshot.exists()){
-                profile=new Cards(documentSnapshot, 0 );
+                profile=new Cards(documentSnapshot, "" );
                 fillCard();
             }
         }
