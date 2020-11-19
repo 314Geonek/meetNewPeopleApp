@@ -7,8 +7,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.icu.lang.UScript;
+import android.media.MediaDrm;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Switch;
 
 import com.golab.meetnewpeopleapp.ShowSingleProfileActivity;
 import com.golab.meetnewpeopleapp.R;
@@ -55,59 +58,58 @@ public class MatchesActivity extends AppCompatActivity {
     }
 
     private void getUserMatchesId(String id) {
-        db.collection("Matches").whereEqualTo(id, currentUserID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                String key;
-                                if(document.get("id1") !=null && document.get("id2")!=null)
-                                {
-                                    findViewById(R.id.tvNoMatches).setVisibility(View.GONE);
-                                    String matchId=document.getId();
-                                    key = currentUserID.equals(document.get("id1").toString()) ? document.get("id2").toString() : document.get("id1").toString();
-                                    FetchMatchInformation(key, matchId);}
-                            }
-                        }
-                    }
-                });
-
-    }
-//  private void getId(String id){
-//        db.collection("Matches").document(matchID).collection("Messages").orderBy("writed", Query.Direction.DESCENDING).limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
+//        db.collection("Matches").whereEqualTo(id, currentUserID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
 //            @Override
-//            public void onEvent(@Nullable QuerySnapshot snapshots,
-//                                @Nullable FirebaseFirestoreException e) {
-//                if (e != null) {
-//                    return;
-//                }
-//                for (DocumentChange dc : snapshots.getDocumentChanges())
-//                    if(dc.getType().toString().equals("ADDED")){
-//                        String content = dc.getDocument().get("content") != null ? dc.getDocument().get("content").toString() : null;
-//                        String author = dc.getDocument().get("writerId") != null ? dc.getDocument().get("content").toString() : null;
-//
-//                        ChatObject chatObject= new ChatObject(content, author.equals(currentUserID)?true : false);
-//                        MatchesObject obj = new MatchesObject(userId, name, profileImageUrl, matchID, chatObject);
-//                        int counter=-1;
-//                        for (int i = 0 ; i < resultsMatches.size();i++) {
-//                            System.out.println(resultsMatches.get(i).getMatchId());
-//                            if(matchID.equals(resultsMatches.get(i).getMatchId()))
-//                            {
-//                                counter=i;
-//                                break;
-//                            }
-//                        }
-//                        if(counter==-1)
-//                            resultsMatches.add(obj);
-//                        else
-//                            resultsMatches.set(counter, obj);
-//                        mMatchesAdapter.notifyDataSetChanged();
+//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    for (QueryDocumentSnapshot document : task.getResult()) {
+//                        String key;
+//                        if(document.get("id1") !=null && document.get("id2")!=null)
+//                        {
+//                            findViewById(R.id.tvNoMatches).setVisibility(View.GONE);
+//                            String matchId=document.getId();
+//                            key = currentUserID.equals(document.get("id1").toString()) ? document.get("id2").toString() : document.get("id1").toString();
+//                            FetchMatchInformation(key, matchId);}
 //                    }
-//
+//                }
 //            }
 //        });
-//    }
+        db.collection("Matches").whereEqualTo(id, currentUserID).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    return;
+                }
+                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                    String key;
+                    switch(dc.getType())
+                    {
+                        case MODIFIED:
+                        case ADDED:
+                            findViewById(R.id.tvNoMatches).setVisibility(View.GONE);
+                            String matchId=dc.getDocument().getId();
+                            key = currentUserID.equals(dc.getDocument().get("id1").toString()) ? dc.getDocument().get("id2").toString() : dc.getDocument().get("id1").toString();
+                            FetchMatchInformation(key, matchId);
+                            break;
+                        case REMOVED:
+                            System.out.println("removed");
+                            for (MatchesObject match:resultsMatches) {
+                                if(match.getMatchId().equals(dc.getDocument().getId()))
+                                 resultsMatches.remove(match);
+                                mMatchesAdapter.notifyDataSetChanged();
+                            }
+                            if(resultsMatches.isEmpty())
+                                findViewById(R.id.tvNoMatches).setVisibility(View.VISIBLE);
+                            break;
+                    }
 
+
+
+                }
+            }
+        });
+    }
 
     private void FetchMatchInformation(final  String key, final String matchId) {
         db.collection("users").document(key).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -127,11 +129,11 @@ public class MatchesActivity extends AppCompatActivity {
                             profileImageUrl = tsk.get("profileImageUrl").toString();
                         }
                         fetchLastMessage(userId, name, profileImageUrl, matchId);
+
                     }
             }
         });
     }
-
 private void fetchLastMessage(final String userId,final String name,final  String profileImageUrl, final String matchID) {
     db.collection("Matches").document(matchID).collection("Messages").orderBy("writed", Query.Direction.DESCENDING).limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
         @Override
@@ -140,16 +142,24 @@ private void fetchLastMessage(final String userId,final String name,final  Strin
             if (e != null) {
                 return;
             }
-            for (DocumentChange dc : snapshots.getDocumentChanges())
-                if(dc.getType().toString().equals("ADDED")){
-                        String content = dc.getDocument().get("content") != null ? dc.getDocument().get("content").toString() : null;
-                        String author = dc.getDocument().get("writerId") != null ? dc.getDocument().get("content").toString() : null;
+            if(snapshots.getDocumentChanges().isEmpty())
+            {
 
-                        ChatObject chatObject= new ChatObject(content, author.equals(currentUserID)?true : false);
+                MatchesObject obj = new MatchesObject(userId, name, profileImageUrl, matchID, new ChatObject("", false, false ));
+                resultsMatches.add(obj);
+                mMatchesAdapter.notifyDataSetChanged();
+            }
+            else for (DocumentChange dc : snapshots.getDocumentChanges()){
+                if(dc.getType().toString().equals("ADDED")||dc.getType().toString().equals("MODIFIED")){
+                    System.out.println(dc.getType().toString());
+                    String content = dc.getDocument().get("content") != null ? dc.getDocument().get("content").toString() : "";
+                        String author = dc.getDocument().get("writerId") != null ? dc.getDocument().get("content").toString() : "";
+                        boolean readed = dc.getDocument().get("readed") != null ? (boolean)dc.getDocument().get("readed") : true;
+                        ChatObject chatObject;
+                        chatObject= new ChatObject(content, false , readed);
                         MatchesObject obj = new MatchesObject(userId, name, profileImageUrl, matchID, chatObject);
                         int counter=-1;
                         for (int i = 0 ; i < resultsMatches.size();i++) {
-                            System.out.println(resultsMatches.get(i).getMatchId());
                             if(matchID.equals(resultsMatches.get(i).getMatchId()))
                             {
                                 counter=i;
@@ -158,11 +168,11 @@ private void fetchLastMessage(final String userId,final String name,final  Strin
                         }
                         if(counter==-1)
                             resultsMatches.add(obj);
-                        else
-                            resultsMatches.set(counter, obj);
-                        mMatchesAdapter.notifyDataSetChanged();
+                        else{
+                            resultsMatches.set(counter, obj); }
+                    mMatchesAdapter.notifyDataSetChanged();
                     }
-
+            }
         }
     });
 }

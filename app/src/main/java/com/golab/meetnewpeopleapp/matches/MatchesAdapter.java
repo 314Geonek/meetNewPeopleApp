@@ -40,9 +40,16 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesViewHolders> {
         if(matchesList.get(position).getLastMessage()!=null) {
             holder.lastMessage.setText(matchesList.get(position).getLastMessage().getMessage());
             holder.lastMessage.setTextSize(15);
-        if(!matchesList.get(position).getLastMessage().getCurrentUser())
+        if(!matchesList.get(position).getLastMessage().isReaded() && !matchesList.get(position).getLastMessage().getCurrentUser()){
             holder.lastMessage.setTypeface(null, Typeface.BOLD);
+            System.out.println("bold");
         }
+        else{
+            holder.lastMessage.setTypeface(null, Typeface.NORMAL);
+            System.out.println("normal");
+        }
+        }
+
         holder.mMatchName.setText(matchesList.get(position).getName());
         holder.setMatchId(matchesList.get(position).getMatchId());
         holder.setUserId(matchesList.get(position).getUserId());

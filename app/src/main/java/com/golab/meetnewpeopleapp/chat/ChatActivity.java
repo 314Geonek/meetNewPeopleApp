@@ -95,14 +95,15 @@ public class ChatActivity extends AppCompatActivity {
                 }
                 for (DocumentChange dc : snapshots.getDocumentChanges())
                         if(dc.getType().toString().equals("ADDED")){
-                        String content = dc.getDocument().get("content") != null ? dc.getDocument().get("content").toString() : null;
-                        String writerId = dc.getDocument().get("writerId") != null ? dc.getDocument().get("writerId").toString() : null;
-                        if (content != null && writerId != null) {
+                        String content = dc.getDocument().get("content") != null ? dc.getDocument().get("content").toString() : "";
+                        String writerId = dc.getDocument().get("writerId") != null ? dc.getDocument().get("writerId").toString() : "";
+                        Boolean readed = dc.getDocument().get("readed")!= null ? (boolean) dc.getDocument().get("readed") : false;
+                            if(!readed && !writerId.equals(currentUserID))
+                                dc.getDocument().getReference().update("readed",true);
                             Boolean currentUserBoolean = writerId.equals(currentUserID) ? true : false;
-                            ChatObject newMessage = new ChatObject(content, currentUserBoolean);
+                            ChatObject newMessage = new ChatObject(content, currentUserBoolean, readed);
                             resultsMessages.add(newMessage);
                             mChatAdapter.notifyDataSetChanged();
-                        }
                 }
             }
         });
@@ -116,6 +117,7 @@ public class ChatActivity extends AppCompatActivity {
             newMessage.put("writerId", currentUserID);
             newMessage.put("content", messageText);
             newMessage.put("writed", Timestamp.now().toDate());
+            newMessage.put("readed", false);
             mDbChat.document().set(newMessage);
         }
         mMessage.setText(null);
