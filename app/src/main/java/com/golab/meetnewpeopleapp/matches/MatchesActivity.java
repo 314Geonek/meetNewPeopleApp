@@ -93,7 +93,6 @@ public class MatchesActivity extends AppCompatActivity {
                             FetchMatchInformation(key, matchId);
                             break;
                         case REMOVED:
-                            System.out.println("removed");
                             for (MatchesObject match:resultsMatches) {
                                 if(match.getMatchId().equals(dc.getDocument().getId()))
                                  resultsMatches.remove(match);

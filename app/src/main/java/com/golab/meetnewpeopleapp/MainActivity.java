@@ -1,13 +1,19 @@
 package com.golab.meetnewpeopleapp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -15,15 +21,19 @@ import android.widget.Toast;
 import com.golab.meetnewpeopleapp.Cards.Array_Adapter;
 import com.golab.meetnewpeopleapp.Cards.Cards;
 import com.golab.meetnewpeopleapp.matches.MatchesActivity;
+import com.golab.meetnewpeopleapp.matches.MatchesObject;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -38,8 +48,10 @@ import java.util.Map;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static com.google.firebase.firestore.DocumentChange.Type.ADDED;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String CHANNEL_ID = "asdfsdafdfs";
     private Array_Adapter arrayAdapter;
     private FirebaseAuth mAuth;
     private List<Cards> rowItems;
@@ -60,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
         currentUId = mAuth.getCurrentUser().getUid();
         getMyCurrentLocation();
         getDatailsOfSearching();
+        searchMessageAndMatchesChange("id1");
+        searchMessageAndMatchesChange("id2");
+        createNotificationChannel();
         rowItems = new ArrayList<Cards>();
         arrayAdapter = new Array_Adapter(this, R.layout.item, rowItems);
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
@@ -116,6 +131,8 @@ public class MainActivity extends AppCompatActivity {
                         Map match = new HashMap();
                         match.put("id1", currentUId);
                         match.put("id2", userId);
+                        match.put("id1Notificated", false);
+                        match.put("id2Notificated", false);
                         db.collection("Matches").document().set(match);
                     }
             }
@@ -251,4 +268,69 @@ public class MainActivity extends AppCompatActivity {
            intent.putExtra("myObject", new Gson().toJson(rowItems.get(0)));
            startActivity(intent);
     }
+    private void createNotificationChannel()
+    {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        {
+            NotificationChannel channel = new NotificationChannel("My notification", "My notification", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+    }
+    private void createNotification(String content) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this, "My notification");
+        builder.setContentTitle("Meet new people");
+        builder.setContentText(content);
+        builder.setAutoCancel(true);
+        builder.setSmallIcon(R.drawable.ic_launcher_background);
+        NotificationManagerCompat manager = NotificationManagerCompat.from(MainActivity.this);
+        manager.notify(1,builder.build());
+    }
+    private void searchMessageAndMatchesChange(final String id)
+    {
+        db.collection("Matches").whereEqualTo(id, currentUId).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    return;
+                }
+                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                    String key;
+                    if(dc.getType() == ADDED){
+                        if(dc.getDocument().get(id.concat("Notificated"))!=null)
+                        if(!(boolean)dc.getDocument().get(id.concat("Notificated")))
+                        {
+                            Map data= new HashMap();
+                            data.put(id.concat("Notificated"), true);
+                            dc.getDocument().getReference().update(data);
+                            createNotification("new Match");
+                        }
+                        dc.getDocument().getReference().collection("Messages").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                if (error != null) {
+                                    return;
+                                }
+                                for (DocumentChange change : value.getDocumentChanges())
+                                {
+                                    if(change.getType() == ADDED) {
+                                    if(change.getDocument().get("readed")!=null && change.getDocument().get("writerId")!= null)
+                                     if(!(boolean)change.getDocument().get("readed") &&! change.getDocument().get("writerId").toString().equals(currentUId))
+                                    createNotification("New message");
+                                    }
+                                    }
+
+                            }
+                        });
+                    }
+
+
+
+                }
+            }
+        });
+       }
+
+
 }

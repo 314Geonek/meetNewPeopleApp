@@ -60,5 +60,7 @@
     <string name="notFoundGps">Localization not found</string>
     <string name="reason_of_report">Select reason of the report:</string>
     <string name="no_matches_found">No matches found</string>
+    <string name="channel_name">Meet new pople channel</string>
+    <string name="channel_description">New Message</string>
 
 </resources>
