@@ -317,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
                                     if(change.getType() == ADDED) {
                                     if(change.getDocument().get("readed")!=null && change.getDocument().get("writerId")!= null)
                                      if(!(boolean)change.getDocument().get("readed") &&! change.getDocument().get("writerId").toString().equals(currentUId))
-                                    createNotification("New message");
+                                           createNotification("New message");
                                     }
                                     }
 
