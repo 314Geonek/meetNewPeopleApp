@@ -1,11 +1,13 @@
 package com.golab.meetnewpeopleapp.admin;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.TextViewCompat;
 
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import com.golab.meetnewpeopleapp.Cards.Array_Adapter;
 import com.golab.meetnewpeopleapp.Cards.Cards;
@@ -33,11 +35,16 @@ public class AdminMainActivity extends AppCompatActivity {
     private List<Cards> rowItems;
     private FirebaseFirestore db;
     private String currentUId;
-
+    private TextView tvPicture;
+    private  TextView tvDescription;
+    private TextView tvChat;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_main);
+        tvChat = findViewById(R.id.forchat);
+        tvDescription = findViewById(R.id.fordesc);
+        tvPicture = findViewById(R.id.picture);
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         currentUId = mAuth.getCurrentUser().getUid();
@@ -77,20 +84,62 @@ public class AdminMainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshotsUser) {
                 for (final DocumentSnapshot snapshotUser:queryDocumentSnapshotsUser) {
-                    System.out.println("found");
                     snapshotUser.getReference().collection("Reports").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshotsReports) {
+                            int countPhoto=0;
+                            int countDesc=0;
+                            int countChat=0;
+                            List<String> reportedByForPhoto = new ArrayList<>();
+                            List<String> reportedByForDesc = new ArrayList<>();
+                            List<String> reportedByForChar = new ArrayList<>();
+
                             for (DocumentSnapshot snapshotReport:queryDocumentSnapshotsReports) {
-                                System.out.println("found");
-                                    rowItems.add(new Cards(snapshotUser, "" ));
-                                    arrayAdapter.notifyDataSetChanged();
+                                String reason = snapshotReport.get("Reason") != null ? snapshotReport.get("Reason").toString() : "";
+                                String reportedByObject = snapshotReport.get("ReportedBy") != null ? snapshotReport.get("ReportedBy").toString() : "";
+                                if(!reportedByObject.equals(""))
+                                {
+                                    switch(reason)
+                                    {
+                                        case "Photo":
+                                            if(!reportedByForPhoto.contains(reportedByObject)) {
+                                                countPhoto++;
+                                                reportedByForPhoto.add(reportedByObject);
+                                            }
+                                            break;
+                                        case "Description":
+                                            if(!reportedByForDesc.contains(reportedByObject)) {
+                                                countDesc++;
+                                                reportedByForDesc.add(reportedByObject);
+                                            }
+                                            break;
+                                        case  "Messages":
+                                        if(!reportedByForChar.equals(reportedByObject)) {
+                                            countChat++;
+                                            reportedByForChar.add(reportedByObject);
+                                        }
+                                        break;
+                                    }
+                                }
                             }
+                            if(countChat>10 || countDesc>0 || countPhoto >0)
+                            {
+
+                                rowItems.add(new Cards(snapshotUser, "" ));
+                                arrayAdapter.notifyDataSetChanged();
+                                giveInfoAboutReports(countChat, countDesc, countPhoto);
+                             }
                         }
                     });
                 }
             }
         });
+    }
+
+    private void giveInfoAboutReports(int chat, int desc, int photo) {
+        tvPicture.setText(tvPicture.getText().toString().concat("/n").concat(Integer.toString(photo)));
+        tvDescription.setText(tvDescription.getText().toString().concat("/n").concat(Integer.toString(desc)));
+        tvChat.setText(tvChat.getText().toString().concat("/n").concat(Integer.toString(chat)));
     }
 
 
@@ -114,6 +163,7 @@ public class AdminMainActivity extends AppCompatActivity {
         }
         rowItems.remove(0);
         arrayAdapter.notifyDataSetChanged();
+       // giveInfoAboutReports();
     }
     public void goToDescription(View view)
     {
@@ -129,14 +179,11 @@ public class AdminMainActivity extends AppCompatActivity {
         swipe("right");
     }
 
-    public void journal(View view) {
-        Intent intent=new Intent(AdminMainActivity.this, AdminJournalActivity.class);
-        Bundle b = new Bundle();
-        b.putString("id", rowItems.get(0).getId());
-        intent.putExtras(b);
-        startActivity(intent);
+    public void addOtherAdmin(View view) {
     }
 
-    public void addOtherAdmin(View view) {
+    public void logout(View view) {
+        mAuth.signOut();
+        finish();
     }
 }

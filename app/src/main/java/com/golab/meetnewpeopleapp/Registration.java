@@ -172,7 +172,7 @@ public class Registration extends AppCompatActivity {
                 && data != null && data.getData() != null )
         {
             resultUri = data.getData();
-            Glide.with(getApplication()).asBitmap().load(resultUri).into(mPhoto);
+            Glide.with(getApplication()).asBitmap().apply(RequestOptions.circleCropTransform()).load(resultUri).into(mPhoto);
         }
     }
     private void saveUserData()

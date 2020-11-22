@@ -303,9 +303,20 @@ public class MainActivity extends AppCompatActivity {
                         {
                             Map data= new HashMap();
                             data.put(id.concat("Notificated"), true);
+                            String idOfMatchedUser = id.equals("id1") ? dc.getDocument().get("id2").toString() : dc.getDocument().get("id1").toString();
+                            db.collection("users").document(idOfMatchedUser).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot snapshot) {
+                                    if(snapshot!=null)
+                                    {
+                                        String username = snapshot.get("name")!=null ? snapshot.get("name").toString() : "";
+                                        createNotification(username.concat(getResources().getString(R.string.yourNewMatch)));
+                                    }
+                                }
+                            });
                             dc.getDocument().getReference().update(data);
-                            createNotification("new Match");
                         }
+
                         dc.getDocument().getReference().collection("Messages").addSnapshotListener(new EventListener<QuerySnapshot>() {
                             @Override
                             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -314,12 +325,13 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 for (DocumentChange change : value.getDocumentChanges())
                                 {
-                                    if(change.getType() == ADDED) {
-                                    if(change.getDocument().get("readed")!=null && change.getDocument().get("writerId")!= null)
-                                     if(!(boolean)change.getDocument().get("readed") &&! change.getDocument().get("writerId").toString().equals(currentUId))
-                                           createNotification("New message");
+                                    if(change.getType() == ADDED)
+                                    {
+                                        if(change.getDocument().get("readed")!=null && change.getDocument().get("writerId")!= null)
+                                         if(!(boolean)change.getDocument().get("readed") &&! change.getDocument().get("writerId").toString().equals(currentUId))
+                                               createNotification(getResources().getString(R.string.UHaveNewMessage));
                                     }
-                                    }
+                                }
 
                             }
                         });

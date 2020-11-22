@@ -1,3 +1,4 @@
+
 package com.golab.meetnewpeopleapp.matches;
 
 import android.content.Context;
@@ -42,11 +43,9 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesViewHolders> {
             holder.lastMessage.setTextSize(15);
         if(!matchesList.get(position).getLastMessage().isReaded() && !matchesList.get(position).getLastMessage().getCurrentUser()){
             holder.lastMessage.setTypeface(null, Typeface.BOLD);
-            System.out.println("bold");
         }
         else{
             holder.lastMessage.setTypeface(null, Typeface.NORMAL);
-            System.out.println("normal");
         }
         }
 

@@ -24,25 +24,56 @@
             android:layout_height="70dp"
             android:onClick="clear"/>
         <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/reportJournal"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:onClick="journal"/>
-        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/createOtherAdminAccounts"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:onClick="addOtherAdmin"/>
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/logout"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:onClick="logout"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
     <com.lorentzos.flingswipe.SwipeFlingAdapterView
         android:id="@+id/frame"
         app:layout_constraintTop_toBottomOf="@+id/navBar"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/journal"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:rotation_degrees="15.5"
         tools:context=".admin.AdminMainActivity" />
+    <androidx.appcompat.widget.LinearLayoutCompat
+       android:id="@+id/journal"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/forpicture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/for_picture"/>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/fordesc"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:text="@string/for_profile_data"/>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/forchat"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:text="@string/for_chat"/>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

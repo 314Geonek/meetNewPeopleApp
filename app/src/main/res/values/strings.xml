@@ -62,5 +62,10 @@
     <string name="no_matches_found">No matches found</string>
     <string name="channel_name">Meet new pople channel</string>
     <string name="channel_description">New Message</string>
+    <string name="yourNewMatch">" is your new match"</string>
+    <string name="UHaveNewMessage">"You have new message "</string>
+    <string name="for_picture">For picture</string>
+    <string name="for_profile_data">For description</string>
+    <string name="for_chat">"For chat "</string>
 
 </resources>

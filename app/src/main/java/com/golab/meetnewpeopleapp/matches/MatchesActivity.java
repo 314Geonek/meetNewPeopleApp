@@ -73,7 +73,7 @@ public class MatchesActivity extends AppCompatActivity {
 //                    }
 //                }
 //            }
-//        });
+//        });+
         db.collection("Matches").whereEqualTo(id, currentUserID).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,

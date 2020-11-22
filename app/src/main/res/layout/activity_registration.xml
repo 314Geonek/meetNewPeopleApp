@@ -159,8 +159,8 @@
         android:text="@string/myPicture"/>
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/myProfilImage"
-                android:layout_width="100dp"
-                android:layout_height="142dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:layout_marginBottom="20dp"
                 android:src="@mipmap/ic_launcher_round"
                 android:contentDescription="@string/contentdescription" />

@@ -33,7 +33,6 @@
                 android:id="@+id/nameAgeTxt"
                 android:layout_width="wrap_content"
                 android:textSize="26sp"
-                android:text="ELo jestem golab"
                 android:textStyle="bold"
                 android:textColor="#fabfd3"
                 android:layout_height="wrap_content"/>
@@ -41,7 +40,6 @@
                 android:id="@+id/locationNameTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/away"
                 android:textColor="#fabfd3"
                 android:textSize="14sp"
                 android:textStyle="italic"/>
