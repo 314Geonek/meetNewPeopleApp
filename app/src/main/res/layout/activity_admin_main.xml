@@ -33,14 +33,14 @@
             android:id="@+id/logout"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:onClick="logout"/>
+            android:onClick="askLogout"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
     <com.lorentzos.flingswipe.SwipeFlingAdapterView
         android:id="@+id/frame"
         app:layout_constraintTop_toBottomOf="@+id/navBar"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/journal"
+        app:layout_constraintBottom_toTopOf="@id/journal"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:rotation_degrees="15.5"

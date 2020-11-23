@@ -14,7 +14,6 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/full_screen_key">
-        <activity android:name=".admin.AdminJournalActivity"></activity>
         <activity android:name=".admin.AdminMainActivity" />
         <activity android:name=".Description_Activity" />
         <activity android:name=".ShowSingleProfileActivity" />

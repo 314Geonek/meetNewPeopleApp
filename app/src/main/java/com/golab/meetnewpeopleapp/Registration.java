@@ -259,7 +259,7 @@ public class Registration extends AppCompatActivity {
 
     private String getMySex()
     {
-        return mRadioGroupMyGender.getCheckedRadioButtonId()==R.id.male ? "Male" : "Female";
+        return mRadioGroupMyGender.getCheckedRadioButtonId()==R.id.male ? "male" : "female";
     }
     @Override
     protected void onStart() {

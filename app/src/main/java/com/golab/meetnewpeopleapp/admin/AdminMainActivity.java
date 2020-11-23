@@ -11,7 +11,9 @@ import android.widget.TextView;
 
 import com.golab.meetnewpeopleapp.Cards.Array_Adapter;
 import com.golab.meetnewpeopleapp.Cards.Cards;
+import com.golab.meetnewpeopleapp.ChooseLoginOrRegistrationActivity;
 import com.golab.meetnewpeopleapp.Description_Activity;
+import com.golab.meetnewpeopleapp.LoginActivity;
 import com.golab.meetnewpeopleapp.MainActivity;
 import com.golab.meetnewpeopleapp.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -44,7 +46,7 @@ public class AdminMainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_admin_main);
         tvChat = findViewById(R.id.forchat);
         tvDescription = findViewById(R.id.fordesc);
-        tvPicture = findViewById(R.id.picture);
+        tvPicture = findViewById(R.id.forpicture);
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         currentUId = mAuth.getCurrentUser().getUid();
@@ -125,9 +127,10 @@ public class AdminMainActivity extends AppCompatActivity {
                             if(countChat>10 || countDesc>0 || countPhoto >0)
                             {
 
-                                rowItems.add(new Cards(snapshotUser, "" ));
+                                rowItems.add(new Cards(snapshotUser, "", countChat, countDesc, countPhoto ));
                                 arrayAdapter.notifyDataSetChanged();
-                                giveInfoAboutReports(countChat, countDesc, countPhoto);
+                                if(rowItems.size()==1)
+                                  giveInfoAboutReports(countChat, countDesc, countPhoto);
                              }
                         }
                     });
@@ -137,9 +140,9 @@ public class AdminMainActivity extends AppCompatActivity {
     }
 
     private void giveInfoAboutReports(int chat, int desc, int photo) {
-        tvPicture.setText(tvPicture.getText().toString().concat("/n").concat(Integer.toString(photo)));
-        tvDescription.setText(tvDescription.getText().toString().concat("/n").concat(Integer.toString(desc)));
-        tvChat.setText(tvChat.getText().toString().concat("/n").concat(Integer.toString(chat)));
+        tvPicture.setText(tvPicture.getText().toString().concat("\n").concat(Integer.toString(photo)));
+        tvDescription.setText(tvDescription.getText().toString().concat("\n").concat(Integer.toString(desc)));
+        tvChat.setText(tvChat.getText().toString().concat("\n").concat(Integer.toString(chat)));
     }
 
 
@@ -162,8 +165,9 @@ public class AdminMainActivity extends AppCompatActivity {
             db.collection("users").document(userId).set(m);
         }
         rowItems.remove(0);
+        if(rowItems.size()>0)
+            giveInfoAboutReports(rowItems.get(0).getReportedForChat(), rowItems.get(0).getReportedForDesc(), rowItems.get(0).getReportedForPhoto());
         arrayAdapter.notifyDataSetChanged();
-       // giveInfoAboutReports();
     }
     public void goToDescription(View view)
     {
@@ -172,11 +176,13 @@ public class AdminMainActivity extends AppCompatActivity {
         startActivity(intent);
     }
     public void ban(View view) {
-        swipe("left");
+        if(rowItems.size()>0)
+            swipe("left");
     }
 
     public void clear(View view) {
-        swipe("right");
+        if(rowItems.size()>0)
+            swipe("right");
     }
 
     public void addOtherAdmin(View view) {
@@ -185,5 +191,7 @@ public class AdminMainActivity extends AppCompatActivity {
     public void logout(View view) {
         mAuth.signOut();
         finish();
+        Intent intent=new Intent(AdminMainActivity.this, ChooseLoginOrRegistrationActivity.class);
+        startActivity(intent);
     }
 }

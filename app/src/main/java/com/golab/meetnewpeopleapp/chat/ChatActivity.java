@@ -30,6 +30,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -51,6 +52,7 @@ public class ChatActivity extends AppCompatActivity {
     private TextView mName;
     private ImageButton ibPicture;
     private ArrayList<ChatObject> resultsMessages;
+    private boolean isStillMatch;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +65,7 @@ public class ChatActivity extends AppCompatActivity {
         mRecyclerView= (RecyclerView) findViewById(R.id.recyclerView);
         resultsMessages = new ArrayList <ChatObject>();
         db= FirebaseFirestore.getInstance();
+        checkOrStillMatch();
         currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         mDbChat= FirebaseFirestore.getInstance().collection("Matches").document(matchId).collection("Messages");
         fillNavBar();
@@ -72,6 +75,22 @@ public class ChatActivity extends AppCompatActivity {
         mChatAdapter = new ChatAdapter(resultsMessages, ChatActivity.this);
         mRecyclerView.setAdapter(mChatAdapter);
     }
+
+    private void checkOrStillMatch() {
+        db.collection("Matches").document(matchId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                db.collection("Matches").document(matchId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(!task.getResult().exists())
+                        kill();
+                    }
+                });
+            }
+        });
+    }
+
     private void fillNavBar()
     {    db.collection("users").document(userMatchId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
         @Override
@@ -93,7 +112,7 @@ public class ChatActivity extends AppCompatActivity {
                 if (e != null) {
                     return;
                 }
-                for (DocumentChange dc : snapshots.getDocumentChanges())
+                for (DocumentChange dc : snapshots.getDocumentChanges()){
                         if(dc.getType().toString().equals("ADDED")){
                         String content = dc.getDocument().get("content") != null ? dc.getDocument().get("content").toString() : "";
                         String writerId = dc.getDocument().get("writerId") != null ? dc.getDocument().get("writerId").toString() : "";
@@ -105,7 +124,7 @@ public class ChatActivity extends AppCompatActivity {
                             resultsMessages.add(newMessage);
                             mChatAdapter.notifyDataSetChanged();
                 }
-            }
+            }}
         });
     }
 
@@ -133,8 +152,12 @@ public class ChatActivity extends AppCompatActivity {
     public void showProfile(View view) {
         Intent intent=new Intent(ChatActivity.this, ShowSingleProfileActivity.class);
         Bundle b = new Bundle();
+        b.putString("idMatch", matchId);
         b.putString("id", userMatchId);
         intent.putExtras(b);
         startActivity(intent);
+    }
+    private void kill() {
+        finish();
     }
 }

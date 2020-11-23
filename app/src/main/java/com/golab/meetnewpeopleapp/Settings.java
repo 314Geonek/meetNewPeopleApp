@@ -134,13 +134,11 @@ public class Settings extends AppCompatActivity {
                 saveUserInformation();
             }
         });
-        //pokazywanie/ukrywanie slidera dystansu
         rangeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 slider.setEnabled(isChecked);
                 slider.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-                System.out.println(isChecked);
             }
         });
     }
@@ -175,7 +173,6 @@ public class Settings extends AppCompatActivity {
                     if(map.get("lookingFor")!=null)
                     {
                         String lookingFor = map.get("lookingFor").toString();
-                        System.out.println(lookingFor);
                         switch (lookingFor)
                         {
                             case "Male":

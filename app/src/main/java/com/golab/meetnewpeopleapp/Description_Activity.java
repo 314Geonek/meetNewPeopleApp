@@ -48,7 +48,6 @@ public class Description_Activity extends AppCompatActivity {
 
     }
     private void fillData() {
-        System.out.println(profile.getName());
         name.setText(profile.getName());
         about.setText(profile.getAboutMe());
         city.setText(profile.getCity());
@@ -74,30 +73,30 @@ public class Description_Activity extends AppCompatActivity {
     public void sendReport(View view) {
         findViewById(R.id.groundsList).setVisibility(View.VISIBLE);
     }
-    private void hideLayout() {
+    private void hideLayoutReport() {
         findViewById(R.id.groundsList).setVisibility(View.GONE);
     }
 
     public void repMessages(View View)
     {
         sendReportToDatabase("Messages");
-        hideLayout();
+        hideLayoutReport();
     }
 
     public void repDescription(View View)
     {
         sendReportToDatabase("Description");
-        hideLayout();
+        hideLayoutReport();
     }
     public void repPhoto(View view)
     {
         sendReportToDatabase("Photo");
-        hideLayout();
+        hideLayoutReport();
     }
     public void doNothing(View view){}
     public void hideReports(View view)
     {
-        hideLayout();
+        hideLayoutReport();
     }
     private void sendReportToDatabase(String description) {
         Map report = new HashMap<>();
@@ -106,4 +105,5 @@ public class Description_Activity extends AppCompatActivity {
         report.put("Reason", description);
         FirebaseFirestore.getInstance().collection("users").document(profile.getId()).collection("Reports").document().set(report);
     }
+
 }

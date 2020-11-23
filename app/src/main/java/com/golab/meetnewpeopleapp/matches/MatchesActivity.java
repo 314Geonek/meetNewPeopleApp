@@ -58,22 +58,6 @@ public class MatchesActivity extends AppCompatActivity {
     }
 
     private void getUserMatchesId(String id) {
-//        db.collection("Matches").whereEqualTo(id, currentUserID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    for (QueryDocumentSnapshot document : task.getResult()) {
-//                        String key;
-//                        if(document.get("id1") !=null && document.get("id2")!=null)
-//                        {
-//                            findViewById(R.id.tvNoMatches).setVisibility(View.GONE);
-//                            String matchId=document.getId();
-//                            key = currentUserID.equals(document.get("id1").toString()) ? document.get("id2").toString() : document.get("id1").toString();
-//                            FetchMatchInformation(key, matchId);}
-//                    }
-//                }
-//            }
-//        });+
         db.collection("Matches").whereEqualTo(id, currentUserID).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,

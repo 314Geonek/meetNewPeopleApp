@@ -67,5 +67,8 @@
     <string name="for_picture">For picture</string>
     <string name="for_profile_data">For description</string>
     <string name="for_chat">"For chat "</string>
+    <string name="are_you_sure_that_u_want_to_remove_this_match">Are you sure that u want to remove this match?</string>
+    <string name="yes">Yes</string>
+    <string name="are_you_sure_that_u_want_to_logout">Are u sure that u want to logout</string>
 
 </resources>

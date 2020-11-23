@@ -21,7 +21,6 @@ import android.widget.Toast;
 import com.golab.meetnewpeopleapp.Cards.Array_Adapter;
 import com.golab.meetnewpeopleapp.Cards.Cards;
 import com.golab.meetnewpeopleapp.matches.MatchesActivity;
-import com.golab.meetnewpeopleapp.matches.MatchesObject;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -71,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         currentUId = mAuth.getCurrentUser().getUid();
         getMyCurrentLocation();
-        getDatailsOfSearching();
+        getDetailOfSearching();
         searchMessageAndMatchesChange("id1");
         searchMessageAndMatchesChange("id2");
         createNotificationChannel();
@@ -152,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
                             myLocation = location;
                             Map myCurrentLocation = new HashMap();
                             myCurrentLocation.put("lastLocation", lastLocation);
+
                             db.collection("users").document(currentUId).update(myCurrentLocation);
                         }
                         else {
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void getDatailsOfSearching(){
+    private void getDetailOfSearching(){
         lookingFor =new ArrayList<>();
         db.collection("users").document(currentUId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -173,9 +173,9 @@ public class MainActivity extends AppCompatActivity {
                 {       if(task.getResult().get("lookingFor")!=null)
                         {
                                 if(task.getResult().get("lookingFor").toString().contains("Male"))
-                                        lookingFor.add("Male");
+                                        lookingFor.add("male");
                                 if(task.getResult().get("lookingFor").toString().contains("Female"))
-                                        lookingFor.add("Female");
+                                        lookingFor.add("female");
                         }
                         if(task.getResult().get("searchingRange")!=null)
                         if(!task.getResult().get("searchingRange").toString().equals("false"))
@@ -214,12 +214,13 @@ public class MainActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (final QueryDocumentSnapshot document : task.getResult()) {
-                        checkOrswiped(document);
+                        checkOrSwiped(document);
                         }
                     }}
         });
+
     }
-    private void checkOrswiped(final QueryDocumentSnapshot snapshot)
+    private void checkOrSwiped(final QueryDocumentSnapshot snapshot)
     {
         snapshot.getReference().collection("SwipedBy").document(currentUId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -235,6 +236,8 @@ public class MainActivity extends AppCompatActivity {
     {
         distance = distance.concat(getResources().getString(R.string.away));
         Cards item = new Cards(snapshot, distance);
+        if(rowItems.size()>0 && rowItems.get(0).equals(item))
+            return;
         rowItems.add(item);
         arrayAdapter.notifyDataSetChanged();
     }
@@ -253,7 +256,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        if(mAuth.getCurrentUser()==null)
+        {
+            finish();
+            Intent intent=new Intent(MainActivity.this, ChooseLoginOrRegistrationActivity.class);
+            startActivity(intent);
+            return;
+        }
         super.onResume();
+        for(int i=1; i<rowItems.size(); i++)
+            rowItems.remove(i);
     }
 
     public void goToProfilMenuActivity(View view) {
