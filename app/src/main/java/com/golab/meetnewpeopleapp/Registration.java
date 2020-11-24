@@ -208,14 +208,7 @@ public class Registration extends AppCompatActivity {
     }
 
     private void goToLogin() {
-
-                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    Intent intent = new Intent(Registration.this, LoginActivity.class);
-                    Bundle b = new Bundle();
-                    b.putString("email", user.getEmail().concat(" "));
-                    intent.putExtras(b);
                     mAuth.signOut();
-                    startActivity(intent);
                     finish();
 
     }
