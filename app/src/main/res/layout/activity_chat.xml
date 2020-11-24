@@ -39,7 +39,7 @@
                                  />
                                 <androidx.appcompat.widget.AppCompatImageButton
                                     android:id="@+id/ibMatchpic"
-                                    android:background=""
+                                    android:background="@drawable/nav_bar"
                                     android:layout_width="60dp"
                                     android:layout_height="60dp"
                                     android:onClick="showProfile"

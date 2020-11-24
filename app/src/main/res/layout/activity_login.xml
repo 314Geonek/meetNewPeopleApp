@@ -37,7 +37,7 @@
         android:inputType="textPassword" />
 
         <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/forgotPassword"
+            android:id="@+id/restorePassword"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
         android:layout_marginTop="10dp"
@@ -47,7 +47,6 @@
         android:background="#00000000"
         android:onClick="goToResetPassword"
         android:text="@string/forgotPassword" />
-
     <androidx.appcompat.widget.AppCompatButton
         android:layout_below="@+id/forgotPassword"
         android:layout_width="300dp"
@@ -60,6 +59,14 @@
         android:layout_marginTop="10dp"
         android:onClick="logIn" />
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_marginTop="10dp"
+            android:textColor="#fabfd3"
+            android:layout_gravity="center"
+            android:background="#00000000"
+            android:onClick="goToRegistration"
+            android:text="@string/dont_have_account" />
     </androidx.appcompat.widget.LinearLayoutCompat>
-
 </androidx.core.widget.NestedScrollView>

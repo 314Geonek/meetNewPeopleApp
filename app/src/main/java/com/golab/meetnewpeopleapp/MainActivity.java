@@ -69,8 +69,6 @@ public class MainActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         currentUId = mAuth.getCurrentUser().getUid();
-        getMyCurrentLocation();
-        getDetailOfSearching();
         searchMessageAndMatchesChange("id1");
         searchMessageAndMatchesChange("id2");
         createNotificationChannel();
@@ -259,13 +257,21 @@ public class MainActivity extends AppCompatActivity {
         if(mAuth.getCurrentUser()==null)
         {
             finish();
-            Intent intent=new Intent(MainActivity.this, ChooseLoginOrRegistrationActivity.class);
+            Intent intent=new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             return;
         }
         super.onResume();
+    }
+
+    @Override
+    protected void onStart() {
         for(int i=1; i<rowItems.size(); i++)
             rowItems.remove(i);
+        arrayAdapter.notifyDataSetChanged();
+        getMyCurrentLocation();
+        getDetailOfSearching();
+        super.onStart();
     }
 
     public void goToProfilMenuActivity(View view) {

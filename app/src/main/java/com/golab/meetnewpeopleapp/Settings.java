@@ -55,7 +55,7 @@ import kotlin.jvm.functions.Function1;
 
 public class Settings extends AppCompatActivity {
     private EditText mName, mAboutMe, mJob, mCity;
-    private Button mBack, mConfirm;
+    private Button mConfirm;
     private ImageView mProfileImage;
     private FirebaseAuth mAuth;
     private SwitchCompat rangeSwitch;
@@ -74,7 +74,6 @@ public class Settings extends AppCompatActivity {
         mName  = (EditText) findViewById(R.id.name);
         mAboutMe = (EditText) findViewById(R.id.aboutMe);
         mProfileImage = (ImageView) findViewById(R.id.profileImage);
-        mBack = (Button) findViewById(R.id.back);
         mStorageRef = FirebaseStorage.getInstance().getReference();
         mConfirm = (Button) findViewById(R.id.confirm);
         rangeSwitch = (SwitchCompat) findViewById(R.id.switcher);
@@ -138,6 +137,7 @@ public class Settings extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 slider.setEnabled(isChecked);
+                slider.setPosition(0.499f);
                 slider.setVisibility(isChecked ? View.VISIBLE : View.GONE);
             }
         });

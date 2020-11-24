@@ -99,7 +99,7 @@ public class ShowSingleProfileActivity extends AppCompatActivity{
     public void sureLogout(View view) {
         mAuth.signOut();
         finish();
-        Intent intent=new Intent(ShowSingleProfileActivity.this, ChooseLoginOrRegistrationActivity.class);
+        Intent intent=new Intent(ShowSingleProfileActivity.this, LoginActivity.class);
         startActivity(intent);
     }
     public void cancelLogout(View view) {

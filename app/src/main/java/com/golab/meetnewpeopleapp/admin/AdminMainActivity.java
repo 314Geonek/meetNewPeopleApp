@@ -9,10 +9,9 @@ import android.widget.TextView;
 
 import com.golab.meetnewpeopleapp.Cards.Array_Adapter;
 import com.golab.meetnewpeopleapp.Cards.Cards;
-import com.golab.meetnewpeopleapp.ChooseLoginOrRegistrationActivity;
 import com.golab.meetnewpeopleapp.Description_Activity;
+import com.golab.meetnewpeopleapp.LoginActivity;
 import com.golab.meetnewpeopleapp.R;
-import com.golab.meetnewpeopleapp.ShowSingleProfileActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -191,7 +190,7 @@ public class AdminMainActivity extends AppCompatActivity {
     public void sureLogout(View view) {
         mAuth.signOut();
         finish();
-        Intent intent=new Intent(AdminMainActivity.this, ChooseLoginOrRegistrationActivity.class);
+        Intent intent=new Intent(AdminMainActivity.this, LoginActivity.class);
         startActivity(intent);
     }
     public void cancelLogout(View view) {

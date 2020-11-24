@@ -21,17 +21,15 @@
         <activity android:name=".matches.MatchesActivity" />
         <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".Settings" />
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".Registration" />
-        <activity
-            android:name=".ChooseLoginOrRegistrationActivity"
-            android:noHistory="true">
+        <activity android:name=".LoginActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Registration" />
+
         <activity
             android:name=".MainActivity"
             android:foregroundServiceType="location" />
