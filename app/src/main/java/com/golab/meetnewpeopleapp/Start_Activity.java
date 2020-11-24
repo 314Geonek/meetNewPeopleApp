@@ -46,8 +46,13 @@ public class Start_Activity extends AppCompatActivity {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 Intent intent;
                 if (documentSnapshot.exists()) {
+                    if(documentSnapshot.get("banned")==null)
                     intent = new Intent(Start_Activity.this, MainActivity.class);
-                }else {
+                    else{
+                        mAuth.signOut();
+                        intent = new Intent(Start_Activity.this, LoginActivity.class);
+                    }
+                } else {
                     intent = new Intent(Start_Activity.this, AdminMainActivity.class);
                 }
                 startActivity(intent);

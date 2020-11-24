@@ -14,10 +14,13 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/full_screen_key">
-        <activity android:name=".Start_Activity"
+        <activity android:name=".admin.Create_new_admin_Activity"></activity>
+        <activity
+            android:name=".Start_Activity"
             android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -28,8 +31,7 @@
         <activity android:name=".matches.MatchesActivity" />
         <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".Settings" />
-        <activity android:name=".LoginActivity">
-        </activity>
+        <activity android:name=".LoginActivity"></activity>
         <activity android:name=".Registration" />
         <activity
             android:name=".MainActivity"

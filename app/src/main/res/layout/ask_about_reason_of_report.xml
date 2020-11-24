@@ -35,7 +35,7 @@
                 <androidx.appcompat.widget.AppCompatButton
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Vulgar descrption"
+                    android:text="@string/vulgar_descrption"
                     style="?android:attr/buttonBarButtonStyle"
                     android:onClick="repDescription"/>
                 <androidx.appcompat.widget.AppCompatButton

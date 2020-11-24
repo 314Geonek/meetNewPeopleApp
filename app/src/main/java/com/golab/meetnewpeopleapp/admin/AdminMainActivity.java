@@ -14,6 +14,7 @@ import com.golab.meetnewpeopleapp.LoginActivity;
 import com.golab.meetnewpeopleapp.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -45,7 +46,6 @@ public class AdminMainActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         if(mAuth.getCurrentUser()!=null)
             currentUId = mAuth.getCurrentUser().getUid();
-        search();
         rowItems = new ArrayList<>();
         arrayAdapter = new Array_Adapter(this, R.layout.item, rowItems);
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
@@ -81,6 +81,7 @@ public class AdminMainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshotsUser) {
                 for (final DocumentSnapshot snapshotUser:queryDocumentSnapshotsUser) {
+                    if(snapshotUser.get("banned")==null)
                     snapshotUser.getReference().collection("Reports").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshotsReports) {
@@ -133,35 +134,46 @@ public class AdminMainActivity extends AppCompatActivity {
             }
         });
     }
+    @Override
+    protected void onStart() {
+        for(int i=1; i<rowItems.size(); i++)
+            rowItems.remove(i);
+        search();
+        arrayAdapter.notifyDataSetChanged();
 
+        super.onStart();
+    }
     private void giveInfoAboutReports(int chat, int desc, int photo) {
-        tvPicture.setText(tvPicture.getText().toString().concat("\n").concat(Integer.toString(photo)));
-        tvDescription.setText(tvDescription.getText().toString().concat("\n").concat(Integer.toString(desc)));
-        tvChat.setText(tvChat.getText().toString().concat("\n").concat(Integer.toString(chat)));
+        tvPicture.setText(getResources().getString(R.string.for_picture).concat("\n").concat(Integer.toString(photo)));
+        tvDescription.setText(getResources().getString(R.string.for_profile_data).concat("\n").concat(Integer.toString(desc)));
+        tvChat.setText(getResources().getString(R.string.for_chat).concat("\n").concat(Integer.toString(chat)));
     }
 
 
     private void swipe(String direction) {
         Cards object = (Cards) rowItems.get(0);
         String userId = object.getId();
+        if(direction.equals("right"))
         db.collection("users").document(userId).collection("Reports").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 for (DocumentSnapshot snapschot:queryDocumentSnapshots) {
-                    Map checked = new HashMap();
-                    checked.put("checked", true);
-                    snapschot.getReference().set(checked);
+                    if(snapschot.get("Reason")!=null)
+                    {
+                        if(!snapschot.get("Reason").equals("Messages"))
+                            snapschot.getReference().delete();
+                    }
                 }
             }
         });
         if(direction.equals("left")){
-            Map m= new HashMap();
-            m.put("Ban", currentUId);
-            db.collection("users").document(userId).set(m);
+                Map m= new HashMap();
+                m.put("banned", true);
+                db.collection("users").document(userId).update(m);
         }
-        rowItems.remove(0);
         if(rowItems.size()>0)
             giveInfoAboutReports(rowItems.get(0).getReportedForChat(), rowItems.get(0).getReportedForDesc(), rowItems.get(0).getReportedForPhoto());
+        else giveInfoAboutReports(0,0,0);
         arrayAdapter.notifyDataSetChanged();
     }
     public void goToDescription(View view)
@@ -181,6 +193,8 @@ public class AdminMainActivity extends AppCompatActivity {
     }
 
     public void addOtherAdmin(View view) {
+        Intent intent=new Intent(AdminMainActivity.this, Create_new_admin_Activity.class);
+        startActivity(intent);
 
     }
     public void askAboutLogout(View view)

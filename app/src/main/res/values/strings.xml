@@ -78,5 +78,10 @@
     <string name="limited">Limited</string>
     <string name="vulgar_descrption">Vulgar descrption</string>
     <string name="dont_have_account">You don\'t have account? Create it!</string>
+    <string name="repeat_email">Rwpeat email</string>
+    <string name="my_password">My password</string>
+    <string name="create">Create</string>
+    <string name="emails_not_match">Emails not Match</string>
+    <string name="your_account_is_banned">Sorry but your account is banned</string>
 
 </resources>

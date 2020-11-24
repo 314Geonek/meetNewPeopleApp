@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".admin.Create_new_admin_Activity"
+    android:background="#eb1e63">
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageButton
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/back"
+            android:layout_gravity="start"
+            android:layout_marginBottom="250dp"
+            android:onClick="back"/>
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/email"
+            android:layout_width="300dp"
+            android:layout_height="45dp"
+            android:textColor="#fabfd3"
+            android:textColorHint="#fabfd3"
+            android:backgroundTint="#fabfd3"
+            android:drawableStart="@drawable/mail30"
+            android:hint="@string/email"
+            android:importantForAutofill="no"
+            android:inputType="textEmailAddress" />
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/repeatEmail"
+            android:layout_width="300dp"
+            android:layout_height="45dp"
+            android:textColor="#fabfd3"
+            android:textColorHint="#fabfd3"
+            android:backgroundTint="#fabfd3"
+            android:drawableStart="@drawable/mail30"
+            android:hint="@string/repeat_email"
+            android:importantForAutofill="no"
+            android:inputType="textEmailAddress" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/password"
+            android:layout_width="300dp"
+            android:layout_height="45dp"
+            android:textColor="#fabfd3"
+            android:textColorHint="#fabfd3"
+            android:backgroundTint="#fabfd3"
+            android:drawableStart="@drawable/password30"
+            android:hint="@string/my_password"
+            android:importantForAutofill="no"
+            android:inputType="textPassword" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_below="@+id/forgotPassword"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/button_round"
+            android:text="@string/create"
+            android:id="@+id/login"
+            android:textAllCaps="false"
+            android:layout_marginTop="10dp"
+            android:onClick="validateData" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.core.widget.NestedScrollView>

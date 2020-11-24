@@ -63,6 +63,11 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 Intent intent;
                 if (documentSnapshot.exists()) {
+                    if(documentSnapshot.get("banned")!=null)
+                    {
+                        mAuth.signOut();
+                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.your_account_is_banned), Toast.LENGTH_LONG).show();
+                    }
                     intent = new Intent(LoginActivity.this, MainActivity.class);
                 }else {
                     intent = new Intent(LoginActivity.this, AdminMainActivity.class);
@@ -76,8 +81,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart()
     {
         super.onStart();
-//        if(null!=mAuth.getCurrentUser())
-//            mAuth.signOut();
         mAuth.addAuthStateListener(firebaseAuthStateListener);
     }
     @Override

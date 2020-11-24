@@ -212,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (final QueryDocumentSnapshot document : task.getResult()) {
+                        if(document.get("banned")==null)
                         checkOrSwiped(document);
                         }
                     }}
