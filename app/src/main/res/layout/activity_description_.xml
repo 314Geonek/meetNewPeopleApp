@@ -5,7 +5,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 <androidx.core.widget.NestedScrollView
     android:id="@+id/nsvDescription"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,7 +12,6 @@
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintRight_toRightOf="parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:duplicateParentState="true"
     android:background="#F6F6Fb"
     tools:context=".Description_Activity">
@@ -55,9 +53,9 @@
                     android:id="@+id/nameFieldDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
+                    android:paddingHorizontal="20dp"
                     android:textSize="16sp"
-                    android:text="Name"/>
+                    android:text="@string/Name"/>
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/name"
                     android:layout_width="match_parent"
@@ -71,9 +69,9 @@
                     android:id="@+id/ageFieldDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
+                    android:paddingHorizontal="20dp"
                     android:textSize="16sp"
-                    android:text="Age"/>
+                    android:text="@string/age"/>
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/age"
                     android:layout_width="match_parent"
@@ -87,16 +85,15 @@
                     android:id="@+id/cityFieldDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
+                    android:paddingHorizontal="20dp"
                     android:textSize="16sp"
-                    android:text="City"/>
+                    android:text="@string/city"/>
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/city"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="20dp"
                     android:paddingVertical="10dp"
-
                     android:background="@drawable/compact_text_view_white"
                     android:textSize="18sp"/>
 
@@ -104,9 +101,9 @@
                     android:id="@+id/jobFieldDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
+                    android:paddingHorizontal="20dp"
                     android:textSize="16sp"
-                    android:text="Job"/>
+                    android:text="@string/job"/>
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/job"
                     android:layout_width="match_parent"
@@ -120,9 +117,9 @@
                     android:id="@+id/aboutFieldDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
+                    android:paddingHorizontal="20dp"
                     android:textSize="16sp"
-                    android:text="About"/>
+                    android:text="@string/about"/>
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/about"
                     android:layout_width="match_parent"
@@ -136,9 +133,9 @@
                     android:id="@+id/myGenderFieldDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
+                    android:paddingHorizontal="20dp"
                     android:textSize="16sp"
-                    android:text="Gender"/>
+                    android:text="@string/gender"/>
                 <RadioGroup
                     android:id="@+id/radioGroupMyGender"
                     android:layout_width="200dp"
@@ -173,7 +170,7 @@
                 </RadioGroup>
             </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.core.widget.NestedScrollView>
-<include layout="@layout/report"
+<include layout="@layout/ask_about_reason_of_report"
 android:id="@+id/groundsList"
 android:layout_width="match_parent"
     app:layout_constraintTop_toTopOf="parent"

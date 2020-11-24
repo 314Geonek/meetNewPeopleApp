@@ -35,7 +35,7 @@
         android:textColorHint="#fabfd3"
         android:backgroundTint="#fabfd3"
         android:layout_gravity="center"
-        android:hint="@string/name"
+        android:hint="@string/Name"
         android:layout_marginBottom="20dp"
         android:autofillHints=""
         android:inputType="textPersonName" />
@@ -147,14 +147,14 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Unimited"
+        android:text="@string/unlimited"
         android:textStyle="bold"
         android:textColor="#fabfd3"
         android:scrollbarSize="14sp"
         android:layout_alignTop="@+id/switcher"
-        android:paddingRight="10dp"
+        android:paddingHorizontal="10dp"
         android:layout_alignBottom="@+id/switcher"
-        android:layout_toLeftOf="@+id/switcher"/>
+        android:layout_toStartOf="@+id/switcher"/>
 <androidx.appcompat.widget.SwitchCompat
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -163,11 +163,11 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Limited"
+        android:text="@string/limited"
         android:textStyle="bold"
         android:textColor="#fabfd3"
         android:scrollbarSize="14sp"
-        android:paddingLeft="10dp" />
+        android:paddingHorizontal="10dp" />
 </androidx.appcompat.widget.LinearLayoutCompat>
 <com.ramotion.fluidslider.FluidSlider
     android:id="@+id/seekBar"

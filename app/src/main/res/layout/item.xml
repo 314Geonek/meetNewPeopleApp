@@ -44,6 +44,5 @@
                 android:textSize="14sp"
                 android:textStyle="italic"/>
         </androidx.appcompat.widget.LinearLayoutCompat>
-
     </androidx.cardview.widget.CardView>
 </FrameLayout>

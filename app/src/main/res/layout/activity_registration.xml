@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     tools:context=".Registration"
-    android:background="#eb1e63"
-    >
+    android:background="#eb1e63">
 <androidx.appcompat.widget.LinearLayoutCompat
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -47,7 +46,7 @@
                 android:backgroundTint="#fabfd3"
                 android:drawableStart="@drawable/facet30"
                 android:maxLength="20"
-                android:hint="@string/name"
+                android:hint="@string/Name"
                 android:inputType="textPersonName"
                 android:importantForAutofill="no" />
     <androidx.appcompat.widget.AppCompatEditText
@@ -176,4 +175,4 @@
                 />
 
 </androidx.appcompat.widget.LinearLayoutCompat>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

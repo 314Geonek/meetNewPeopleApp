@@ -10,7 +10,7 @@
 
     <string name="password">password</string>
 
-    <string name="name">name</string>
+    <string name="Name">name</string>
 
     <string name="register">register</string>
 
@@ -70,5 +70,12 @@
     <string name="are_you_sure_that_u_want_to_remove_this_match">Are you sure that u want to remove this match?</string>
     <string name="yes">Yes</string>
     <string name="are_you_sure_that_u_want_to_logout">Are u sure that u want to logout</string>
+    <string name="about">About</string>
+    <string name="job">Job</string>
+    <string name="gender">Gender</string>
+    <string name="age">Age</string>
+    <string name="unlimited">Unlimited</string>
+    <string name="limited">Limited</string>
+    <string name="vulgar_descrption">Vulgar descrption</string>
 
 </resources>

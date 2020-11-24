@@ -1,10 +1,8 @@
 package com.golab.meetnewpeopleapp.admin;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.widget.TextViewCompat;
 
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -13,11 +11,8 @@ import com.golab.meetnewpeopleapp.Cards.Array_Adapter;
 import com.golab.meetnewpeopleapp.Cards.Cards;
 import com.golab.meetnewpeopleapp.ChooseLoginOrRegistrationActivity;
 import com.golab.meetnewpeopleapp.Description_Activity;
-import com.golab.meetnewpeopleapp.LoginActivity;
-import com.golab.meetnewpeopleapp.MainActivity;
 import com.golab.meetnewpeopleapp.R;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
+import com.golab.meetnewpeopleapp.ShowSingleProfileActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -44,14 +39,15 @@ public class AdminMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_main);
-        tvChat = findViewById(R.id.forchat);
-        tvDescription = findViewById(R.id.fordesc);
-        tvPicture = findViewById(R.id.forpicture);
+        tvChat = findViewById(R.id.forChat);
+        tvDescription = findViewById(R.id.forDesc);
+        tvPicture = findViewById(R.id.forPicture);
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        currentUId = mAuth.getCurrentUser().getUid();
+        if(mAuth.getCurrentUser()!=null)
+            currentUId = mAuth.getCurrentUser().getUid();
         search();
-        rowItems = new ArrayList<Cards>();
+        rowItems = new ArrayList<>();
         arrayAdapter = new Array_Adapter(this, R.layout.item, rowItems);
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
         flingContainer.setAdapter(arrayAdapter);
@@ -186,12 +182,26 @@ public class AdminMainActivity extends AppCompatActivity {
     }
 
     public void addOtherAdmin(View view) {
-    }
 
-    public void logout(View view) {
+    }
+    public void askAboutLogout(View view)
+    {
+        findViewById(R.id.makeSureLogout).setVisibility(View.VISIBLE);
+    }
+    public void sureLogout(View view) {
         mAuth.signOut();
         finish();
         Intent intent=new Intent(AdminMainActivity.this, ChooseLoginOrRegistrationActivity.class);
         startActivity(intent);
     }
+    public void cancelLogout(View view) {
+        hideAskAboutLogout();
+    }
+
+    private void hideAskAboutLogout() {
+    findViewById(R.id.makeSureLogout).setVisibility(View.GONE);
+    }
+    public void doNothingLogout(View view) {
+    }
+
 }
