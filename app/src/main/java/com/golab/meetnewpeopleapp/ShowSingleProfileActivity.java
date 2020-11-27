@@ -78,7 +78,7 @@ public class ShowSingleProfileActivity extends AppCompatActivity{
         tvNameAge.setText(profile.getName());
         if (!profile.getProfileImageUrl().isEmpty())
             Glide.with(getApplication()).load(profile.getProfileImageUrl()).apply(options).into(ivPicture);
-        tvLocation.setText("0 km away");
+        tvLocation.setText("");
     }
 
 

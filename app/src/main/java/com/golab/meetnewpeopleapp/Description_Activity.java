@@ -43,6 +43,8 @@ public class Description_Activity extends AppCompatActivity {
             jsonMyObject = extras.getString("myObject");
             profile = new Gson().fromJson(jsonMyObject, Cards.class);
             findViewById(R.id.reportBtn).setVisibility(!profile.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())? View.VISIBLE : View.GONE);
+            if(extras.getString("admin")!=null)
+                findViewById(R.id.reportBtn).setVisibility(View.GONE);
             fillData();
         }
 
