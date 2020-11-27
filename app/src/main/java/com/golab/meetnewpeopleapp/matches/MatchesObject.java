@@ -14,6 +14,7 @@ public class MatchesObject {
         this.profileImageUrl = profileImageUrl;
         this.matchId = matchId;
         this.lastMessage= lastMessage;
+        this.name = this.name.length()>=10 ? this.name.substring(0,7).concat("...") : this.name;
     }
 
     public String getMatchId() {

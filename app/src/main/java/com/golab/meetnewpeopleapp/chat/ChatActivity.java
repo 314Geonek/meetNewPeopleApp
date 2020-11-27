@@ -95,13 +95,13 @@ public class ChatActivity extends AppCompatActivity {
     {    db.collection("users").document(userMatchId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
         @Override
         public void onSuccess(DocumentSnapshot document) {
-            if(document.exists())
-            mName.setText(document.get("name").toString());
-            ibPicture.setBackground(null);
+            if(document.exists()){
+                mName.setText(document.get("name").toString().length()>=10 ? document.get("name").toString().substring(0,7).concat("...") :  document.get("name").toString());
+                ibPicture.setBackground(null);
             if(!document.get("profileImageUrl").toString().equals("default"))
             Glide.with(getApplication()).load(document.get("profileImageUrl").toString()).apply(RequestOptions.circleCropTransform())
                     .into(ibPicture);
-        }
+        }}
     });
     }
     private void getChatMessages() {

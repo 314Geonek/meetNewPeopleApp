@@ -18,6 +18,7 @@ public class Cards {
         city = snapshot.get("city")!=null ? snapshot.get("city").toString() : "";
         gender = snapshot.get("gender")!=null ? snapshot.get("gender").toString() : "";
         job = snapshot.get("job")!=null ? snapshot.get("job").toString() : "";
+        name = name.length()>=10 ? name.substring(0,7).concat("...") : name;
         this.distance = distance;
     }
 
@@ -29,6 +30,7 @@ public class Cards {
         city = snapshot.get("city")!=null ? snapshot.get("city").toString() : "";
         gender = snapshot.get("gender")!=null ? snapshot.get("gender").toString() : "";
         job = snapshot.get("job")!=null ? snapshot.get("job").toString() : "";
+        name = name.length()>=10 ? name.substring(0,7).concat("..."): name ;
         this.distance = distance;
         this.reportedForChat=reportedForChat;
         this.reportedForDesc = reportedForDesc;
