@@ -170,12 +170,36 @@ public class AdminMainActivity extends AppCompatActivity {
                 Map m= new HashMap();
                 m.put("banned", true);
                 db.collection("users").document(userId).update(m);
+                removeMatches(userId, "id1");
+                removeMatches(userId, "id2");
         }
         if(rowItems.size()>0)
             giveInfoAboutReports(rowItems.get(0).getReportedForChat(), rowItems.get(0).getReportedForDesc(), rowItems.get(0).getReportedForPhoto());
         else giveInfoAboutReports(0,0,0);
         arrayAdapter.notifyDataSetChanged();
     }
+
+    private void removeMatches(String id, String idtext) {
+        db.collection("Matches").whereEqualTo(idtext, id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (DocumentSnapshot dc:
+                     queryDocumentSnapshots) {
+                    dc.getReference().collection("Messages").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots2) {
+                            for (DocumentSnapshot ds2:
+                                 queryDocumentSnapshots2) {
+                                ds2.getReference().delete();
+                            }
+                        }
+                    });
+                    dc.getReference().delete();
+                }
+            }
+        });
+    }
+
     public void goToDescription(View view)
     {
         Intent intent=new Intent(AdminMainActivity.this, Description_Activity.class);
