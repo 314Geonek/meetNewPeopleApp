@@ -130,7 +130,7 @@ public class ChatActivity extends AppCompatActivity {
 
     public void sendMessage(View view) {
         String messageText= mMessage.getText().toString();
-        if(!messageText.isEmpty())
+        if(!messageText.isEmpty() && !messageText.equals(" "))
         {
             Map newMessage= new HashMap();
             newMessage.put("writerId", currentUserID);

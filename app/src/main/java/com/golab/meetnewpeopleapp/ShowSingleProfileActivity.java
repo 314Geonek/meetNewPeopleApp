@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
 public class ShowSingleProfileActivity extends AppCompatActivity{
@@ -125,6 +126,13 @@ public class ShowSingleProfileActivity extends AppCompatActivity{
     public void sureRemoveMatch(View view) {
         String currentUser= mAuth.getCurrentUser().getUid();
         String secondUser = userId;
+        db.collection("Matches").document(getIntent().getExtras().getString("idMatch")).collection("Messages").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (DocumentSnapshot dc: queryDocumentSnapshots)
+                    dc.getReference().delete();
+            }
+        });
         db.collection("Matches").document(getIntent().getExtras().getString("idMatch")).delete();
         db.collection("users").document(currentUser).collection("SwipedBy").document(secondUser).delete();
         db.collection("users").document(secondUser).collection("SwipedBy").document(currentUser).delete();
