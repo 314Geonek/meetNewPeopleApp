@@ -204,6 +204,9 @@ public class AdminMainActivity extends AppCompatActivity {
     {
         Intent intent=new Intent(AdminMainActivity.this, Description_Activity.class);
         intent.putExtra("myObject", new Gson().toJson(rowItems.get(0)));
+        Bundle b = new Bundle();
+        b.putString("admin","y");
+        intent.putExtras(b);
         startActivity(intent);
     }
     public void ban(View view) {
