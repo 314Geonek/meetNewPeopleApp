@@ -58,7 +58,8 @@ public class MatchesActivity extends AppCompatActivity {
     }
 
     private void getUserMatchesId(String id) {
-        db.collection("Matches").whereEqualTo(id, currentUserID).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("Matches").whereEqualTo(id, currentUserID)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
@@ -73,7 +74,8 @@ public class MatchesActivity extends AppCompatActivity {
                         case ADDED:
                             findViewById(R.id.tvNoMatches).setVisibility(View.GONE);
                             String matchId=dc.getDocument().getId();
-                            key = currentUserID.equals(dc.getDocument().get("id1").toString()) ? dc.getDocument().get("id2").toString() : dc.getDocument().get("id1").toString();
+                            key = currentUserID.equals(dc.getDocument().get("id1").toString()) ?
+                                    dc.getDocument().get("id2").toString() : dc.getDocument().get("id1").toString();
                             FetchMatchInformation(key, matchId);
                             break;
                         case REMOVED:
@@ -86,9 +88,6 @@ public class MatchesActivity extends AppCompatActivity {
                                 findViewById(R.id.tvNoMatches).setVisibility(View.VISIBLE);
                             break;
                     }
-
-
-
                 }
             }
         });
@@ -118,25 +117,22 @@ public class MatchesActivity extends AppCompatActivity {
         });
     }
 private void fetchLastMessage(final String userId,final String name,final  String profileImageUrl, final String matchID) {
-    db.collection("Matches").document(matchID).collection("Messages").orderBy("writed", Query.Direction.DESCENDING).limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
+    db.collection("Matches").document(matchID).collection("Messages")
+            .orderBy("writed", Query.Direction.DESCENDING).limit(1)
+            .addSnapshotListener(new EventListener<QuerySnapshot>() {
         @Override
         public void onEvent(@Nullable QuerySnapshot snapshots,
                             @Nullable FirebaseFirestoreException e) {
-            if (e != null) {
-                return;
-            }
-            if(snapshots.getDocumentChanges().isEmpty())
-            {
-
-                MatchesObject obj = new MatchesObject(userId, name, profileImageUrl, matchID, new ChatObject("", false, false ));
+            if (e != null) { return; }
+            if(snapshots.getDocumentChanges().isEmpty()) {
+                MatchesObject obj = new MatchesObject(userId, name, profileImageUrl, matchID,
+                        new ChatObject("", false, false ));
                 resultsMatches.add(obj);
                 mMatchesAdapter.notifyDataSetChanged();
             }
             else for (DocumentChange dc : snapshots.getDocumentChanges()){
                 if(dc.getType().toString().equals("ADDED")||dc.getType().toString().equals("MODIFIED")){
-                    System.out.println(dc.getType().toString());
-                    String content = dc.getDocument().get("content") != null ? dc.getDocument().get("content").toString() : "";
-                        String author = dc.getDocument().get("writerId") != null ? dc.getDocument().get("content").toString() : "";
+                        String content = dc.getDocument().get("content") != null ? dc.getDocument().get("content").toString() : "";
                         boolean readed = dc.getDocument().get("readed") != null ? (boolean)dc.getDocument().get("readed") : true;
                         ChatObject chatObject;
                         chatObject= new ChatObject(content, false , readed);

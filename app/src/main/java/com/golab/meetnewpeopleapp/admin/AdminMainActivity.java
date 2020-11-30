@@ -14,7 +14,6 @@ import com.golab.meetnewpeopleapp.LoginActivity;
 import com.golab.meetnewpeopleapp.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -76,63 +75,60 @@ public class AdminMainActivity extends AppCompatActivity {
     }
 
     private void search() {
-
         db.collection("users").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshotsUser) {
                 for (final DocumentSnapshot snapshotUser:queryDocumentSnapshotsUser) {
                     if(snapshotUser.get("banned")==null)
-                    snapshotUser.getReference().collection("Reports").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    snapshotUser.getReference().collection("Reports").get()
+                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshotsReports) {
-                            int countPhoto=0;
-                            int countDesc=0;
-                            int countChat=0;
-                            List<String> reportedByForPhoto = new ArrayList<>();
-                            List<String> reportedByForDesc = new ArrayList<>();
-                            List<String> reportedByForChar = new ArrayList<>();
-
-                            for (DocumentSnapshot snapshotReport:queryDocumentSnapshotsReports) {
-                                String reason = snapshotReport.get("Reason") != null ? snapshotReport.get("Reason").toString() : "";
-                                String reportedByObject = snapshotReport.get("ReportedBy") != null ? snapshotReport.get("ReportedBy").toString() : "";
-                                if(!reportedByObject.equals(""))
-                                {
-                                    switch(reason)
-                                    {
-                                        case "Photo":
-                                            if(!reportedByForPhoto.contains(reportedByObject)) {
-                                                countPhoto++;
-                                                reportedByForPhoto.add(reportedByObject);
-                                            }
-                                            break;
-                                        case "Description":
-                                            if(!reportedByForDesc.contains(reportedByObject)) {
-                                                countDesc++;
-                                                reportedByForDesc.add(reportedByObject);
-                                            }
-                                            break;
-                                        case  "Messages":
-                                        if(!reportedByForChar.equals(reportedByObject)) {
-                                            countChat++;
-                                            reportedByForChar.add(reportedByObject);
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-                            if(countChat>10 || countDesc>0 || countPhoto >0)
-                            {
-
-                                rowItems.add(new Cards(snapshotUser, "", countChat, countDesc, countPhoto ));
-                                arrayAdapter.notifyDataSetChanged();
-                                if(rowItems.size()==1)
-                                  giveInfoAboutReports(countChat, countDesc, countPhoto);
-                             }
+                        countReports(queryDocumentSnapshotsReports,snapshotUser);
                         }
                     });
                 }
             }
         });
+    }
+    private void countReports(QuerySnapshot queryDocumentSnapshotsReports, DocumentSnapshot snapshotUser){
+        int countPhoto=0;
+        int countDesc=0;
+        int countChat=0;
+        List<String> reportedByForPhoto = new ArrayList<>();
+        List<String> reportedByForDesc = new ArrayList<>();
+        List<String> reportedByForChar = new ArrayList<>();
+        for (DocumentSnapshot snapshotReport:queryDocumentSnapshotsReports) {
+            String reason = snapshotReport.get("Reason") != null ? snapshotReport.get("Reason").toString() : "";
+            String reportedByObject = snapshotReport.get("ReportedBy") != null ? snapshotReport.get("ReportedBy").toString() : "";
+            if(!reportedByObject.equals(""))
+            {
+                switch(reason)
+                {
+                    case "Photo":
+                        if(!reportedByForPhoto.contains(reportedByObject)) {
+                            countPhoto++;
+                            reportedByForPhoto.add(reportedByObject); }
+                        break;
+                    case "Description":
+                        if(!reportedByForDesc.contains(reportedByObject)) {
+                            countDesc++;
+                            reportedByForDesc.add(reportedByObject);}
+                        break;
+                    case  "Messages":
+                        if(!reportedByForChar.equals(reportedByObject)) {
+                            countChat++;
+                            reportedByForChar.add(reportedByObject);}break;
+                }
+            }
+        }
+        if(countChat>10 || countDesc>0 || countPhoto >0)
+        {
+            rowItems.add(new Cards(snapshotUser, "", countChat, countDesc, countPhoto ));
+            arrayAdapter.notifyDataSetChanged();
+            if(rowItems.size()==1)
+                giveInfoAboutReports(countChat, countDesc, countPhoto);
+        }
     }
     @Override
     protected void onStart() {
@@ -140,7 +136,6 @@ public class AdminMainActivity extends AppCompatActivity {
             rowItems.remove(i);
         search();
         arrayAdapter.notifyDataSetChanged();
-
         super.onStart();
     }
     private void giveInfoAboutReports(int chat, int desc, int photo) {
@@ -154,7 +149,8 @@ public class AdminMainActivity extends AppCompatActivity {
         Cards object = (Cards) rowItems.get(0);
         String userId = object.getId();
         if(direction.equals("right"))
-        db.collection("users").document(userId).collection("Reports").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        db.collection("users").document(userId).collection("Reports").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 for (DocumentSnapshot snapschot:queryDocumentSnapshots) {
@@ -174,18 +170,21 @@ public class AdminMainActivity extends AppCompatActivity {
                 removeMatches(userId, "id2");
         }
         if(rowItems.size()>0)
-            giveInfoAboutReports(rowItems.get(0).getReportedForChat(), rowItems.get(0).getReportedForDesc(), rowItems.get(0).getReportedForPhoto());
+            giveInfoAboutReports(rowItems.get(0).getReportedForChat(), rowItems.get(0).getReportedForDesc(),
+                    rowItems.get(0).getReportedForPhoto());
         else giveInfoAboutReports(0,0,0);
         arrayAdapter.notifyDataSetChanged();
     }
 
     private void removeMatches(String id, String idtext) {
-        db.collection("Matches").whereEqualTo(idtext, id).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        db.collection("Matches").whereEqualTo(idtext, id).get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 for (DocumentSnapshot dc:
                      queryDocumentSnapshots) {
-                    dc.getReference().collection("Messages").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    dc.getReference().collection("Messages").get()
+                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots2) {
                             for (DocumentSnapshot ds2:

@@ -35,7 +35,8 @@ public class Create_new_admin_Activity extends AppCompatActivity {
     }
     private void verifyCurrentUser()
     {
-        AuthCredential credential = EmailAuthProvider.getCredential(mAuth.getCurrentUser().getEmail(), mPassword.getText().toString());
+        AuthCredential credential = EmailAuthProvider.getCredential(mAuth.getCurrentUser().getEmail(),
+                mPassword.getText().toString());
         mAuth.getCurrentUser().reauthenticate(credential).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {

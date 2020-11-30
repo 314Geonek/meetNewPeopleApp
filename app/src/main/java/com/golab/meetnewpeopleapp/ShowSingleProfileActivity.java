@@ -49,19 +49,9 @@ public class ShowSingleProfileActivity extends AppCompatActivity{
         fillData();
     }
 
-    public void goToMainActivity(View view) {
-        finish();
-        return;
-    }
-
-    public void goToMatches(View view) {
-        Intent intent=new Intent(ShowSingleProfileActivity.this, MatchesActivity.class);
-        startActivity(intent);
-        finish();
-        return;
-    }
     private void fillData() {
-        db.collection("users").document(userId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        db.collection("users").document(userId).get().addOnSuccessListener
+                (new OnSuccessListener<DocumentSnapshot>() {
         @Override
         public void onSuccess(DocumentSnapshot documentSnapshot) {
             if(documentSnapshot.exists()){
@@ -82,18 +72,58 @@ public class ShowSingleProfileActivity extends AppCompatActivity{
         tvLocation.setText("");
     }
 
-
-
-    public void goBack(View view) {
-        finish();
-    }
-
     public void goToProfileEdit(View view) {
         Intent intent=new Intent(ShowSingleProfileActivity.this, Settings.class);
         startActivity(intent);
         finish();
         return;
     }
+    public void askRemoveMatch(View view) { findViewById(R.id.makeSureRemoveMatch).setVisibility(View.VISIBLE); }
+    public void cancelRemoveMatch(View view) {
+        hideRemoveMatchMakeSure();
+    }
+    private void hideRemoveMatchMakeSure() { findViewById(R.id.makeSureRemoveMatch).setVisibility(View.GONE); }
+    public void sureRemoveMatch(View view) {
+        String currentUser= mAuth.getCurrentUser().getUid();
+        String secondUser = userId;
+        db.collection("Matches").document(getIntent().getExtras().getString("idMatch"))
+                .collection("Messages").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (DocumentSnapshot dc: queryDocumentSnapshots)
+                    dc.getReference().delete();
+            }
+        });
+        db.collection("Matches").document(getIntent().getExtras().getString("idMatch")).delete();
+        db.collection("users").document(currentUser).collection("SwipedBy").document(secondUser).delete();
+        db.collection("users").document(secondUser).collection("SwipedBy").document(currentUser).delete();
+        finish();
+    }
+
+    public void  goToDescription(View view) {
+        Intent intent=new Intent(ShowSingleProfileActivity.this, Description_Activity.class);
+        intent.putExtra("myObject", new Gson().toJson(profile));
+        startActivity(intent);
+    }
+    public void doNothingRemoveMatch(View view) {
+    }
+    public void doNothingLogout(View view) {
+    }
+    public void goBack(View view) {
+        finish();
+    }
+    public void goToMainActivity(View view) {
+        finish();
+        return;
+    }
+
+    public void goToMatches(View view) {
+        Intent intent=new Intent(ShowSingleProfileActivity.this, MatchesActivity.class);
+        startActivity(intent);
+        finish();
+        return;
+    }
+
     public void askLogout(View view) {
         findViewById(R.id.makeSureLogout).setVisibility(View.VISIBLE);
     }
@@ -106,41 +136,8 @@ public class ShowSingleProfileActivity extends AppCompatActivity{
     public void cancelLogout(View view) {
         hideAskAboutLogout();
     }
-    private void hideAskAboutLogout() {
-        findViewById(R.id.makeSureLogout).setVisibility(View.GONE);
-    }
-    public void  goToDescription(View view) {
-        Intent intent=new Intent(ShowSingleProfileActivity.this, Description_Activity.class);
-        intent.putExtra("myObject", new Gson().toJson(profile));
-        startActivity(intent);
-    }
-    public void askRemoveMatch(View view) {
-        findViewById(R.id.makeSureRemoveMatch).setVisibility(View.VISIBLE);
-    }
-    public void cancelRemoveMatch(View view) {
-        hideRemoveMatchMakeSure();
-    }
-    private void hideRemoveMatchMakeSure() {
-        findViewById(R.id.makeSureRemoveMatch).setVisibility(View.GONE);
-    }
-    public void sureRemoveMatch(View view) {
-        String currentUser= mAuth.getCurrentUser().getUid();
-        String secondUser = userId;
-        db.collection("Matches").document(getIntent().getExtras().getString("idMatch")).collection("Messages").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                for (DocumentSnapshot dc: queryDocumentSnapshots)
-                    dc.getReference().delete();
-            }
-        });
-        db.collection("Matches").document(getIntent().getExtras().getString("idMatch")).delete();
-        db.collection("users").document(currentUser).collection("SwipedBy").document(secondUser).delete();
-        db.collection("users").document(secondUser).collection("SwipedBy").document(currentUser).delete();
-        finish();
-    }
-    public void doNothingRemoveMatch(View view) {
-    }
-    public void doNothingLogout(View view) {
-    }
+    private void hideAskAboutLogout() { findViewById(R.id.makeSureLogout).setVisibility(View.GONE); }
+
+
 
 }

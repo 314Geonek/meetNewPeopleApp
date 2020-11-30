@@ -52,7 +52,6 @@ public class ChatActivity extends AppCompatActivity {
     private TextView mName;
     private ImageButton ibPicture;
     private ArrayList<ChatObject> resultsMessages;
-    private boolean isStillMatch;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,10 +76,12 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void checkOrStillMatch() {
-        db.collection("Matches").document(matchId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        db.collection("Matches").document(matchId)
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                db.collection("Matches").document(matchId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                db.collection("Matches").document(matchId).get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if(!task.getResult().exists())
@@ -92,14 +93,18 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void fillNavBar()
-    {    db.collection("users").document(userMatchId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+    {    db.collection("users").document(userMatchId).get()
+            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
         @Override
         public void onSuccess(DocumentSnapshot document) {
             if(document.exists()){
-                mName.setText(document.get("name").toString().length()>=10 ? document.get("name").toString().substring(0,7).concat("...") :  document.get("name").toString());
+                mName.setText(document.get("name").toString().length()>=10 ?
+                        document.get("name").toString().substring(0,7).concat("...") :  document.get("name").toString());
+
                 ibPicture.setBackground(null);
             if(!document.get("profileImageUrl").toString().equals("default"))
-            Glide.with(getApplication()).load(document.get("profileImageUrl").toString()).apply(RequestOptions.circleCropTransform())
+              Glide.with(getApplication()).load(document.get("profileImageUrl").toString())
+                    .apply(RequestOptions.circleCropTransform())
                     .into(ibPicture);
         }}
     });
@@ -113,16 +118,16 @@ public class ChatActivity extends AppCompatActivity {
                     return;
                 }
                 for (DocumentChange dc : snapshots.getDocumentChanges()){
-                        if(dc.getType().toString().equals("ADDED")){
+                    if(dc.getType().toString().equals("ADDED")){
                         String content = dc.getDocument().get("content") != null ? dc.getDocument().get("content").toString() : "";
                         String writerId = dc.getDocument().get("writerId") != null ? dc.getDocument().get("writerId").toString() : "";
                         Boolean readed = dc.getDocument().get("readed")!= null ? (boolean) dc.getDocument().get("readed") : false;
-                            if(!readed && !writerId.equals(currentUserID))
-                                dc.getDocument().getReference().update("readed",true);
-                            Boolean currentUserBoolean = writerId.equals(currentUserID) ? true : false;
-                            ChatObject newMessage = new ChatObject(content, currentUserBoolean, readed);
-                            resultsMessages.add(newMessage);
-                            mChatAdapter.notifyDataSetChanged();
+                        if(!readed && !writerId.equals(currentUserID))
+                            dc.getDocument().getReference().update("readed",true);
+                        Boolean currentUserBoolean = writerId.equals(currentUserID) ? true : false;
+                        ChatObject newMessage = new ChatObject(content, currentUserBoolean, readed);
+                        resultsMessages.add(newMessage);
+                        mChatAdapter.notifyDataSetChanged();
                 }
             }}
         });

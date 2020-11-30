@@ -208,7 +208,6 @@ public class Settings extends AppCompatActivity {
 
                     }
 
-
                 }
 
 
@@ -237,7 +236,8 @@ public class Settings extends AppCompatActivity {
                 userInfo.put("lookingFor", "Male Female");
                 }
 
-            userInfo.put("searchingRange",rangeSwitch.isChecked() ?  slider.getBubbleText().substring(0, slider.getBubbleText().length()-3) : "false");
+            userInfo.put("searchingRange",rangeSwitch.isChecked() ?  slider.getBubbleText()
+                    .substring(0, slider.getBubbleText().length()-3) : "false");
             db.collection("users").document(mAuth.getCurrentUser().getUid()).update(userInfo);
 
         if(resultUri!= null)

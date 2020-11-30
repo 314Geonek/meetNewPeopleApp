@@ -28,9 +28,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        if(getIntent().getExtras()!=null )
-        Toast.makeText(LoginActivity.this, getIntent().getExtras().getString("email").concat(getResources().getString(R.string.notVerifiedEmail)), Toast.LENGTH_LONG).show();
-
         mAuth = FirebaseAuth.getInstance();
         firebaseAuthStateListener = new FirebaseAuth.AuthStateListener()
         {
@@ -41,7 +38,9 @@ public class LoginActivity extends AppCompatActivity {
                 if (user != null){
                     if (!user.isEmailVerified()) {
                         user.sendEmailVerification();
-                        Toast.makeText(LoginActivity.this, user.getEmail() +"  "+ getResources().getString(R.string.notVerifiedEmail), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, user.getEmail()
+                                +"  "+ getResources().getString(R.string.notVerifiedEmail),
+                                Toast.LENGTH_SHORT).show();
                         mAuth.signOut();
                     }
                     else {
@@ -58,7 +57,8 @@ public class LoginActivity extends AppCompatActivity {
     private void logIntoApplication(FirebaseUser user)
     {
         FirebaseFirestore db= FirebaseFirestore.getInstance();
-        db.collection("users").document(user.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        db.collection("users").document(user.getUid()).get().
+                addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 Intent intent;
@@ -66,7 +66,9 @@ public class LoginActivity extends AppCompatActivity {
                     if(documentSnapshot.get("banned")!=null)
                     {
                         mAuth.signOut();
-                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.your_account_is_banned), Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivity.this, getResources().
+                                        getString(R.string.your_account_is_banned),
+                                        Toast.LENGTH_LONG).show();
                     }
                     intent = new Intent(LoginActivity.this, MainActivity.class);
                 }else {

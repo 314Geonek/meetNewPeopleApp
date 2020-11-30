@@ -28,14 +28,13 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     public void resetPassword(View view) {
         if(mAuth != null) {
-            Toast.makeText(ResetPasswordActivity.this,"Recovery Email has been  sent to " + mEmail.getText().toString(), Toast.LENGTH_LONG).show();
-            Log.w(" if Email authenticated", "Recovery Email has been  sent to " + mEmail.getText().toString());
+            Toast.makeText(ResetPasswordActivity.this,"Recovery Email has been  sent to "
+                    + mEmail.getText().toString(), Toast.LENGTH_LONG).show();
             mAuth.sendPasswordResetEmail(mEmail.getText().toString());
             finish();
             return;
         } else {
             Toast.makeText(ResetPasswordActivity.this,"Error", Toast.LENGTH_LONG).show();
-            Log.w(" error ", " bad entry ");
         }
     }
 }

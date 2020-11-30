@@ -1,19 +1,12 @@
 package com.golab.meetnewpeopleapp;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ButtonBarLayout;
-import androidx.core.widget.ImageViewCompat;
-import androidx.core.widget.TextViewCompat;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,28 +18,19 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
-import com.google.firebase.auth.FirebaseUser;
 
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.google.firebase.storage.internal.Sleeper;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static java.lang.Math.pow;
 
 
 public class Registration extends AppCompatActivity {
@@ -67,13 +51,23 @@ public class Registration extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         mStorageRef= FirebaseStorage.getInstance();
-        mRegister = (Button) findViewById(R.id.register);
         mEmail = (EditText) findViewById(R.id.email);
-        mPhoto = findViewById(R.id.myProfilImage);
         mPassword = (EditText) findViewById(R.id.password);
         mName = (EditText) findViewById(R.id.nameMy);
         mRadioGroupMyGender = (RadioGroup) findViewById(R.id.radioGroupMyGender);
         mRadioGroupSearchedGender = (RadioGroup) findViewById(R.id.radioGroupSearchedGender);
+
+        mPhoto = findViewById(R.id.myProfilImage);
+        mPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), 71);
+            }
+        });
+
         mRadioGroupMyGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -119,7 +113,7 @@ public class Registration extends AppCompatActivity {
             }
         });
 
-
+        mRegister = (Button) findViewById(R.id.register);
         mRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -141,9 +135,8 @@ public class Registration extends AppCompatActivity {
                                     try
                                     { throw task.getException(); }
                                     catch (FirebaseAuthUserCollisionException existEmail)
-                                    {
-                                            Toast.makeText(Registration.this, getResources().getString(R.string.emailExists), Toast.LENGTH_SHORT).show();
-                                        }
+                                    { Toast.makeText(Registration.this,
+                                            getResources().getString(R.string.emailExists), Toast.LENGTH_SHORT).show();}
                                         catch (Exception e)
                                         {
                                             Toast.makeText(Registration.this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -154,16 +147,6 @@ public class Registration extends AppCompatActivity {
                 );
             }
         });
-
-        mPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), 71);
-            }
-        });
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -172,7 +155,8 @@ public class Registration extends AppCompatActivity {
                 && data != null && data.getData() != null )
         {
             resultUri = data.getData();
-            Glide.with(getApplication()).asBitmap().apply(RequestOptions.circleCropTransform()).load(resultUri).into(mPhoto);
+            Glide.with(getApplication()).asBitmap().apply(RequestOptions.circleCropTransform())
+                    .load(resultUri).into(mPhoto);
         }
     }
     private void saveUserData()
@@ -180,8 +164,8 @@ public class Registration extends AppCompatActivity {
         String userId = mAuth.getCurrentUser().getUid();
         Map userInfo = new HashMap<>();
         userInfo.put("name", mName.getText().toString());
-        userInfo.put("gender", getMySex());
-        userInfo.put("lookingFor", getSearchedSex());
+        userInfo.put("gender", getMyGender());
+        userInfo.put("lookingFor", getSearchedGender());
         userInfo.put("searchingRange", 50);
         db = FirebaseFirestore.getInstance();
         db.collection("users").document(userId).set(userInfo);
@@ -208,9 +192,8 @@ public class Registration extends AppCompatActivity {
     }
 
     private void goToLogin() {
-                    mAuth.signOut();
-                    finish();
-
+        mAuth.signOut();
+        finish();
     }
 
     private boolean isDataCorrect() {
@@ -239,7 +222,7 @@ public class Registration extends AppCompatActivity {
         return output;
     }
 
-    private String getSearchedSex()
+    private String getSearchedGender()
     {
         switch (mRadioGroupSearchedGender.getCheckedRadioButtonId())
         {
@@ -250,14 +233,13 @@ public class Registration extends AppCompatActivity {
         }
     }
 
-    private String getMySex()
+    private String getMyGender()
     {
         return mRadioGroupMyGender.getCheckedRadioButtonId()==R.id.male ? "male" : "female";
     }
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     @Override

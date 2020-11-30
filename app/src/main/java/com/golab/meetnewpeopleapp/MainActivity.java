@@ -50,7 +50,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static com.google.firebase.firestore.DocumentChange.Type.ADDED;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String CHANNEL_ID = "asdfsdafdfs";
+    private static final String CHANNEL_ID = "meetNewPeopleChannel";
     private Array_Adapter arrayAdapter;
     private FirebaseAuth mAuth;
     private List<Cards> rowItems;
@@ -69,18 +69,14 @@ public class MainActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         currentUId = mAuth.getCurrentUser().getUid();
-        searchMessageAndMatchesChange("id1");
-        searchMessageAndMatchesChange("id2");
+        listenMatchesChanges("id1");
+        listenMatchesChanges("id2");
         createNotificationChannel();
         rowItems = new ArrayList<Cards>();
         arrayAdapter = new Array_Adapter(this, R.layout.item, rowItems);
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
         flingContainer.setAdapter(arrayAdapter);
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
-            @Override
-            public void removeFirstObjectInAdapter() {
-            }
-
             @Override
             public void onLeftCardExit(Object dataObject) {
                 swipe("left");
@@ -98,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScroll(float scrollProgressPercent) {
             }
+            @Override
+            public void removeFirstObjectInAdapter() {
+            }
         });
     }
 
@@ -112,7 +111,8 @@ public class MainActivity extends AppCompatActivity {
             swipe.put("swipe", true);
             isMatch(userId);
         }
-        db.collection("users").document(userId).collection("SwipedBy").document(currentUId).set(swipe);
+        db.collection("users").document(userId).
+                collection("SwipedBy").document(currentUId).set(swipe);
         rowItems.remove(0);
         arrayAdapter.notifyDataSetChanged();
     }
@@ -137,7 +137,11 @@ public class MainActivity extends AppCompatActivity {
     }
     private void getMyCurrentLocation()
     {
-        while (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        while (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED)
+        {
             ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, 1);
         }
         fusedLocationClient.getLastLocation()
@@ -154,7 +158,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                         else {
                             myLocation = null;
-                            Toast.makeText(MainActivity.this, getString(R.string.notFoundGps),Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, getString(R.string.notFoundGps),
+                                    Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -164,7 +169,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void getDetailOfSearching(){
         lookingFor =new ArrayList<>();
-        db.collection("users").document(currentUId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection("users").document(currentUId).get().
+                addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful())
@@ -206,7 +212,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void getOtherProfiles() {
-        Query query =  db.collection("users").whereIn("gender", lookingFor).whereNotEqualTo(FieldPath.documentId(), currentUId);
+        Query query =  db.collection("users").whereIn("gender", lookingFor)
+                .whereNotEqualTo(FieldPath.documentId(), currentUId);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -215,13 +222,14 @@ public class MainActivity extends AppCompatActivity {
                         if(document.get("banned")==null)
                         checkOrSwiped(document);
                         }
-                    }}
+                }}
         });
 
     }
     private void checkOrSwiped(final QueryDocumentSnapshot snapshot)
     {
-        snapshot.getReference().collection("SwipedBy").document(currentUId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        snapshot.getReference().collection("SwipedBy").document(currentUId).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (!documentSnapshot.exists()) {
@@ -276,8 +284,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goToProfilMenuActivity(View view) {
-        Intent intent=new Intent(MainActivity.this, ShowSingleProfileActivity.class);
-        Bundle b = new Bundle();
+            Intent intent=new Intent(MainActivity.this, ShowSingleProfileActivity.class);
+            Bundle b = new Bundle();
         b.putString("id", currentUId);
         intent.putExtras(b);
         startActivity(intent);
@@ -291,13 +299,15 @@ public class MainActivity extends AppCompatActivity {
     {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
-            NotificationChannel channel = new NotificationChannel("My notification", "My notification", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel = new NotificationChannel("My notification",
+                    "My notification", NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
     }
     private void createNotification(String content) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this, "My notification");
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this,
+                "My notification");
         builder.setContentTitle("Meet new people");
         builder.setContentText(content);
         builder.setAutoCancel(true);
@@ -305,63 +315,73 @@ public class MainActivity extends AppCompatActivity {
         NotificationManagerCompat manager = NotificationManagerCompat.from(MainActivity.this);
         manager.notify(1,builder.build());
     }
-    private void searchMessageAndMatchesChange(final String id)
+    private void checkOrItsNewMatch(DocumentChange dc, final String id)
     {
-        db.collection("Matches").whereEqualTo(id, currentUId).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        if(dc.getDocument().get(id.concat("Notificated"))!=null)
+            if(!(boolean)dc.getDocument().get(id.concat("Notificated")))
+            {
+                Map data= new HashMap();
+                data.put(id.concat("Notificated"), true);
+                String idOfMatchedUser = id.equals("id1") ?
+                        dc.getDocument().get("id2").toString() : dc.getDocument().get("id1").toString();
+
+                db.collection("users").document(idOfMatchedUser).get()
+                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot snapshot) {
+                        if(snapshot!=null)
+                        {
+                            String username = snapshot.get("name")!=null ? snapshot.get("name").toString() : "";
+                            createNotification(username.concat(getResources().getString(R.string.yourNewMatch)));
+                        }
+                    }
+                });
+                dc.getDocument().getReference().update(data);
+            }
+    }
+    private void listenNewMessages(DocumentChange dc)
+    {
+        dc.getDocument().getReference().collection("Messages")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots,
-                                @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
                     return;
                 }
-                for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                    String key;
-                    if(dc.getType() == ADDED){
-                        if(dc.getDocument().get(id.concat("Notificated"))!=null)
-                        if(!(boolean)dc.getDocument().get(id.concat("Notificated")))
-                        {
-                            Map data= new HashMap();
-                            data.put(id.concat("Notificated"), true);
-                            String idOfMatchedUser = id.equals("id1") ? dc.getDocument().get("id2").toString() : dc.getDocument().get("id1").toString();
-                            db.collection("users").document(idOfMatchedUser).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot snapshot) {
-                                    if(snapshot!=null)
-                                    {
-                                        String username = snapshot.get("name")!=null ? snapshot.get("name").toString() : "";
-                                        createNotification(username.concat(getResources().getString(R.string.yourNewMatch)));
-                                    }
-                                }
-                            });
-                            dc.getDocument().getReference().update(data);
-                        }
-
-                        dc.getDocument().getReference().collection("Messages").addSnapshotListener(new EventListener<QuerySnapshot>() {
-                            @Override
-                            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                                if (error != null) {
-                                    return;
-                                }
-                                for (DocumentChange change : value.getDocumentChanges())
-                                {
-                                    if(change.getType() == ADDED)
-                                    {
-                                        if(change.getDocument().get("readed")!=null && change.getDocument().get("writerId")!= null)
-                                         if(!(boolean)change.getDocument().get("readed") &&! change.getDocument().get("writerId").toString().equals(currentUId))
-                                               createNotification(getResources().getString(R.string.UHaveNewMessage));
-                                    }
-                                }
-
+                for (DocumentChange change : value.getDocumentChanges())
+                {
+                    if(change.getType() == ADDED)
+                    {
+                        if(change.getDocument().get("readed")!=null && change.getDocument().get("writerId")!= null)
+                            if(!(boolean)change.getDocument().get("readed") &&
+                                    !change.getDocument().get("writerId").toString().equals(currentUId)){
+                                createNotification(getResources().getString(R.string.UHaveNewMessage));
                             }
-                        });
                     }
-
-
-
                 }
+
             }
         });
-       }
+    }
 
+    private void listenMatchesChanges(final String id)
+    {
+        db.collection("Matches").whereEqualTo(id, currentUId)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot snapshots,
+                                    @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        return;
+                    }
+                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                        if(dc.getType() == ADDED){
+                           checkOrItsNewMatch(dc, id);
+                           listenNewMessages(dc);
+                        }
+                    }
+                }
+            });
+    }
 
 }
