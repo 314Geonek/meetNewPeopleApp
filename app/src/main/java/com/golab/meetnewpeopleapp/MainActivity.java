@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
     {
         distance = distance.concat(getResources().getString(R.string.away));
         Cards item = new Cards(snapshot, distance);
-        if(rowItems.size()==0 || !rowItems.get(0).equals(item)) {
+        if(!rowItems.contains(item)) {
             rowItems.add(item);
             arrayAdapter.notifyDataSetChanged();
         }
@@ -284,8 +284,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goToProfilMenuActivity(View view) {
-            Intent intent=new Intent(MainActivity.this, ShowSingleProfileActivity.class);
-            Bundle b = new Bundle();
+        Intent intent=new Intent(MainActivity.this, ShowSingleProfileActivity.class);
+        Bundle b = new Bundle();
         b.putString("id", currentUId);
         intent.putExtras(b);
         startActivity(intent);

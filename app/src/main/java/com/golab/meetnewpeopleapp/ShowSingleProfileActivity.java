@@ -94,9 +94,9 @@ public class ShowSingleProfileActivity extends AppCompatActivity{
                     dc.getReference().delete();
             }
         });
-        db.collection("Matches").document(getIntent().getExtras().getString("idMatch")).delete();
         db.collection("users").document(currentUser).collection("SwipedBy").document(secondUser).delete();
         db.collection("users").document(secondUser).collection("SwipedBy").document(currentUser).delete();
+        db.collection("Matches").document(getIntent().getExtras().getString("idMatch")).delete();
         finish();
     }
 

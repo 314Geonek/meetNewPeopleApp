@@ -228,7 +228,7 @@ public class Registration extends AppCompatActivity {
         {
             case R.id.searchMale: return "Male";
             case R.id.searchFemale: return "Female";
-            case R.id.searchBoth: return "MaleFemale";
+            case R.id.searchBoth: return "Male Female";
             default: return "";
         }
     }
