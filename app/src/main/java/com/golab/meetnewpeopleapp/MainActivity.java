@@ -243,11 +243,11 @@ public class MainActivity extends AppCompatActivity {
     {
         distance = distance.concat(getResources().getString(R.string.away));
         Cards item = new Cards(snapshot, distance);
-        if(rowItems.size()>0 && rowItems.get(0).equals(item))
-            return;
-        rowItems.add(item);
-        arrayAdapter.notifyDataSetChanged();
-    }
+        if(rowItems.size()==0 || !rowItems.get(0).equals(item)) {
+            rowItems.add(item);
+            arrayAdapter.notifyDataSetChanged();
+        }
+        }
 
 
     public void goToMatches(View view) {

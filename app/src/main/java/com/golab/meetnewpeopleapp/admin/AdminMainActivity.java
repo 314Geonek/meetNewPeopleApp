@@ -74,68 +74,76 @@ public class AdminMainActivity extends AppCompatActivity {
         });
     }
 
+
     private void search() {
+
         db.collection("users").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshotsUser) {
                 for (final DocumentSnapshot snapshotUser:queryDocumentSnapshotsUser) {
                     if(snapshotUser.get("banned")==null)
-                    snapshotUser.getReference().collection("Reports").get()
-                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshotsReports) {
-                        countReports(queryDocumentSnapshotsReports,snapshotUser);
-                        }
-                    });
+                        snapshotUser.getReference().collection("Reports").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshotsReports) {
+                                countReports(queryDocumentSnapshotsReports, snapshotUser);
+                            }
+                        });
                 }
             }
         });
     }
-    private void countReports(QuerySnapshot queryDocumentSnapshotsReports, DocumentSnapshot snapshotUser){
-        int countPhoto=0;
-        int countDesc=0;
-        int countChat=0;
-        List<String> reportedByForPhoto = new ArrayList<>();
-        List<String> reportedByForDesc = new ArrayList<>();
-        List<String> reportedByForChar = new ArrayList<>();
-        for (DocumentSnapshot snapshotReport:queryDocumentSnapshotsReports) {
-            String reason = snapshotReport.get("Reason") != null ? snapshotReport.get("Reason").toString() : "";
-            String reportedByObject = snapshotReport.get("ReportedBy") != null ? snapshotReport.get("ReportedBy").toString() : "";
-            if(!reportedByObject.equals(""))
+private void countReports(QuerySnapshot queryDocumentSnapshotsReports, DocumentSnapshot snapshotUser)
+{
+    int countPhoto=0;
+    int countDesc=0;
+    int countChat=0;
+    List<String> reportedByForPhoto = new ArrayList<>();
+    List<String> reportedByForDesc = new ArrayList<>();
+    List<String> reportedByForChar = new ArrayList<>();
+
+    for (DocumentSnapshot snapshotReport:queryDocumentSnapshotsReports) {
+        String reason = snapshotReport.get("Reason") != null ? snapshotReport.get("Reason").toString() : "";
+        String reportedByObject = snapshotReport.get("ReportedBy") != null ? snapshotReport.get("ReportedBy").toString() : "";
+        if(!reportedByObject.equals(""))
+        {
+            switch(reason)
             {
-                switch(reason)
-                {
-                    case "Photo":
-                        if(!reportedByForPhoto.contains(reportedByObject)) {
-                            countPhoto++;
-                            reportedByForPhoto.add(reportedByObject); }
-                        break;
-                    case "Description":
-                        if(!reportedByForDesc.contains(reportedByObject)) {
-                            countDesc++;
-                            reportedByForDesc.add(reportedByObject);}
-                        break;
-                    case  "Messages":
-                        if(!reportedByForChar.equals(reportedByObject)) {
-                            countChat++;
-                            reportedByForChar.add(reportedByObject);}break;
-                }
+                case "Photo":
+                    if(!reportedByForPhoto.contains(reportedByObject)) {
+                        countPhoto++;
+                        reportedByForPhoto.add(reportedByObject);
+                    }
+                    break;
+                case "Description":
+                    if(!reportedByForDesc.contains(reportedByObject)) {
+                        countDesc++;
+                        reportedByForDesc.add(reportedByObject);
+                    }
+                    break;
+                case  "Messages":
+                    if(!reportedByForChar.contains(reportedByObject)) {
+                        countChat++;
+                        reportedByForChar.add(reportedByObject);
+                    }
+                    break;
             }
         }
-        if(countChat>10 || countDesc>0 || countPhoto >0)
-        {
-            rowItems.add(new Cards(snapshotUser, "", countChat, countDesc, countPhoto ));
-            arrayAdapter.notifyDataSetChanged();
-            if(rowItems.size()==1)
-                giveInfoAboutReports(countChat, countDesc, countPhoto);
-        }
     }
+    if(countChat>10 || countDesc>0 || countPhoto >0)
+    {
+        System.out.println("dsadsasddsasadasddasdsa");
+        rowItems.add(new Cards(snapshotUser, "", countChat, countDesc, countPhoto ));
+        arrayAdapter.notifyDataSetChanged();
+        if(rowItems.size()==1)
+            giveInfoAboutReports(countChat, countDesc, countPhoto);
+    }
+}
     @Override
     protected void onStart() {
         for(int i=1; i<rowItems.size(); i++)
             rowItems.remove(i);
-        search();
         arrayAdapter.notifyDataSetChanged();
+        search();
         super.onStart();
     }
     private void giveInfoAboutReports(int chat, int desc, int photo) {
@@ -169,6 +177,7 @@ public class AdminMainActivity extends AppCompatActivity {
                 removeMatches(userId, "id1");
                 removeMatches(userId, "id2");
         }
+        rowItems.remove(0);
         if(rowItems.size()>0)
             giveInfoAboutReports(rowItems.get(0).getReportedForChat(), rowItems.get(0).getReportedForDesc(),
                     rowItems.get(0).getReportedForPhoto());

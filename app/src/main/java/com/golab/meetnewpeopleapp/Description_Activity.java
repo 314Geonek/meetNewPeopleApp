@@ -101,8 +101,5 @@ public class Description_Activity extends AppCompatActivity {
         hideLayoutReport();
     }
     public void sendReport(View view) { findViewById(R.id.groundsList).setVisibility(View.VISIBLE); }
-    private void hideLayoutReport() { findViewById(R.id.groundsList).setVisibility(View.GONE);
-
-
-    }
+    private void hideLayoutReport() { findViewById(R.id.groundsList).setVisibility(View.GONE);}
 }
