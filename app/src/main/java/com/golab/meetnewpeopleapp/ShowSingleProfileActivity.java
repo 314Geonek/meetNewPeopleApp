@@ -41,6 +41,7 @@ public class ShowSingleProfileActivity extends AppCompatActivity{
             findViewById(R.id.btnMainActivity).setVisibility(View.GONE);
             findViewById(R.id.btnMatchesActivity).setVisibility(View.GONE);
             findViewById(R.id.logout).setVisibility(View.GONE);
+
         }
         db=  FirebaseFirestore.getInstance();
         ivPicture= findViewById(R.id.image);
