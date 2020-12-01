@@ -90,7 +90,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:visibility="gone"
-                                android:background="@drawable/back"
+                                android:background="@drawable/can"
                                 android:onClick="askRemoveMatch"/>
 
                  </androidx.appcompat.widget.LinearLayoutCompat>
