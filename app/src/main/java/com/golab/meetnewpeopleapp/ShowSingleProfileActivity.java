@@ -138,6 +138,4 @@ public class ShowSingleProfileActivity extends AppCompatActivity{
     }
     private void hideAskAboutLogout() { findViewById(R.id.makeSureLogout).setVisibility(View.GONE); }
 
-
-
 }
