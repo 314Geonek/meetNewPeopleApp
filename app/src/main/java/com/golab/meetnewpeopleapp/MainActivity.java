@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
     {
         distance = distance.concat(getResources().getString(R.string.away));
         Cards item = new Cards(snapshot, distance);
-        if(!rowItems.contains(item)) {
+        if(rowItems.size()==0 ||(rowItems.size()>0 && rowItems.get(0).equals(item))) {
             rowItems.add(item);
             arrayAdapter.notifyDataSetChanged();
         }

@@ -82,6 +82,7 @@ public class Settings extends AppCompatActivity {
         mCity = findViewById(R.id.City);
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
+        //fluid Slider created By www.ramotion.com
         slider = findViewById(R.id.seekBar);
         slider.setPositionListener(new Function1<Float, Unit>() {
             @Override

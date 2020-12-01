@@ -130,12 +130,12 @@ private void countReports(QuerySnapshot queryDocumentSnapshotsReports, DocumentS
         }
     }
     if(countChat>10 || countDesc>0 || countPhoto >0)
-    {
-        System.out.println("dsadsasddsasadasddasdsa");
-        rowItems.add(new Cards(snapshotUser, "", countChat, countDesc, countPhoto ));
+    {   Cards item = new Cards(snapshotUser, "", countChat, countDesc, countPhoto );
+        if(rowItems.size()==0 ||(rowItems.size()>0 && rowItems.get(0).equals(item))) {
+        rowItems.add(item);
         arrayAdapter.notifyDataSetChanged();
         if(rowItems.size()==1)
-            giveInfoAboutReports(countChat, countDesc, countPhoto);
+            giveInfoAboutReports(countChat, countDesc, countPhoto);}
     }
 }
     @Override
