@@ -110,11 +110,12 @@ public class MainActivity extends AppCompatActivity {
         else {
             swipe.put("swipe", true);
             isMatch(userId);
-        }
+              }
         db.collection("users").document(userId).
                 collection("SwipedBy").document(currentUId).set(swipe);
         rowItems.remove(0);
         arrayAdapter.notifyDataSetChanged();
+        System.out.println(rowItems.size());
     }
 
 
@@ -137,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void getMyCurrentLocation()
     {
-        while (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED)
@@ -160,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                             myLocation = null;
                             Toast.makeText(MainActivity.this, getString(R.string.notFoundGps),
                                     Toast.LENGTH_LONG).show();
-                        }
+                            }
                     }
                 });
 
@@ -176,9 +177,9 @@ public class MainActivity extends AppCompatActivity {
                 if(task.isSuccessful())
                 {       if(task.getResult().get("lookingFor")!=null)
                         {
-                                if(task.getResult().get("lookingFor").toString().contains("Male"))
+                                if(task.getResult().get("lookingFor").toString().toLowerCase().contains("Male".toLowerCase()))
                                         lookingFor.add("male");
-                                if(task.getResult().get("lookingFor").toString().contains("Female"))
+                                if(task.getResult().get("lookingFor").toString().toLowerCase().contains("Female".toLowerCase()))
                                         lookingFor.add("female");
                         }
                         if(task.getResult().get("searchingRange")!=null)
@@ -197,9 +198,7 @@ public class MainActivity extends AppCompatActivity {
         if(myLocation==null)
         {
             addToRowItems(snapshot, "");
-        }
-
-        if(snapshot.get("lastLocation")!=null)
+        }else if(snapshot.get("lastLocation")!=null)
         {
             Location otherUserLocation= new Location("otherUserLocation");
             GeoPoint tmp = (GeoPoint)snapshot.get("lastLocation");
@@ -243,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
     {
         distance = distance.concat(getResources().getString(R.string.away));
         Cards item = new Cards(snapshot, distance);
-        if(rowItems.size()==0 ||(rowItems.size()>0 && rowItems.get(0).equals(item))) {
+        if(rowItems.size()==0 ||(rowItems.size()>0 && !rowItems.get(0).equals(item))) {
             rowItems.add(item);
             arrayAdapter.notifyDataSetChanged();
         }
