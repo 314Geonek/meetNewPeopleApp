@@ -238,7 +238,7 @@ public class Settings extends AppCompatActivity {
                 }
 
             userInfo.put("searchingRange",rangeSwitch.isChecked() ?  slider.getBubbleText()
-                    .substring(0, slider.getBubbleText().length()-3) : "false");
+                    .substring(0, slider.getBubbleText().length()-3) : "unlimited");
             db.collection("users").document(mAuth.getCurrentUser().getUid()).update(userInfo);
 
         if(resultUri!= null)

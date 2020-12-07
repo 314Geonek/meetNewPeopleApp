@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                                         lookingFor.add("female");
                         }
                         if(task.getResult().get("searchingRange")!=null)
-                        if(!task.getResult().get("searchingRange").toString().equals("false"))
+                        if(!task.getResult().get("searchingRange").toString().equals("unlimited"))
                         {
                             searchingRange = Float.parseFloat(task.getResult().get("searchingRange").toString());
                         }
