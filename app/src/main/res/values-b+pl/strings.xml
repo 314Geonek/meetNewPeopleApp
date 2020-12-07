@@ -72,5 +72,7 @@
     <string name="create">Utwórz</string>
     <string name="emails_not_match">Emaile nie pasują do siebie</string>
     <string name="your_account_is_banned">Przepraszamy ale twoje konto zostało zablokowane</string>
-
+    <string name="emailvalidateerr">Błędny adres email</string>
+    <string name="passwordtiishort">Za krótkie hasło (minimun 6 znaków)</string>
+    <string name="nameLenght">Za krótka nazwa (minimum 6 znaków)</string>
 </resources>

@@ -72,5 +72,8 @@
     <string name="create">Create</string>
     <string name="emails_not_match">Emails not Match</string>
     <string name="your_account_is_banned">Sorry but your account is banned</string>
+    <string name="emailvalidateerr">This email is not validate</string>
+    <string name="passwordtiishort"><![CDATA[This password is too weak <6 chars]]></string>
+    <string name="nameLenght">Your name is too short (less than 3 charss)</string>
 
 </resources>

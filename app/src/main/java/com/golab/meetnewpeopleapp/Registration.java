@@ -200,7 +200,7 @@ public class Registration extends AppCompatActivity {
         boolean output=true;
         String error="";
         if(!android.util.Patterns.EMAIL_ADDRESS.matcher(mEmail.getText().toString()).matches())
-        {   mEmail.setError("Email not Validate");
+        {   mEmail.setError(getResources().getString(R.string.emailvalidateerr));
             output=false; }
         if(mRadioGroupSearchedGender.getCheckedRadioButtonId()== -1)
         {   error = error.concat( getResources().getString(R.string.uHaveToSelectSearchedGender)).concat("\n");
@@ -209,10 +209,10 @@ public class Registration extends AppCompatActivity {
         {   error = error.concat( getResources().getString(R.string.uHaveToSelectYourGender).concat("\n"));
             output=false; }
         if(mPassword.getText().length()<6)
-        {   mPassword.setError("Password too short <6");
+        {   mPassword.setError(getResources().getString(R.string.passwordtiishort));
             output=false; }
         if(mName.getText().length()<3)
-        {   mName.setError("Name too short <3");
+        {   mName.setError(getResources().getString(R.string.nameLenght));
             output=false; }
         if(resultUri==null)
         {   error = error.concat( getResources().getString(R.string.uHaveTOAddPhoto).concat("\n"));

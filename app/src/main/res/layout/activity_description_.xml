@@ -70,6 +70,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="20dp"
+                    android:visibility="gone"
                     android:textSize="16sp"
                     android:text="@string/age"/>
                 <androidx.appcompat.widget.AppCompatTextView
@@ -77,6 +78,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="20dp"
+                    android:visibility="gone"
+
                     android:paddingVertical="10dp"
                     android:background="@drawable/compact_text_view_white"
                     android:textSize="18sp"/>

@@ -28,7 +28,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     public void resetPassword(View view) {
         if(mAuth != null) {
-            Toast.makeText(ResetPasswordActivity.this,"Recovery Email has been  sent to "
+            Toast.makeText(ResetPasswordActivity.this,"Wysłano wiadomość z linkiem do resetu hasła na "
                     + mEmail.getText().toString(), Toast.LENGTH_LONG).show();
             mAuth.sendPasswordResetEmail(mEmail.getText().toString());
             finish();
