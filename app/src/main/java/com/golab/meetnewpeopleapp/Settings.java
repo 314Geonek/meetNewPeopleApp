@@ -196,7 +196,7 @@ public class Settings extends AppCompatActivity {
 
                     }
                     if(map.get("searchingRange")!=null)
-                    if(map.get("searchingRange").toString().equals("false")) {
+                    if(map.get("searchingRange").toString().equals("unlimited")) {
                         rangeSwitch.setChecked(false);
                     }
                     else
