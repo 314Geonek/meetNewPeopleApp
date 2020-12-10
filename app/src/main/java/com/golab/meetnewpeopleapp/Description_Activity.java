@@ -54,7 +54,7 @@ public class Description_Activity extends AppCompatActivity {
         about.setText(profile.getAboutMe());
         city.setText(profile.getCity());
         job.setText(profile.getJob());
-        if (profile.getGender().equals("Male")) {
+        if (profile.getGender().equals("male")) {
             findViewById(R.id.male).setBackgroundResource(R.drawable.radio_button_round_left_selected);
         } else
         {
