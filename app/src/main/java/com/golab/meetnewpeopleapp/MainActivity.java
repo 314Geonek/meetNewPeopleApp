@@ -37,6 +37,7 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.model.Document;
 import com.google.gson.Gson;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
@@ -115,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
                 collection("SwipedBy").document(currentUId).set(swipe);
         rowItems.remove(0);
         arrayAdapter.notifyDataSetChanged();
-        System.out.println(rowItems.size());
     }
 
 
@@ -195,7 +195,8 @@ public class MainActivity extends AppCompatActivity {
     }
     private void checkDistance(final QueryDocumentSnapshot snapshot)
     {
-        if(myLocation==null)
+
+        if(myLocation==null || searchingRange==null)
         {
             addToRowItems(snapshot, "");
         }else if(snapshot.get("lastLocation")!=null)
@@ -242,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
     {
         distance = distance.concat(getResources().getString(R.string.away));
         Cards item = new Cards(snapshot, distance);
-        if(rowItems.size()==0 ||(rowItems.size()>0 && !rowItems.get(0).equals(item))) {
+        if(rowItems.size()==0 ||(!rowItems.get(0).getId().equals(item.getId()))) {
             rowItems.add(item);
             arrayAdapter.notifyDataSetChanged();
         }
@@ -262,23 +263,31 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        if(mAuth.getCurrentUser()==null)
-        {
-            finish();
-            Intent intent=new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            return;
-        }
         super.onResume();
+            db.collection("users").document(mAuth.getCurrentUser().getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if (documentSnapshot.get("banned") != null)
+                    {
+                        finish();
+                        Intent intent=new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        return;
+                    }
+                    else {
+                        for(int i=1; i<rowItems.size(); i++)
+                            rowItems.remove(i);
+                        arrayAdapter.notifyDataSetChanged();
+                        getMyCurrentLocation();
+                        getDetailOfSearching();
+                    }
+                }
+            });
+
     }
 
     @Override
     protected void onStart() {
-        for(int i=1; i<rowItems.size(); i++)
-            rowItems.remove(i);
-        arrayAdapter.notifyDataSetChanged();
-        getMyCurrentLocation();
-        getDetailOfSearching();
         super.onStart();
     }
 
